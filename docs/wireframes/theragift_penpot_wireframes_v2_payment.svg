@@ -1,0 +1,1135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="6100" height="7350" viewBox="0 0 6100 7350">
+<rect width="100%" height="100%" fill="#EEF2F1"/>
+<style>text{dominant-baseline:alphabetic;}</style>
+<text x="80" y="80" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="900" fill="#1A2226" text-anchor="start">
+<tspan x="80" dy="0">TheraGift MVP — Penpot Wireframe Pack v2</tspan>
+</text>
+<text x="80" y="128" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="80" dy="0">Güncel kapsam: randevu + danışan uygunluk + seans ücret/ödeme takibi + Gift License + developer handoff.</tspan>
+</text>
+<rect x="80" y="160" width="160" height="32" rx="16" fill="#CFF3DF"/>
+<text x="160.0" y="181" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">v2 payment update</text>
+<rect x="260" y="160" width="140" height="32" rx="16" fill="#EAF1FA"/>
+<text x="330.0" y="181" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Penpot import</text>
+<rect x="420" y="160" width="120" height="32" rx="16" fill="#FFF2D8"/>
+<text x="480.0" y="181" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">SVG taslak</text>
+<rect x="80" y="240" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="114" y="288" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="114" dy="0">00 Product Strategy</tspan>
+</text>
+<text x="114" y="326" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="114" dy="0">Önce çalışan web MVP. Mobil mağaza ve gerçek ödeme entegrasyonu sonraki faz.</tspan>
+</text>
+<rect x="120" y="400" width="390" height="210" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="142" y="434" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="142" dy="0">Ana karar</tspan>
+</text>
+<text x="142" y="470" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="142" dy="0">Native iOS/Android, App Store, Play Store ve</tspan>
+<tspan x="142" dy="18">gerçek ödeme entegrasyonu şu an kapsam dışı.</tspan>
+<tspan x="142" dy="18">Önce psikoloğa gösterilebilir çalışan web MVP</tspan>
+<tspan x="142" dy="18">yapılacak.</tspan>
+</text>
+<rect x="378" y="418" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="432.0" y="439" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Karar</text>
+<rect x="550" y="400" width="390" height="210" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="572" y="434" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="572" dy="0">Güncel ürün çekirdeği</tspan>
+</text>
+<text x="572" y="470" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="572" dy="0">TheraGift artık sadece randevu değil: danışan</tspan>
+<tspan x="572" dy="18">uygunluk, haftalık takvim, randevu önerisi ve</tspan>
+<tspan x="572" dy="18">seans ödeme takibini birlikte yönetir.</tspan>
+</text>
+<rect x="808" y="418" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="862.0" y="439" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">v2</text>
+<rect x="980" y="400" width="390" height="210" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1002" y="434" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1002" dy="0">Ödeme ayrımı</tspan>
+</text>
+<text x="1002" y="470" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="1002" dy="0">TheraGift aboneliği ayrı; danışanın psikoloğa</tspan>
+<tspan x="1002" dy="18">yaptığı seans ödemesi ayrı takip edilir. İlk</tspan>
+<tspan x="1002" dy="18">MVP’de tahsilat değil manuel takip yapılır.</tspan>
+</text>
+<rect x="1238" y="418" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1292.0" y="439" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ödeme</text>
+<text x="120" y="680" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">Faz 1 içinde</text>
+<rect x="120" y="715" width="130" height="32" rx="16" fill="#EAF1FA"/>
+<text x="185.0" y="736" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Login/JWT</text>
+<rect x="270" y="715" width="130" height="32" rx="16" fill="#E8F3F0"/>
+<text x="335.0" y="736" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Psikolog profil</text>
+<rect x="420" y="715" width="130" height="32" rx="16" fill="#EAF1FA"/>
+<text x="485.0" y="736" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Çalışma saatleri</text>
+<rect x="570" y="715" width="130" height="32" rx="16" fill="#E8F3F0"/>
+<text x="635.0" y="736" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Danışan formu</text>
+<rect x="720" y="715" width="130" height="32" rx="16" fill="#EAF1FA"/>
+<text x="785.0" y="736" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Haftalık takvim</text>
+<rect x="120" y="767" width="130" height="32" rx="16" fill="#E8F3F0"/>
+<text x="185.0" y="788" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Randevu önerisi</text>
+<rect x="270" y="767" width="130" height="32" rx="16" fill="#EAF1FA"/>
+<text x="335.0" y="788" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Seans ücreti</text>
+<rect x="420" y="767" width="130" height="32" rx="16" fill="#E8F3F0"/>
+<text x="485.0" y="788" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ödeme durumu</text>
+<rect x="570" y="767" width="130" height="32" rx="16" fill="#EAF1FA"/>
+<text x="635.0" y="788" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Danışan borcu</text>
+<rect x="720" y="767" width="130" height="32" rx="16" fill="#E8F3F0"/>
+<text x="785.0" y="788" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Gift License</text>
+<text x="120" y="850" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">Faz 1 dışında</text>
+<rect x="120" y="885" width="130" height="32" rx="16" fill="#FFF2D8"/>
+<text x="185.0" y="906" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Native iOS</text>
+<rect x="270" y="885" width="130" height="32" rx="16" fill="#FDE8E8"/>
+<text x="335.0" y="906" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Native Android</text>
+<rect x="420" y="885" width="130" height="32" rx="16" fill="#FFF2D8"/>
+<text x="485.0" y="906" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">App Store</text>
+<rect x="570" y="885" width="130" height="32" rx="16" fill="#FDE8E8"/>
+<text x="635.0" y="906" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Play Store</text>
+<rect x="720" y="885" width="130" height="32" rx="16" fill="#FFF2D8"/>
+<text x="785.0" y="906" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Kart tahsilatı</text>
+<rect x="120" y="937" width="130" height="32" rx="16" fill="#FDE8E8"/>
+<text x="185.0" y="958" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">iyzico/Stripe</text>
+<rect x="270" y="937" width="130" height="32" rx="16" fill="#FFF2D8"/>
+<text x="335.0" y="958" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Tıbbi AI</text>
+<rect x="420" y="937" width="130" height="32" rx="16" fill="#FDE8E8"/>
+<text x="485.0" y="958" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Apple IAP</text>
+<rect x="570" y="937" width="130" height="32" rx="16" fill="#FFF2D8"/>
+<text x="635.0" y="958" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Google Billing</text>
+<rect x="720" y="937" width="130" height="32" rx="16" fill="#FDE8E8"/>
+<text x="785.0" y="958" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Fatura kesme</text>
+<rect x="900" y="680" width="470" height="330" rx="22" fill="#FFF2D8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="922" y="714" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="922" dy="0">Yeni kritik modül</tspan>
+</text>
+<text x="922" y="750" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="922" dy="0">Seans Ücret &amp; Ödeme Takibi: danışanın seans ücreti,</tspan>
+<tspan x="922" dy="18">ödedi/ödemedi, sonra ödeyecek mi, kısmi ödeme, paket</tspan>
+<tspan x="922" dy="18">hakkı, toplam borç ve geciken ödeme takibi.</tspan>
+</text>
+<rect x="1238" y="698" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1292.0" y="719" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Yeni</text>
+<rect x="80" y="1120" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="114" y="1168" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="114" dy="0">01 Auth &amp; Onboarding</tspan>
+</text>
+<text x="114" y="1206" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="114" dy="0">Giriş, demo talep, şifre sıfırlama ve psikolog ilk kurulum akışları.</tspan>
+</text>
+<rect x="120" y="1270" width="430" height="520" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="144" y="1308" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="144" dy="0">Login</tspan>
+</text>
+<text x="160" y="1360" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">E-posta</text>
+<rect x="160" y="1380" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="174" y="1414" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="174" dy="0">psikolog@example.com</tspan>
+</text>
+<text x="160" y="1460" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Şifre</text>
+<rect x="160" y="1480" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="174" y="1514" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="174" dy="0">••••••••</tspan>
+</text>
+<rect x="160" y="1580" width="330" height="44" rx="12" fill="#387A6B"/>
+<text x="325.0" y="1608" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Giriş yap</text>
+<text x="200" y="1655" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#16362F" text-anchor="start">
+<tspan x="200" dy="0">Şifremi unuttum • Demo hesabı aç</tspan>
+</text>
+<rect x="580" y="1270" width="430" height="520" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="604" y="1308" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="604" dy="0">Register / Demo Talep</tspan>
+</text>
+<text x="620" y="1350" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ad soyad</text>
+<rect x="620" y="1370" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="634" y="1404" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="634" dy="0">Uzm. Psk. ...</tspan>
+</text>
+<text x="620" y="1435" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">E-posta</text>
+<rect x="620" y="1455" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="634" y="1489" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="634" dy="0">psikolog@example.com</tspan>
+</text>
+<text x="620" y="1520" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Uzmanlık alanı</text>
+<rect x="620" y="1540" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="634" y="1574" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="634" dy="0">Yetişkin terapisi</tspan>
+</text>
+<text x="620" y="1605" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Plan tipi</text>
+<rect x="620" y="1625" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="634" y="1659" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="634" dy="0">Gift License / Demo</tspan>
+</text>
+<rect x="620" y="1715" width="190" height="44" rx="12" fill="#387A6B"/>
+<text x="715.0" y="1743" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Demo oluştur</text>
+<rect x="1040" y="1270" width="330" height="520" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1064" y="1308" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1064" dy="0">Onboarding</tspan>
+</text>
+<rect x="1070" y="1345" width="200" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1170.0" y="1366" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">1 Profil</text>
+<rect x="1070" y="1399" width="200" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1170.0" y="1420" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">2 Çalışma Saatleri</text>
+<rect x="1070" y="1453" width="200" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1170.0" y="1474" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">3 Seans Kuralları</text>
+<rect x="1070" y="1507" width="200" height="32" rx="16" fill="#F6F8F7"/>
+<text x="1170.0" y="1528" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">4 Ücret Ayarı</text>
+<rect x="1070" y="1561" width="200" height="32" rx="16" fill="#F6F8F7"/>
+<text x="1170.0" y="1582" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">5 Hazır</text>
+<text x="1070" y="1635" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Varsayılan seans ücreti</text>
+<rect x="1070" y="1655" width="250" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1084" y="1689" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1084" dy="0">₺1.500</tspan>
+</text>
+<text x="1070" y="1720" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödeme yöntemi</text>
+<rect x="1070" y="1740" width="250" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1084" y="1774" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1084" dy="0">Havale/EFT</tspan>
+</text>
+<rect x="1480" y="240" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="1514" y="288" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="1514" dy="0">02 Psychologist Dashboard</tspan>
+</text>
+<text x="1514" y="326" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="1514" dy="0">Günlük akış, randevular, bekleyen formlar ve finans özeti.</tspan>
+</text>
+<rect x="1520" y="390" width="1040" height="650" rx="24" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="1520" y="390" width="210" height="650" rx="0" fill="#1F463F"/>
+<text x="1542" y="424" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF" text-anchor="start">TheraGift</text>
+<text x="1542" y="452" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="400" fill="#C9E8DF" text-anchor="start">Web MVP</text>
+<rect x="1534" y="482" width="182" height="36" rx="10" fill="#336B60"/>
+<text x="1550" y="505" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Dashboard</text>
+<text x="1550" y="553" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Takvim</text>
+<text x="1550" y="601" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Danışanlar</text>
+<text x="1550" y="649" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ödemeler</text>
+<text x="1550" y="697" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Öneriler</text>
+<text x="1550" y="745" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ayarlar</text>
+<text x="1760" y="435" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1760" dy="0">Dashboard Genel Bakış</tspan>
+</text>
+<rect x="2380" y="435" width="150" height="44" rx="12" fill="#387A6B"/>
+<text x="2455.0" y="463" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Yeni randevu</text>
+<rect x="1760" y="517" width="160" height="96" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1778" y="546" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="1778" dy="0">Bugünkü Seans</tspan>
+</text>
+<text x="1778" y="582" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1778" dy="0">6</tspan>
+</text>
+<rect x="1945" y="517" width="160" height="96" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1963" y="546" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="1963" dy="0">Boş Slot</tspan>
+</text>
+<text x="1963" y="582" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1963" dy="0">3</tspan>
+</text>
+<rect x="2130" y="517" width="160" height="96" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2148" y="546" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="2148" dy="0">Bekleyen Form</tspan>
+</text>
+<text x="2148" y="582" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2148" dy="0">4</tspan>
+</text>
+<rect x="1760" y="632" width="160" height="96" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1778" y="661" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="1778" dy="0">Bugünkü Tahsilat</tspan>
+</text>
+<text x="1778" y="697" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1778" dy="0">₺6.000</tspan>
+</text>
+<rect x="1945" y="632" width="160" height="96" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1963" y="661" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="1963" dy="0">Bekleyen Ödeme</tspan>
+</text>
+<text x="1963" y="697" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1963" dy="0">₺4.500</tspan>
+</text>
+<rect x="1760" y="757" width="500" height="245" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1782" y="791" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1782" dy="0">Haftalık Takvim Özeti</tspan>
+</text>
+<text x="1782" y="827" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="1782" dy="0">Seans dağılımı, boş saatler ve önerilen slotlar burada</tspan>
+<tspan x="1782" dy="18">özetlenir.</tspan>
+</text>
+<rect x="2290" y="757" width="250" height="245" rx="22" fill="#FFF2D8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2312" y="791" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2312" dy="0">Finans Uyarısı</tspan>
+</text>
+<text x="2312" y="827" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2312" dy="0">3 danışanın geciken ödemesi</tspan>
+<tspan x="2312" dy="18">var. Bugün 2 seans sonra</tspan>
+<tspan x="2312" dy="18">ödenecek olarak işaretli.</tspan>
+</text>
+<rect x="2408" y="775" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2462.0" y="796" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ödeme</text>
+<rect x="1520" y="1110" width="1040" height="650" rx="24" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="1520" y="1110" width="210" height="650" rx="0" fill="#1F463F"/>
+<text x="1542" y="1144" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF" text-anchor="start">TheraGift</text>
+<text x="1542" y="1172" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="400" fill="#C9E8DF" text-anchor="start">Web MVP</text>
+<rect x="1534" y="1202" width="182" height="36" rx="10" fill="#336B60"/>
+<text x="1550" y="1225" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Dashboard</text>
+<text x="1550" y="1273" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Takvim</text>
+<text x="1550" y="1321" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Danışanlar</text>
+<text x="1550" y="1369" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ödemeler</text>
+<text x="1550" y="1417" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Öneriler</text>
+<text x="1550" y="1465" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ayarlar</text>
+<text x="1760" y="1155" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1760" dy="0">Günlük Randevu + Ödeme Durumu</tspan>
+</text>
+<rect x="1760" y="1232" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1774" y="1259" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1774" dy="0">09:00 Elif M. -</tspan>
+<tspan x="1774" dy="17">Online</tspan>
+</text>
+<text x="1970" y="1259" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="1970" dy="0">Ödendi ₺1.500</tspan>
+</text>
+<text x="2280" y="1259" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2280" dy="0">Planlı</tspan>
+</text>
+<rect x="1760" y="1290" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1774" y="1317" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1774" dy="0">10:30 Mert D. - Yüz</tspan>
+<tspan x="1774" dy="17">yüze</tspan>
+</text>
+<text x="1970" y="1317" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="1970" dy="0">Sonra ödenecek</tspan>
+</text>
+<text x="2280" y="1317" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2280" dy="0">Planlı</tspan>
+</text>
+<rect x="1760" y="1348" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1774" y="1375" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1774" dy="0">12:00 Mola</tspan>
+</text>
+<text x="1970" y="1375" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="1970" dy="0">-</tspan>
+</text>
+<text x="2280" y="1375" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2280" dy="0"></tspan>
+</text>
+<rect x="1760" y="1406" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1774" y="1433" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1774" dy="0">13:30 Zeynep A. -</tspan>
+<tspan x="1774" dy="17">Online</tspan>
+</text>
+<text x="1970" y="1433" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="1970" dy="0">Ödenmedi</tspan>
+</text>
+<text x="2280" y="1433" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2280" dy="0">Planlı</tspan>
+</text>
+<rect x="1760" y="1464" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1774" y="1491" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1774" dy="0">15:00 Boş slot</tspan>
+</text>
+<text x="1970" y="1491" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="1970" dy="0">Önerilebilir</tspan>
+</text>
+<text x="2280" y="1491" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2280" dy="0"></tspan>
+</text>
+<rect x="1760" y="1522" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1774" y="1549" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1774" dy="0">16:00 Deniz T.</tspan>
+</text>
+<text x="1970" y="1549" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="1970" dy="0">Kısmi ₺750</tspan>
+</text>
+<text x="2280" y="1549" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2280" dy="0">Planlı</tspan>
+</text>
+<rect x="2880" y="240" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="2914" y="288" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="2914" dy="0">03 Calendar &amp; Scheduling</tspan>
+</text>
+<text x="2914" y="326" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="2914" dy="0">Haftalık takvim, randevu oluşturma, ödeme durumu ve çakışma kontrolü.</tspan>
+</text>
+<rect x="2920" y="390" width="1040" height="650" rx="24" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="2920" y="390" width="210" height="650" rx="0" fill="#1F463F"/>
+<text x="2942" y="424" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF" text-anchor="start">TheraGift</text>
+<text x="2942" y="452" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="400" fill="#C9E8DF" text-anchor="start">Web MVP</text>
+<text x="2950" y="505" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Dashboard</text>
+<rect x="2934" y="530" width="182" height="36" rx="10" fill="#336B60"/>
+<text x="2950" y="553" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Takvim</text>
+<text x="2950" y="601" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Danışanlar</text>
+<text x="2950" y="649" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ödemeler</text>
+<text x="2950" y="697" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Öneriler</text>
+<text x="2950" y="745" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ayarlar</text>
+<text x="3160" y="435" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="3160" dy="0">Haftalık Takvim</tspan>
+</text>
+<rect x="3780" y="435" width="160" height="44" rx="12" fill="#16362F"/>
+<text x="3860.0" y="463" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Program öner</text>
+<text x="3230" y="527" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#1A2226" text-anchor="middle">Pzt</text>
+<text x="3360" y="527" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#1A2226" text-anchor="middle">Sal</text>
+<text x="3490" y="527" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#1A2226" text-anchor="middle">Çar</text>
+<text x="3620" y="527" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#1A2226" text-anchor="middle">Per</text>
+<text x="3750" y="527" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800" fill="#1A2226" text-anchor="middle">Cum</text>
+<text x="3150" y="577" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">09:00</tspan>
+</text>
+<rect x="3180" y="552" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="552" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="552" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="552" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="552" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3150" y="632" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">10:00</tspan>
+</text>
+<rect x="3180" y="607" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="607" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="607" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="607" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="607" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3150" y="687" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">11:00</tspan>
+</text>
+<rect x="3180" y="662" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="662" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="662" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="662" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="662" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3150" y="742" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">12:00</tspan>
+</text>
+<rect x="3180" y="717" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="717" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="717" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="717" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="717" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3150" y="797" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">13:00</tspan>
+</text>
+<rect x="3180" y="772" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="772" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="772" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="772" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="772" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3150" y="852" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">14:00</tspan>
+</text>
+<rect x="3180" y="827" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="827" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="827" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="827" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="827" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3150" y="907" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3150" dy="0">15:00</tspan>
+</text>
+<rect x="3180" y="882" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3310" y="882" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3440" y="882" width="108" height="38" rx="10" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3570" y="882" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="3700" y="882" width="108" height="38" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3160" y="972" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#687178" text-anchor="start">
+<tspan x="3160" dy="0">Kart üzerinde küçük ödeme etiketi: Ödendi / Ödenmedi / Sonra ödenecek / Paket</tspan>
+</text>
+<rect x="2920" y="1110" width="500" height="560" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2944" y="1148" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2944" dy="0">Randevu Oluşturma Modalı</tspan>
+</text>
+<text x="2960" y="1210" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Danışan</text>
+<rect x="2960" y="1230" width="360" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2974" y="1264" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2974" dy="0">Ayşe Kaya</tspan>
+</text>
+<text x="2960" y="1295" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Tarih</text>
+<rect x="2960" y="1315" width="360" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2974" y="1349" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2974" dy="0">Perşembe, 18 Temmuz</tspan>
+</text>
+<text x="2960" y="1380" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Saat</text>
+<rect x="2960" y="1400" width="360" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2974" y="1434" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2974" dy="0">14:00 - 14:50</tspan>
+</text>
+<text x="2960" y="1465" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Seans ücreti</text>
+<rect x="2960" y="1485" width="360" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2974" y="1519" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2974" dy="0">₺1.500</tspan>
+</text>
+<text x="2960" y="1550" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödeme durumu</text>
+<rect x="2960" y="1570" width="360" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2974" y="1604" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2974" dy="0">Sonra ödenecek</tspan>
+</text>
+<rect x="2960" y="1655" width="220" height="44" rx="12" fill="#387A6B"/>
+<text x="3070.0" y="1683" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Randevuyu kaydet</text>
+<rect x="3470" y="1110" width="730" height="560" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3494" y="1148" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="3494" dy="0">Randevu Önerileri</tspan>
+</text>
+<rect x="3510" y="1210" width="640" height="92" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3540" y="1260" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#16362F" text-anchor="start">1</text>
+<text x="3580" y="1235" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">Perşembe 14:00</text>
+<text x="3580" y="1267" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#387A6B" text-anchor="start">%96 uygun</text>
+<text x="3740" y="1248" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="3740" dy="0">Gün düşük yoğunlukta; ödeme geçmişi</tspan>
+<tspan x="3740" dy="17">düzenli.</tspan>
+</text>
+<rect x="4045" y="1238" width="70" height="44" rx="12" fill="#387A6B"/>
+<text x="4080.0" y="1266" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Seç</text>
+<rect x="3510" y="1332" width="640" height="92" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3540" y="1382" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#16362F" text-anchor="start">2</text>
+<text x="3580" y="1357" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">Salı 11:30</text>
+<text x="3580" y="1389" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#387A6B" text-anchor="start">%88 uygun</text>
+<text x="3740" y="1370" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="3740" dy="0">Uygun ama sabah bloğunda yoğunluk var.</tspan>
+</text>
+<rect x="4045" y="1360" width="70" height="44" rx="12" fill="#16362F"/>
+<text x="4080.0" y="1388" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Tut</text>
+<rect x="3510" y="1454" width="640" height="92" rx="18" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3540" y="1504" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#16362F" text-anchor="start">3</text>
+<text x="3580" y="1479" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">Perşembe 16:00</text>
+<text x="3580" y="1511" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#387A6B" text-anchor="start">%82 uygun</text>
+<text x="3740" y="1492" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="3740" dy="0">Alternatif olarak tutulabilir.</tspan>
+</text>
+<rect x="4045" y="1482" width="70" height="44" rx="12" fill="#16362F"/>
+<text x="4080.0" y="1510" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Tut</text>
+<rect x="80" y="2660" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="114" y="2708" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="114" dy="0">04 Client Flow</tspan>
+</text>
+<text x="114" y="2746" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="114" dy="0">Danışan listesi, danışan detay, form linki, uygunluk formu ve ödeme özeti.</tspan>
+</text>
+<rect x="120" y="2810" width="1040" height="650" rx="24" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="120" y="2810" width="210" height="650" rx="0" fill="#1F463F"/>
+<text x="142" y="2844" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF" text-anchor="start">TheraGift</text>
+<text x="142" y="2872" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="400" fill="#C9E8DF" text-anchor="start">Web MVP</text>
+<text x="150" y="2925" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Dashboard</text>
+<text x="150" y="2973" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Takvim</text>
+<rect x="134" y="2998" width="182" height="36" rx="10" fill="#336B60"/>
+<text x="150" y="3021" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Danışanlar</text>
+<text x="150" y="3069" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ödemeler</text>
+<text x="150" y="3117" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Öneriler</text>
+<text x="150" y="3165" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ayarlar</text>
+<text x="360" y="2855" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="360" dy="0">Danışan Listesi</tspan>
+</text>
+<rect x="980" y="2855" width="140" height="44" rx="12" fill="#387A6B"/>
+<text x="1050.0" y="2883" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Yeni danışan</text>
+<rect x="360" y="2932" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="2959" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="374" dy="0">Ayşe Kaya</tspan>
+</text>
+<text x="570" y="2959" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="570" dy="0">Borç ₺3.000</tspan>
+</text>
+<text x="880" y="2959" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="880" dy="0">Aktif</tspan>
+</text>
+<rect x="360" y="2990" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="3017" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="374" dy="0">Mert Demir</tspan>
+</text>
+<text x="570" y="3017" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="570" dy="0">Ödendi</tspan>
+</text>
+<text x="880" y="3017" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="880" dy="0">Aktif</tspan>
+</text>
+<rect x="360" y="3048" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="3075" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="374" dy="0">Zeynep Ak</tspan>
+</text>
+<text x="570" y="3075" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="570" dy="0">Sonra ödenecek</tspan>
+</text>
+<text x="880" y="3075" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="880" dy="0">Form bekliyor</tspan>
+</text>
+<rect x="360" y="3106" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="3133" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="374" dy="0">Deniz T.</tspan>
+</text>
+<text x="570" y="3133" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="570" dy="0">Paket 2/4</tspan>
+</text>
+<text x="880" y="3133" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="880" dy="0">Aktif</tspan>
+</text>
+<rect x="360" y="3164" width="800" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="3191" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="374" dy="0">Cem S.</tspan>
+</text>
+<text x="570" y="3191" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="570" dy="0">Geciken ₺1.500</tspan>
+</text>
+<text x="880" y="3191" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="880" dy="0">Uyarı</tspan>
+</text>
+<rect x="120" y="3530" width="1040" height="650" rx="24" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="120" y="3530" width="210" height="650" rx="0" fill="#1F463F"/>
+<text x="142" y="3564" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF" text-anchor="start">TheraGift</text>
+<text x="142" y="3592" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="400" fill="#C9E8DF" text-anchor="start">Web MVP</text>
+<text x="150" y="3645" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Dashboard</text>
+<text x="150" y="3693" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Takvim</text>
+<rect x="134" y="3718" width="182" height="36" rx="10" fill="#336B60"/>
+<text x="150" y="3741" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Danışanlar</text>
+<text x="150" y="3789" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ödemeler</text>
+<text x="150" y="3837" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Öneriler</text>
+<text x="150" y="3885" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ayarlar</text>
+<text x="360" y="3575" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="360" dy="0">Danışan Detay + Ödeme Özeti</tspan>
+</text>
+<rect x="360" y="3622" width="150" height="32" rx="16" fill="#E8F3F0"/>
+<text x="435.0" y="3643" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Haftalık danışan</text>
+<rect x="530" y="3622" width="140" height="32" rx="16" fill="#FDE8E8"/>
+<text x="600.0" y="3643" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Borç: ₺3.000</text>
+<text x="360" y="3692" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Varsayılan seans ücreti</text>
+<rect x="360" y="3712" width="320" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="3746" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="374" dy="0">₺1.500</tspan>
+</text>
+<text x="710" y="3692" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödeme yöntemi</text>
+<rect x="710" y="3712" width="320" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="724" y="3746" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="724" dy="0">Havale/EFT</tspan>
+</text>
+<rect x="360" y="3832" width="320" height="170" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="382" y="3866" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="382" dy="0">Uygunluk</tspan>
+</text>
+<text x="382" y="3902" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="382" dy="0">Salı 10:00-14:00, Perşembe</tspan>
+<tspan x="382" dy="18">13:00-17:00. Öğleden sonra tercih</tspan>
+<tspan x="382" dy="18">ediyor.</tspan>
+</text>
+<rect x="710" y="3832" width="320" height="170" rx="22" fill="#FFF2D8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="732" y="3866" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="732" dy="0">Finans özeti</tspan>
+</text>
+<text x="732" y="3902" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="732" dy="0">Toplam seans: 8</tspan>
+<tspan x="732" dy="18">Ödenen: 6</tspan>
+<tspan x="732" dy="18">Ödenmemiş: 2</tspan>
+<tspan x="732" dy="18">Toplam borç: ₺3.000</tspan>
+</text>
+<rect x="898" y="3850" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="952.0" y="3871" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ödeme</text>
+<rect x="1200" y="2810" width="440" height="600" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1224" y="2848" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1224" dy="0">Danışan Form Linki</tspan>
+</text>
+<text x="1240" y="2910" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Danışan adı</text>
+<rect x="1240" y="2930" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1254" y="2964" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1254" dy="0">Ayşe Kaya</tspan>
+</text>
+<text x="1240" y="3010" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Geçerlilik süresi</text>
+<rect x="1240" y="3030" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1254" y="3064" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1254" dy="0">7 gün</tspan>
+</text>
+<rect x="1240" y="3120" width="220" height="44" rx="12" fill="#387A6B"/>
+<text x="1350.0" y="3148" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Güvenli link oluştur</text>
+<text x="1240" y="3200" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600" fill="#16362F" text-anchor="start">
+<tspan x="1240" dy="0">theragift.app/form/a8xk-92...</tspan>
+</text>
+<rect x="1200" y="3460" width="440" height="650" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1224" y="3498" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1224" dy="0">Danışan Uygunluk Formu</tspan>
+</text>
+<text x="1240" y="3560" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ad soyad</text>
+<rect x="1240" y="3580" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1254" y="3614" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1254" dy="0">Ayşe Kaya</tspan>
+</text>
+<text x="1240" y="3660" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Görüşme tipi</text>
+<rect x="1240" y="3680" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1254" y="3714" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1254" dy="0">Online veya yüz yüze</tspan>
+</text>
+<text x="1240" y="3760" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Uygun saatler</text>
+<rect x="1240" y="3780" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1254" y="3814" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1254" dy="0">Salı 10-14, Perşembe 13-17</tspan>
+</text>
+<text x="1240" y="3860" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Not</text>
+<rect x="1240" y="3880" width="330" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1254" y="3914" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1254" dy="0">Öğleden sonra tercih ederim.</tspan>
+</text>
+<rect x="1240" y="3990" width="180" height="44" rx="12" fill="#387A6B"/>
+<text x="1330.0" y="4018" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Bilgileri gönder</text>
+<rect x="1880" y="2660" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="1914" y="2708" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="1914" dy="0">05 Session Fee &amp; Payment Tracking</tspan>
+</text>
+<text x="1914" y="2746" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="1914" dy="0">Danışan seans ücreti, ödeme durumu, borç, geciken ödeme ve paket seans takibi.</tspan>
+</text>
+<rect x="1920" y="2820" width="300" height="160" rx="22" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1942" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1942" dy="0">Bugünkü Tahsilat</tspan>
+</text>
+<text x="1942" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="1942" dy="0">₺6.000</tspan>
+</text>
+<rect x="2088" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2142.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Kasa</text>
+<rect x="2250" y="2820" width="300" height="160" rx="22" fill="#FFF2D8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2272" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2272" dy="0">Bekleyen Ödeme</tspan>
+</text>
+<text x="2272" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2272" dy="0">₺4.500</tspan>
+</text>
+<rect x="2418" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2472.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Uyarı</text>
+<rect x="2580" y="2820" width="300" height="160" rx="22" fill="#EAF1FA" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2602" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2602" dy="0">Aylık Gelir</tspan>
+</text>
+<text x="2602" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2602" dy="0">₺42.000</tspan>
+</text>
+<rect x="2748" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2802.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ay</text>
+<rect x="2910" y="2820" width="260" height="160" rx="22" fill="#FDE8E8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2932" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2932" dy="0">Geciken</tspan>
+</text>
+<text x="2932" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2932" dy="0">3 danışan</tspan>
+</text>
+<rect x="3038" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="3092.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Risk</text>
+<rect x="1920" y="3040" width="610" height="520" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1944" y="3078" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1944" dy="0">Danışan Ödeme Geçmişi</tspan>
+</text>
+<rect x="1960" y="3130" width="520" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3157" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1974" dy="0">18 Tem</tspan>
+</text>
+<text x="2170" y="3157" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="2170" dy="0">₺1.500</tspan>
+</text>
+<text x="2480" y="3157" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2480" dy="0">Ödenmedi</tspan>
+</text>
+<rect x="1960" y="3188" width="520" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3215" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1974" dy="0">11 Tem</tspan>
+</text>
+<text x="2170" y="3215" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="2170" dy="0">₺1.500</tspan>
+</text>
+<text x="2480" y="3215" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2480" dy="0">Ödendi</tspan>
+</text>
+<rect x="1960" y="3246" width="520" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3273" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1974" dy="0">04 Tem</tspan>
+</text>
+<text x="2170" y="3273" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="2170" dy="0">₺1.500</tspan>
+</text>
+<text x="2480" y="3273" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2480" dy="0">Ödendi</tspan>
+</text>
+<rect x="1960" y="3304" width="520" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3331" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1974" dy="0">27 Haz</tspan>
+</text>
+<text x="2170" y="3331" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="2170" dy="0">₺1.500</tspan>
+</text>
+<text x="2480" y="3331" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2480" dy="0">Kısmi</tspan>
+<tspan x="2480" dy="17">₺750</tspan>
+</text>
+<rect x="1960" y="3362" width="520" height="42" rx="10" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3389" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800" fill="#16362F" text-anchor="start">
+<tspan x="1974" dy="0">20 Haz</tspan>
+</text>
+<text x="2170" y="3389" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#1A2226" text-anchor="start">
+<tspan x="2170" dy="0">Paket</tspan>
+</text>
+<text x="2480" y="3389" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="2480" dy="0">Paket</tspan>
+<tspan x="2480" dy="17">hakkı</tspan>
+</text>
+<rect x="2580" y="3040" width="590" height="520" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2604" y="3078" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2604" dy="0">Seans Ödeme Güncelleme Modalı</tspan>
+</text>
+<text x="2620" y="3140" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Seans ücreti</text>
+<rect x="2620" y="3160" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2634" y="3194" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2634" dy="0">₺1.500</tspan>
+</text>
+<text x="2890" y="3140" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödenen tutar</text>
+<rect x="2890" y="3160" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2904" y="3194" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2904" dy="0">₺0</tspan>
+</text>
+<text x="2620" y="3240" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödeme durumu</text>
+<rect x="2620" y="3260" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2634" y="3294" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2634" dy="0">Sonra ödenecek</tspan>
+</text>
+<text x="2890" y="3240" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödeme yöntemi</text>
+<rect x="2890" y="3260" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2904" y="3294" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2904" dy="0">Havale/EFT</tspan>
+</text>
+<text x="2620" y="3340" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Son ödeme tarihi</text>
+<rect x="2620" y="3360" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2634" y="3394" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2634" dy="0">25 Temmuz</tspan>
+</text>
+<text x="2890" y="3340" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Not</text>
+<rect x="2890" y="3360" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2904" y="3394" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2904" dy="0">Seans sonrası iletecek</tspan>
+</text>
+<rect x="2620" y="3465" width="190" height="44" rx="12" fill="#387A6B"/>
+<text x="2715.0" y="3493" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Ödemeyi güncelle</text>
+<rect x="1920" y="3620" width="610" height="460" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1944" y="3658" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1944" dy="0">Paket Seans Yönetimi</tspan>
+</text>
+<text x="1960" y="3720" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Paket adı</text>
+<rect x="1960" y="3740" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3774" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1974" dy="0">4 Seans Paketi</tspan>
+</text>
+<text x="2230" y="3720" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Paket tutarı</text>
+<rect x="2230" y="3740" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2244" y="3774" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2244" dy="0">₺6.000</tspan>
+</text>
+<text x="1960" y="3820" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Toplam seans</text>
+<rect x="1960" y="3840" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1974" y="3874" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1974" dy="0">4</tspan>
+</text>
+<text x="2230" y="3820" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Kalan seans</text>
+<rect x="2230" y="3840" width="240" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2244" y="3874" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2244" dy="0">2</tspan>
+</text>
+<rect x="1960" y="3940" width="170" height="44" rx="12" fill="#387A6B"/>
+<text x="2045.0" y="3968" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Paket hakkı düş</text>
+<rect x="2580" y="3620" width="590" height="460" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2604" y="3658" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2604" dy="0">Ödeme Durumları</tspan>
+</text>
+<rect x="2620" y="3720" width="210" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2725.0" y="3741" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ödendi</text>
+<rect x="2870" y="3720" width="210" height="32" rx="16" fill="#FFF2D8"/>
+<text x="2975.0" y="3741" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ödenmedi</text>
+<rect x="2620" y="3780" width="210" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2725.0" y="3801" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Sonra ödenecek</text>
+<rect x="2870" y="3780" width="210" height="32" rx="16" fill="#FFF2D8"/>
+<text x="2975.0" y="3801" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Kısmi ödendi</text>
+<rect x="2620" y="3840" width="210" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2725.0" y="3861" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Paket hakkından düşüldü</text>
+<rect x="2870" y="3840" width="210" height="32" rx="16" fill="#FFF2D8"/>
+<text x="2975.0" y="3861" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">İptal edildi</text>
+<rect x="2620" y="3900" width="210" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2725.0" y="3921" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Gelmedi / No-show</text>
+<rect x="2870" y="3900" width="210" height="32" rx="16" fill="#FFF2D8"/>
+<text x="2975.0" y="3921" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Ücretsiz / Pro bono</text>
+<rect x="3380" y="2660" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="3414" y="2708" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="3414" dy="0">06 Subscription &amp; Gift License</tspan>
+</text>
+<text x="3414" y="2746" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="3414" dy="0">TheraGift kullanım planı. İlk MVP’de gerçek ödeme yok; psikoloğa Gift License.</tspan>
+</text>
+<rect x="3420" y="2820" width="360" height="350" rx="22" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3442" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="3442" dy="0">Gift License</tspan>
+</text>
+<text x="3442" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="3442" dy="0">Tanıdık psikolog / pilot kullanıcı</tspan>
+<tspan x="3442" dy="18">Özel AI hakkı</tspan>
+</text>
+<rect x="3648" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="3702.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Seçili</text>
+<text x="3455" y="2935" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900" fill="#16362F" text-anchor="start">₺0</text>
+<rect x="3455" y="3080" width="155" height="44" rx="12" fill="#387A6B"/>
+<text x="3532.5" y="3108" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Aktif plan</text>
+<rect x="3840" y="2820" width="360" height="350" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3862" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="3862" dy="0">Starter</tspan>
+</text>
+<text x="3862" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="3862" dy="0">Küçük kullanım</tspan>
+<tspan x="3862" dy="18">25 AI öneri / ay</tspan>
+</text>
+<rect x="4068" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="4122.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Mock</text>
+<text x="3875" y="2935" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900" fill="#16362F" text-anchor="start">Mock</text>
+<rect x="3875" y="3080" width="155" height="44" rx="12" fill="#16362F"/>
+<text x="3952.5" y="3108" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Sonraki faz</text>
+<rect x="4260" y="2820" width="360" height="350" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="4282" y="2854" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="4282" dy="0">Pro</tspan>
+</text>
+<text x="4282" y="2890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="4282" dy="0">Aktif kullanım</tspan>
+<tspan x="4282" dy="18">100 AI öneri / ay</tspan>
+</text>
+<rect x="4488" y="2838" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="4542.0" y="2859" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Mock</text>
+<text x="4295" y="2935" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900" fill="#16362F" text-anchor="start">Mock</text>
+<rect x="4295" y="3080" width="155" height="44" rx="12" fill="#16362F"/>
+<text x="4372.5" y="3108" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Sonraki faz</text>
+<rect x="3420" y="3240" width="540" height="230" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="3442" y="3274" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="3442" dy="0">AI Kullanım Kotası</tspan>
+</text>
+<text x="3442" y="3310" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="3442" dy="0">62 / 100 AI öneri hakkı kullanıldı. Kota dolarsa takvim çalışmaya</tspan>
+<tspan x="3442" dy="18">devam eder; yalnızca AI öneri kapanır.</tspan>
+</text>
+<rect x="3828" y="3258" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="3882.0" y="3279" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Quota</text>
+<rect x="3460" y="3385" width="420" height="18" rx="9" fill="#DDE3E1"/>
+<rect x="3460" y="3385" width="260" height="18" rx="9" fill="#387A6B"/>
+<rect x="4030" y="3240" width="560" height="230" rx="22" fill="#FFF2D8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="4052" y="3274" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="4052" dy="0">AI Güvenlik Sınırı</tspan>
+</text>
+<text x="4052" y="3310" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="4052" dy="0">AI terapi, tanı, tedavi veya kriz müdahalesi yapmaz. Sadece randevu,</tspan>
+<tspan x="4052" dy="18">boş slot, yoğunluk ve çalışma düzeni önerir.</tspan>
+</text>
+<rect x="4458" y="3258" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="4512.0" y="3279" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Güvenli</text>
+<rect x="80" y="5100" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="114" y="5148" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="114" dy="0">07 Account &amp; Security</tspan>
+</text>
+<text x="114" y="5186" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="114" dy="0">Hesap ayarları, veri gizliliği, KVKK, audit log ve hesap silme talebi.</tspan>
+</text>
+<rect x="120" y="5250" width="1040" height="650" rx="24" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<rect x="120" y="5250" width="210" height="650" rx="0" fill="#1F463F"/>
+<text x="142" y="5284" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF" text-anchor="start">TheraGift</text>
+<text x="142" y="5312" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="400" fill="#C9E8DF" text-anchor="start">Web MVP</text>
+<text x="150" y="5365" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Dashboard</text>
+<text x="150" y="5413" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Takvim</text>
+<text x="150" y="5461" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Danışanlar</text>
+<text x="150" y="5509" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Ödemeler</text>
+<text x="150" y="5557" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="600" fill="#C9E8DF" text-anchor="start">Öneriler</text>
+<rect x="134" y="5582" width="182" height="36" rx="10" fill="#336B60"/>
+<text x="150" y="5605" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Ayarlar</text>
+<text x="360" y="5295" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="360" dy="0">Hesap Ayarları</tspan>
+</text>
+<text x="360" y="5372" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">E-posta</text>
+<rect x="360" y="5392" width="340" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="5426" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="374" dy="0">psikolog@example.com</tspan>
+</text>
+<text x="360" y="5472" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Şifre</text>
+<rect x="360" y="5492" width="340" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="5526" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="374" dy="0">Son değiştirme: 2 gün önce</tspan>
+</text>
+<text x="360" y="5572" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">İki aşamalı doğrulama</text>
+<rect x="360" y="5592" width="340" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="374" y="5626" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="374" dy="0">Kapalı</tspan>
+</text>
+<rect x="360" y="5692" width="180" height="44" rx="12" fill="#16362F"/>
+<text x="450.0" y="5720" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">2FA etkinleştir</text>
+<rect x="760" y="5372" width="310" height="180" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="782" y="5406" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="782" dy="0">KVKK / Gizlilik</tspan>
+</text>
+<text x="782" y="5442" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="782" dy="0">Danışan ve ödeme verisi hassastır.</tspan>
+<tspan x="782" dy="18">Erişim rolleri, audit log, veri</tspan>
+<tspan x="782" dy="18">dışa aktarma ve silme talebi</tspan>
+<tspan x="782" dy="18">desteklenir.</tspan>
+</text>
+<rect x="938" y="5390" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="992.0" y="5411" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">KVKK</text>
+<rect x="760" y="5582" width="310" height="150" rx="22" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="782" y="5616" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="782" dy="0">Audit Log</tspan>
+</text>
+<text x="782" y="5652" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="782" dy="0">Kim, hangi danışan veya ödeme</tspan>
+<tspan x="782" dy="18">verisine ne zaman baktı kayıt</tspan>
+<tspan x="782" dy="18">altına alınır.</tspan>
+</text>
+<rect x="938" y="5600" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="992.0" y="5621" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Log</text>
+<rect x="760" y="5782" width="160" height="44" rx="12" fill="#387A6B"/>
+<text x="840.0" y="5810" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Veri dışa aktar</text>
+<rect x="940" y="5782" width="150" height="44" rx="12" fill="#16362F"/>
+<text x="1015.0" y="5810" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Hesap silme</text>
+<rect x="1480" y="5100" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="1514" y="5148" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="1514" dy="0">08 Mobile Responsive Preview</tspan>
+</text>
+<text x="1514" y="5186" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="1514" dy="0">Web-first MVP mobil tarayıcıda çalışacak. Mağaza uygulaması sonraki faz.</tspan>
+</text>
+<rect x="1520" y="5250" width="360" height="700" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1544" y="5304" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1544" dy="0">Mobile Login</tspan>
+</text>
+<text x="1544" y="5350" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">E-posta</text>
+<rect x="1544" y="5370" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1558" y="5404" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1558" dy="0">psikolog@example.com</tspan>
+</text>
+<text x="1544" y="5450" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Şifre</text>
+<rect x="1544" y="5470" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1558" y="5504" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="1558" dy="0">••••••••</tspan>
+</text>
+<rect x="1544" y="5575" width="312" height="44" rx="12" fill="#387A6B"/>
+<text x="1700.0" y="5603" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Giriş yap</text>
+<rect x="1915" y="5250" width="360" height="700" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1939" y="5304" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1939" dy="0">Mobile Dashboard</tspan>
+</text>
+<rect x="1939" y="5360" width="92" height="82" rx="16" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1951" y="5390" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Seans</text>
+<text x="1951" y="5422" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#1A2226" text-anchor="start">6</text>
+<rect x="2047" y="5360" width="92" height="82" rx="16" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2059" y="5390" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Boş</text>
+<text x="2059" y="5422" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#1A2226" text-anchor="start">3</text>
+<rect x="2155" y="5360" width="92" height="82" rx="16" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2167" y="5390" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Tahsilat</text>
+<text x="2167" y="5422" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#1A2226" text-anchor="start">₺6K</text>
+<rect x="1939" y="5490" width="312" height="130" rx="22" fill="#FFF2D8" stroke="#DDE3E1" stroke-width="1"/>
+<text x="1961" y="5524" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="1961" dy="0">Ödeme Uyarısı</tspan>
+</text>
+<text x="1961" y="5560" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="1961" dy="0">3 danışanın geciken ödemesi var.</tspan>
+</text>
+<rect x="2119" y="5508" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="2173.0" y="5529" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Finans</text>
+<rect x="2310" y="5250" width="360" height="700" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2334" y="5304" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2334" dy="0">Mobile Client Form</tspan>
+</text>
+<text x="2334" y="5350" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ad soyad</text>
+<rect x="2334" y="5370" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2348" y="5404" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2348" dy="0">Ayşe Kaya</tspan>
+</text>
+<text x="2334" y="5450" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Uygun saatler</text>
+<rect x="2334" y="5470" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2348" y="5504" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2348" dy="0">Salı 10-14</tspan>
+</text>
+<text x="2334" y="5550" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Not</text>
+<rect x="2334" y="5570" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2348" y="5604" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2348" dy="0">Öğleden sonra uygunum.</tspan>
+</text>
+<rect x="2334" y="5680" width="312" height="44" rx="12" fill="#387A6B"/>
+<text x="2490.0" y="5708" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Gönder</text>
+<rect x="2705" y="5250" width="360" height="700" rx="28" fill="#F6F8F7" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2729" y="5304" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="2729" dy="0">Mobile Payment</tspan>
+</text>
+<text x="2729" y="5350" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Seans ücreti</text>
+<rect x="2729" y="5370" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2743" y="5404" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2743" dy="0">₺1.500</tspan>
+</text>
+<text x="2729" y="5450" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödeme durumu</text>
+<rect x="2729" y="5470" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2743" y="5504" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2743" dy="0">Sonra ödenecek</tspan>
+</text>
+<text x="2729" y="5550" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600" fill="#687178" text-anchor="start">Ödenen tutar</text>
+<rect x="2729" y="5570" width="312" height="54" rx="12" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="2743" y="5604" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#1A2226" text-anchor="start">
+<tspan x="2743" dy="0">₺0</tspan>
+</text>
+<rect x="2729" y="5680" width="312" height="44" rx="12" fill="#387A6B"/>
+<text x="2885.0" y="5708" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Ödemeyi güncelle</text>
+<rect x="80" y="6250" width="1320" height="116" rx="0" fill="#1F463F"/>
+<text x="114" y="6298" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="start">
+<tspan x="114" dy="0">09 Developer Handoff</tspan>
+</text>
+<text x="114" y="6336" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="400" fill="#D8EFE8" text-anchor="start">
+<tspan x="114" dy="0">Claude Code’a bölünmüş görev panosu ve güncel backend/frontend kapsamı.</tspan>
+</text>
+<rect x="120" y="6410" width="360" height="180" rx="22" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="142" y="6444" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="142" dy="0">1 Backend Foundation</tspan>
+</text>
+<text x="142" y="6480" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="142" dy="0">Spring Boot, PostgreSQL, JWT, roles, base</tspan>
+<tspan x="142" dy="18">entities</tspan>
+</text>
+<rect x="348" y="6428" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="402.0" y="6449" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Claude</text>
+<rect x="540" y="6410" width="360" height="180" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="562" y="6444" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="562" dy="0">2 Scheduling Core</tspan>
+</text>
+<text x="562" y="6480" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="562" dy="0">working_hours, clients,</tspan>
+<tspan x="562" dy="18">availability_forms, appointments</tspan>
+</text>
+<rect x="768" y="6428" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="822.0" y="6449" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Claude</text>
+<rect x="960" y="6410" width="360" height="180" rx="22" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="982" y="6444" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="982" dy="0">3 Payment Tracking</tspan>
+</text>
+<text x="982" y="6480" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="982" dy="0">session_fee, payment_status, paid_amount,</tspan>
+<tspan x="982" dy="18">remaining_amount</tspan>
+</text>
+<rect x="1188" y="6428" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1242.0" y="6449" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Claude</text>
+<rect x="120" y="6640" width="360" height="180" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="142" y="6674" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="142" dy="0">4 Suggestion Engine</tspan>
+</text>
+<text x="142" y="6710" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="142" dy="0">boş slot, uygunluk eşleştirme, en iyi 3</tspan>
+<tspan x="142" dy="18">slot</tspan>
+</text>
+<rect x="348" y="6658" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="402.0" y="6679" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Claude</text>
+<rect x="540" y="6640" width="360" height="180" rx="22" fill="#E8F3F0" stroke="#DDE3E1" stroke-width="1"/>
+<text x="562" y="6674" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="562" dy="0">5 Frontend Screens</tspan>
+</text>
+<text x="562" y="6710" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="562" dy="0">login, dashboard, takvim, danışanlar,</tspan>
+<tspan x="562" dy="18">ödeme takip, form</tspan>
+</text>
+<rect x="768" y="6658" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="822.0" y="6679" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Claude</text>
+<rect x="960" y="6640" width="360" height="180" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="982" y="6674" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="982" dy="0">6 Future SaaS</tspan>
+</text>
+<text x="982" y="6710" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="982" dy="0">Gift License, usage quota, ai usage logs</tspan>
+</text>
+<rect x="1188" y="6658" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1242.0" y="6679" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Claude</text>
+<rect x="120" y="6900" width="1240" height="230" rx="22" fill="#FFFFFF" stroke="#DDE3E1" stroke-width="1"/>
+<text x="142" y="6934" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800" fill="#1A2226" text-anchor="start">
+<tspan x="142" dy="0">Ana Claude Prompt — v2</tspan>
+</text>
+<text x="142" y="6970" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="400" fill="#687178" text-anchor="start">
+<tspan x="142" dy="0">TheraGift MVP web-first SaaS olacak. İlk aşamada native mobil, App Store/Play Store ve gerçek ödeme yok. React + Tailwind, Spring Boot, PostgreSQL, JWT.</tspan>
+<tspan x="142" dy="18">Öncelik: psikolog login, çalışma saatleri, danışan uygunluk formu, haftalık takvim, algoritmik randevu önerisi ve manuel seans ödeme takibi. PaymentStatus:</tspan>
+<tspan x="142" dy="18">PAID, UNPAID, PAY_LATER, PARTIAL_PAID, PACKAGE_USED, CANCELLED, NO_SHOW, FREE.</tspan>
+</text>
+<rect x="1228" y="6918" width="108" height="32" rx="16" fill="#E8F3F0"/>
+<text x="1282.0" y="6939" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#16362F" text-anchor="middle">Prompt</text>
+</svg>
