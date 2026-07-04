@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios.js'
 import WeeklyCalendar from '../components/WeeklyCalendar.jsx'
 import AppointmentModal from '../components/AppointmentModal.jsx'
+import PageHeader from '../components/PageHeader.jsx'
+import LoadingState from '../components/LoadingState.jsx'
+import ErrorState from '../components/ErrorState.jsx'
 
 function getMonday(date) {
   const d = new Date(date)
@@ -17,13 +20,16 @@ export default function Calendar() {
   const [weekStart, setWeekStart] = useState(getMonday(new Date()))
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
 
   const loadWeek = () => {
     setLoading(true)
+    setError('')
     const dateStr = weekStart.toISOString().slice(0, 10)
     api.get('/appointments/week', { params: { weekStart: dateStr } })
       .then((res) => setAppointments(res.data))
+      .catch(() => setError('Randevular yüklenemedi.'))
       .finally(() => setLoading(false))
   }
 
@@ -37,24 +43,28 @@ export default function Calendar() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <button onClick={() => shiftWeek(-7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold">←</button>
-          <div className="text-sm font-semibold text-ink">
-            {weekStart.toLocaleDateString('tr-TR')} haftası
-          </div>
-          <button onClick={() => shiftWeek(7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold">→</button>
-          <button onClick={() => setWeekStart(getMonday(new Date()))} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold">
-            Bugün
-          </button>
-        </div>
-        <Link to="/appointments/new" className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm text-center">
-          + Yeni randevu
-        </Link>
+      <PageHeader
+        title="Haftalık Takvim"
+        description={`${weekStart.toLocaleDateString('tr-TR')} haftası`}
+        action={
+          <Link to="/appointments/new" className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm text-center whitespace-nowrap">
+            + Yeni randevu
+          </Link>
+        }
+      />
+
+      <div className="flex items-center gap-2">
+        <button onClick={() => shiftWeek(-7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">← Önceki</button>
+        <button onClick={() => setWeekStart(getMonday(new Date()))} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">
+          Bugün
+        </button>
+        <button onClick={() => shiftWeek(7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">Sonraki →</button>
       </div>
 
       {loading ? (
-        <div className="text-muted">Yükleniyor...</div>
+        <LoadingState text="Takvim yükleniyor..." />
+      ) : error ? (
+        <ErrorState text={error} />
       ) : (
         <WeeklyCalendar weekStart={weekStart} appointments={appointments} onSelectAppointment={setSelected} />
       )}

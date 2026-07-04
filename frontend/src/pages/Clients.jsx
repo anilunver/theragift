@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import api from '../api/axios.js'
 import ClientTable from '../components/ClientTable.jsx'
+import PageHeader from '../components/PageHeader.jsx'
+import LoadingState from '../components/LoadingState.jsx'
+import ErrorState from '../components/ErrorState.jsx'
+import { toTitleCase } from '../utils/format.js'
+import { useToast } from '../context/ToastContext.jsx'
 
 const EMPTY_FORM = {
   firstName: '', lastName: '', phone: '', email: '',
@@ -9,16 +14,23 @@ const EMPTY_FORM = {
 }
 
 export default function Clients() {
+  const { showToast } = useToast()
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
+  const [formError, setFormError] = useState('')
   const [search, setSearch] = useState('')
 
   const loadClients = () => {
     setLoading(true)
-    api.get('/clients').then((res) => setClients(res.data)).finally(() => setLoading(false))
+    setError('')
+    api.get('/clients')
+      .then((res) => setClients(res.data))
+      .catch(() => setError('Danışan listesi yüklenemedi. Sayfayı yenilemeyi deneyin.'))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => { loadClients() }, [])
@@ -27,15 +39,25 @@ export default function Clients() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      setFormError('Ad ve soyad zorunludur.')
+      return
+    }
+    setFormError('')
     setSaving(true)
     try {
       await api.post('/clients', {
         ...form,
+        firstName: toTitleCase(form.firstName),
+        lastName: toTitleCase(form.lastName),
         defaultSessionFee: form.defaultSessionFee ? Number(form.defaultSessionFee) : null,
       })
       setShowModal(false)
       setForm(EMPTY_FORM)
       loadClients()
+      showToast('Danışan eklendi.')
+    } catch (err) {
+      setFormError(err.response?.data?.message || 'Danışan kaydedilemedi.')
     } finally {
       setSaving(false)
     }
@@ -47,39 +69,52 @@ export default function Clients() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-extrabold text-ink">Danışanlar</h2>
-          <p className="text-sm text-muted">{clients.length} danışan kayıtlı</p>
-        </div>
-        <div className="flex gap-2">
-          <input
-            placeholder="Ara..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="border border-border rounded-xl px-3 py-2 text-sm w-40"
-          />
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm"
-          >
-            + Danışan Ekle
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Danışanlar"
+        description={`${clients.length} danışan kayıtlı`}
+        action={
+          <>
+            <input
+              placeholder="Ara..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="border border-border rounded-xl px-3 py-2 text-sm w-36 sm:w-44"
+            />
+            <button
+              onClick={() => { setForm(EMPTY_FORM); setFormError(''); setShowModal(true) }}
+              className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm whitespace-nowrap"
+            >
+              + Danışan Ekle
+            </button>
+          </>
+        }
+      />
 
-      {loading ? <div className="text-muted">Yükleniyor...</div> : <ClientTable clients={filtered} />}
+      {loading ? (
+        <LoadingState text="Danışanlar yükleniyor..." />
+      ) : error ? (
+        <ErrorState text={error} />
+      ) : (
+        <ClientTable clients={filtered} />
+      )}
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h3 className="font-extrabold text-lg mb-4">Yeni Danışan</h3>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-xl">
+            <h3 className="font-extrabold text-lg mb-1 text-ink">Yeni Danışan</h3>
+            <p className="text-xs text-muted mb-4">Zorunlu alanlar: Ad, Soyad</p>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <input name="firstName" value={form.firstName} onChange={handleChange} required placeholder="Ad"
-                  className="border border-border rounded-xl px-3 py-2.5 text-sm" />
-                <input name="lastName" value={form.lastName} onChange={handleChange} required placeholder="Soyad"
-                  className="border border-border rounded-xl px-3 py-2.5 text-sm" />
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Ad *</label>
+                  <input name="firstName" value={form.firstName} onChange={handleChange} required placeholder="Ad"
+                    className="w-full border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Soyad *</label>
+                  <input name="lastName" value={form.lastName} onChange={handleChange} required placeholder="Soyad"
+                    className="w-full border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40" />
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <input name="phone" value={form.phone} onChange={handleChange} placeholder="Telefon"
@@ -101,7 +136,7 @@ export default function Clients() {
                 className="border border-border rounded-xl px-3 py-2.5 text-sm w-full">
                 <option value="CASH">Nakit</option>
                 <option value="BANK_TRANSFER">Havale/EFT</option>
-                <option value="CREDIT_CARD_MANUAL">Kredi Kartı (Manuel)</option>
+                <option value="CREDIT_CARD_MANUAL">Manuel Kart</option>
                 <option value="ONLINE_LINK">Online Link</option>
                 <option value="PACKAGE">Paket</option>
                 <option value="OTHER">Diğer</option>
@@ -112,9 +147,11 @@ export default function Clients() {
               <textarea name="notes" value={form.notes} onChange={handleChange} placeholder="Genel notlar"
                 className="border border-border rounded-xl px-3 py-2.5 text-sm w-full" rows={2} />
 
+              {formError && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</div>}
+
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowModal(false)}
-                  className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm">İptal</button>
+                  className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel">İptal</button>
                 <button type="submit" disabled={saving}
                   className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60">
                   {saving ? 'Kaydediliyor...' : 'Kaydet'}

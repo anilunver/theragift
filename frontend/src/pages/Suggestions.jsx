@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios.js'
 import SuggestionCard from '../components/SuggestionCard.jsx'
+import PageHeader from '../components/PageHeader.jsx'
+import LoadingState from '../components/LoadingState.jsx'
+import EmptyState from '../components/EmptyState.jsx'
+import ErrorState from '../components/ErrorState.jsx'
 
 export default function Suggestions() {
   const navigate = useNavigate()
@@ -9,6 +13,7 @@ export default function Suggestions() {
   const [clientId, setClientId] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [searched, setSearched] = useState(false)
 
   useEffect(() => {
@@ -16,12 +21,20 @@ export default function Suggestions() {
   }, [])
 
   const fetchSuggestions = async (id) => {
-    if (!id) return
+    setClientId(id)
+    setError('')
+    if (!id) {
+      setSuggestions([])
+      setSearched(false)
+      return
+    }
     setLoading(true)
     setSearched(true)
     try {
       const res = await api.get(`/suggestions/client/${id}`)
       setSuggestions(res.data)
+    } catch (err) {
+      setError('Öneriler hesaplanamadı. Çalışma saatlerinin tanımlı olduğundan emin olun.')
     } finally {
       setLoading(false)
     }
@@ -40,15 +53,15 @@ export default function Suggestions() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h2 className="text-xl font-extrabold text-ink">Randevu Önerileri</h2>
-        <p className="text-sm text-muted">Danışan seçin, algoritma çalışma saatlerine ve uygunluğa göre en iyi 3 slotu önersin.</p>
-      </div>
+      <PageHeader
+        title="Randevu Önerileri"
+        description="Danışan seçin, algoritma çalışma saatlerine ve uygunluğa göre en iyi 3 slotu önersin."
+      />
 
-      <div className="bg-white border border-border rounded-2xl p-4 flex gap-3 items-center">
+      <div className="bg-white border border-border rounded-2xl p-4 flex gap-3 items-center shadow-sm">
         <select
           value={clientId}
-          onChange={(e) => { setClientId(e.target.value); fetchSuggestions(e.target.value) }}
+          onChange={(e) => fetchSuggestions(e.target.value)}
           className="border border-border rounded-xl px-3 py-2.5 text-sm flex-1"
         >
           <option value="">Danışan seçiniz</option>
@@ -58,15 +71,15 @@ export default function Suggestions() {
         </select>
       </div>
 
-      {loading && <div className="text-muted">Öneriler hesaplanıyor...</div>}
+      {loading && <LoadingState text="Öneriler hesaplanıyor..." />}
 
-      {!loading && searched && suggestions.length === 0 && (
-        <div className="text-sm text-muted bg-white border border-border rounded-2xl p-6 text-center">
-          Uygun boş slot bulunamadı. Çalışma saatlerini kontrol edin.
-        </div>
+      {!loading && error && <ErrorState text={error} />}
+
+      {!loading && !error && searched && suggestions.length === 0 && (
+        <EmptyState text="Uygun boş slot bulunamadı. Ayarlar sayfasından çalışma saatlerini kontrol edin." icon="🔍" />
       )}
 
-      {!loading && suggestions.length > 0 && (
+      {!loading && !error && suggestions.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {suggestions.map((s, idx) => (
             <SuggestionCard key={idx} suggestion={s} onUse={handleUse} />

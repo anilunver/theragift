@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import api from '../api/axios.js'
+import { useToast } from '../context/ToastContext.jsx'
+import { formatCurrency, toTitleCase } from '../utils/format.js'
 
 export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) {
+  const { showToast } = useToast()
   const [form, setForm] = useState({
     paymentStatus: appointment.paymentStatus,
     paymentMethod: appointment.paymentMethod || 'BANK_TRANSFER',
@@ -11,11 +14,13 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
     paymentNote: appointment.paymentNote || '',
   })
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     setSaving(true)
     try {
       await api.put(`/appointments/${appointment.id}/payment`, {
@@ -23,7 +28,10 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
         paidAmount: Number(form.paidAmount),
       })
       onUpdated()
+      showToast('Ödeme güncellendi.')
       onClose()
+    } catch (err) {
+      setError(err.response?.data?.message || 'Ödeme güncellenemedi.')
     } finally {
       setSaving(false)
     }
@@ -31,9 +39,9 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-        <h3 className="font-extrabold text-lg mb-1">{appointment.clientFullName}</h3>
-        <p className="text-xs text-muted mb-4">{appointment.appointmentDate} · Ücret: ₺{appointment.sessionFee}</p>
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+        <h3 className="font-extrabold text-lg mb-1 text-ink">{toTitleCase(appointment.clientFullName)}</h3>
+        <p className="text-xs text-muted mb-4">Seans ücreti: {formatCurrency(appointment.sessionFee)}</p>
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
@@ -45,7 +53,7 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
               <option value="PAY_LATER">Sonra Ödenecek</option>
               <option value="PARTIAL_PAID">Kısmi Ödendi</option>
               <option value="PACKAGE_USED">Paketten Düşüldü</option>
-              <option value="CANCELLED">İptal</option>
+              <option value="CANCELLED">İptal Edildi</option>
               <option value="NO_SHOW">Gelmedi</option>
               <option value="FREE">Ücretsiz</option>
             </select>
@@ -58,7 +66,7 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
                 className="w-full border border-border rounded-xl px-3 py-2.5 text-sm">
                 <option value="CASH">Nakit</option>
                 <option value="BANK_TRANSFER">Havale/EFT</option>
-                <option value="CREDIT_CARD_MANUAL">Kredi Kartı (Manuel)</option>
+                <option value="CREDIT_CARD_MANUAL">Manuel Kart</option>
                 <option value="ONLINE_LINK">Online Link</option>
                 <option value="PACKAGE">Paket</option>
                 <option value="OTHER">Diğer</option>
@@ -87,13 +95,16 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
           <div>
             <label className="block text-xs font-semibold text-muted mb-1">Not</label>
             <textarea name="paymentNote" value={form.paymentNote} onChange={handleChange} rows={2}
+              placeholder="Örn: Danışan seyahatte, ödeme sonra yapılacak"
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
           </div>
 
+          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>}
+
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm">İptal</button>
+            <button type="button" onClick={onClose} className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel transition-colors">İptal</button>
             <button type="submit" disabled={saving}
-              className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60">
+              className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
               {saving ? 'Kaydediliyor...' : 'Güncelle'}
             </button>
           </div>

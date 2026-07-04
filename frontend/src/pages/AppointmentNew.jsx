@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../api/axios.js'
+import PageHeader from '../components/PageHeader.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 
 export default function AppointmentNew() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const preselectedClientId = location.state?.clientId || ''
 
   const [clients, setClients] = useState([])
@@ -34,7 +37,8 @@ export default function AppointmentNew() {
     setForm({
       ...form,
       clientId,
-      sessionFee: client?.defaultSessionFee || form.sessionFee,
+      // Danışanın varsayılan ücreti / seans tercihi / ödeme yöntemi otomatik dolsun
+      sessionFee: client?.defaultSessionFee ?? form.sessionFee,
       sessionType: client?.sessionTypePreference || form.sessionType,
       paymentMethod: client?.defaultPaymentMethod || form.paymentMethod,
     })
@@ -43,6 +47,16 @@ export default function AppointmentNew() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    if (!form.clientId) {
+      setError('Lütfen bir danışan seçin.')
+      return
+    }
+    if (form.startTime >= form.endTime) {
+      setError('Bitiş saati başlangıç saatinden sonra olmalıdır.')
+      return
+    }
+
     setSaving(true)
     try {
       await api.post('/appointments', {
@@ -50,9 +64,10 @@ export default function AppointmentNew() {
         clientId: Number(form.clientId),
         sessionFee: form.sessionFee ? Number(form.sessionFee) : null,
       })
+      showToast('Randevu oluşturuldu.')
       navigate('/calendar')
     } catch (err) {
-      setError(err.response?.data?.message || 'Randevu oluşturulamadı.')
+      setError(err.response?.data?.message || 'Randevu oluşturulamadı. Lütfen tekrar deneyin.')
     } finally {
       setSaving(false)
     }
@@ -60,33 +75,36 @@ export default function AppointmentNew() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-xl font-extrabold text-ink mb-5">Yeni Randevu</h2>
+      <PageHeader title="Yeni Randevu" description="Danışan, tarih ve seans bilgilerini girin" />
 
-      <form onSubmit={handleSubmit} className="bg-white border border-border rounded-2xl p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white border border-border rounded-2xl p-6 space-y-4 shadow-sm">
         <div>
-          <label className="block text-xs font-semibold text-muted mb-1">Danışan</label>
+          <label className="block text-xs font-semibold text-muted mb-1">Danışan *</label>
           <select name="clientId" value={form.clientId} onChange={handleClientChange} required
-            className="w-full border border-border rounded-xl px-3 py-2.5 text-sm">
+            className="w-full border border-border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40">
             <option value="">Seçiniz</option>
             {clients.map((c) => (
               <option key={c.id} value={c.id}>{c.firstName} {c.lastName}</option>
             ))}
           </select>
+          {clients.length === 0 && (
+            <p className="text-xs text-amber-700 mt-1">Henüz danışan yok — önce Danışanlar sayfasından ekleyin.</p>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-muted mb-1">Tarih</label>
+            <label className="block text-xs font-semibold text-muted mb-1">Tarih *</label>
             <input type="date" name="appointmentDate" value={form.appointmentDate} onChange={handleChange} required
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-muted mb-1">Başlangıç</label>
+            <label className="block text-xs font-semibold text-muted mb-1">Başlangıç *</label>
             <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-muted mb-1">Bitiş</label>
+            <label className="block text-xs font-semibold text-muted mb-1">Bitiş *</label>
             <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
           </div>
@@ -104,6 +122,7 @@ export default function AppointmentNew() {
           <div>
             <label className="block text-xs font-semibold text-muted mb-1">Seans Ücreti (₺)</label>
             <input type="number" name="sessionFee" value={form.sessionFee} onChange={handleChange}
+              placeholder="Danışanın varsayılan ücreti kullanılır"
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
           </div>
         </div>
@@ -127,7 +146,7 @@ export default function AppointmentNew() {
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm">
               <option value="CASH">Nakit</option>
               <option value="BANK_TRANSFER">Havale/EFT</option>
-              <option value="CREDIT_CARD_MANUAL">Kredi Kartı (Manuel)</option>
+              <option value="CREDIT_CARD_MANUAL">Manuel Kart</option>
               <option value="ONLINE_LINK">Online Link</option>
               <option value="PACKAGE">Paket</option>
               <option value="OTHER">Diğer</option>
@@ -145,9 +164,9 @@ export default function AppointmentNew() {
 
         <div className="flex gap-3 pt-2">
           <button type="button" onClick={() => navigate(-1)}
-            className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm">İptal</button>
+            className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel transition-colors">İptal</button>
           <button type="submit" disabled={saving}
-            className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60">
+            className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
             {saving ? 'Kaydediliyor...' : 'Randevu Oluştur'}
           </button>
         </div>
