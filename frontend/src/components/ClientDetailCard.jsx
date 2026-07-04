@@ -35,16 +35,4 @@ export default function ClientDetailCard({ client }) {
       </div>
       {client.availabilityNotes && (
         <div>
-          <span className="text-muted text-xs">Uygunluk Notu</span>
-          <div className="text-sm bg-panel rounded-lg p-2.5 mt-1">{client.availabilityNotes}</div>
-        </div>
-      )}
-      {client.notes && (
-        <div>
-          <span className="text-muted text-xs">Genel Notlar</span>
-          <div className="text-sm bg-panel rounded-lg p-2.5 mt-1">{client.notes}</div>
-        </div>
-      )}
-    </div>
-  )
-}
+          <span className="text-muted te

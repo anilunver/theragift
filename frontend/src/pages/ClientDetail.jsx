@@ -92,40 +92,4 @@ export default function ClientDetail() {
                   </div>
                   <div className="bg-panel rounded-xl p-3 text-center">
                     <div className="text-xs text-muted">Kalan Borç</div>
-                    <div className="font-extrabold text-red-600">{formatCurrency(paymentSummary.totalRemaining)}</div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  {paymentSummary.appointments.length === 0 ? (
-                    <EmptyState text="Bu danışan için henüz randevu kaydı yok." icon="🗓️" />
-                  ) : paymentSummary.appointments.map((a) => (
-                    <div key={a.appointmentId} className="flex items-center justify-between border border-border rounded-xl px-4 py-3 flex-wrap gap-2">
-                      <div>
-                        <div className="text-sm font-semibold text-ink">{formatDate(a.appointmentDate)}</div>
-                        <div className="text-xs text-muted">
-                          Ücret: {formatCurrency(a.sessionFee)} · Ödenen: {formatCurrency(a.paidAmount)} · Kalan: {formatCurrency(a.remainingAmount)}
-                        </div>
-                      </div>
-                      <PaymentStatusBadge status={a.paymentStatus} />
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* V2.2A.2: "Önümüzdeki 4 hafta" akışında beklenmeyen bir hata olursa
-              tüm danışan detay sayfası değil, sadece bu kart çökmeli. */}
-          <ErrorBoundary>
-            <RecurringAppointmentSection client={client} />
-          </ErrorBoundary>
-        </div>
-      </div>
-
-      {showEdit && (
-        <ClientEditModal client={client} onClose={() => setShowEdit(false)} onUpdated={loadClient} />
-      )}
-    </div>
-  )
-}
+                    <div className="font-extrabold text-red-600">{formatCurrency(paymentSummary.totalRemaining)}</d

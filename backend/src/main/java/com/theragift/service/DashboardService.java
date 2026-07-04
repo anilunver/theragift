@@ -102,16 +102,4 @@ public class DashboardService {
                         && slotStart.isBefore(wh.getBreakEndTime()) && slotEnd.isAfter(wh.getBreakStartTime());
 
                 boolean conflicts = todayAppointments.stream().anyMatch(a ->
-                        slotStart.isBefore(a.getEndTime()) && slotEnd.isAfter(a.getStartTime()));
-
-                boolean isPast = slotStart.isBefore(LocalTime.now());
-
-                if (!inBreak && !conflicts && !isPast) {
-                    count++;
-                }
-                cursor = cursor.plusMinutes(SLOT_MINUTES);
-            }
-        }
-        return count;
-    }
-}
+                        slotStart.isBefore(a.getEndTime()) && slotEnd.isAfter

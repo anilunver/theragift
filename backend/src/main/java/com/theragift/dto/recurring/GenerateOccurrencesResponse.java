@@ -22,27 +22,4 @@ import java.util.List;
  *   `requiresConfirmation=true` döner ve `createdAppointments` boş olur — frontend
  *   bu durumda kullanıcıya onay modalı göstermeli. Kullanıcı onaylarsa aynı istek
  *   `overrideWarnings=true` ile tekrar gönderilir ve bu sefer warning'li (ama
- *   blocker'sız) occurrence'lar da oluşturulur.
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class GenerateOccurrencesResponse {
-    private boolean requiresConfirmation;
-    private int createdCount;
-    private List<AppointmentResponse> createdAppointments;
-    private List<OccurrenceIssue> blockers;
-    private List<OccurrenceIssue> warnings;
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OccurrenceIssue {
-        private LocalDate date;
-        private LocalTime startTime;
-        private LocalTime endTime;
-        private String message;
-    }
-}
+ *   blocker'sız)

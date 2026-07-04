@@ -45,6 +45,8 @@ Bu, `theragift_db` veritabanını `localhost:5432` üzerinde ayağa kaldırır.
 
 ### 2) Backend'i çalıştır
 
+> **Önkoşul:** Java 17 (proje Java 17 hedefler; Java 11 veya daha eski bir sürümle derlenmez/çalışmaz). Maven 3.8+ önerilir.
+
 **Terminal ile:**
 ```bash
 cd backend
@@ -57,7 +59,7 @@ mvn spring-boot:run
 3. Varsayılan aktif profil `postgres`'tir; Docker'daki PostgreSQL ayakta olmalı.
 4. Backend `http://localhost:8080` üzerinde açılır.
 
-İlk açılışta `SeedDataRunner` otomatik olarak demo verisini oluşturur (demo psikolog, 5 danışan, çalışma saatleri, çeşitli ödeme durumlarında randevular, Gift License aboneliği, AI kullanım kotası). **Bu seed data korunmuştur, v2'de değiştirilmedi.**
+İlk açılışta `SeedDataRunner` otomatik olarak demo verisini oluşturur (demo psikolog, 5 danışan, çalışma saatleri, çeşitli ödeme durumlarında randevular, Gift License aboneliği, AI kullanım kotası). **Bu seed data korunmuştur, davranışı değiştirilmedi.** `SEED_DATA_ENABLED=false` ortam değişkeniyle bu davranış tamamen kapatılabilir — gerçek danışan verisiyle kullanmadan önce bunun yapılması önerilir (bkz. `docs/DEPLOYMENT_NOTES.md`).
 
 > Docker olmadan hızlı test etmek isterseniz: IntelliJ'de Run Configuration → Active profiles alanına `h2` yazarak bellek içi veritabanı kullanabilirsiniz (ana hedef yine de PostgreSQL'dir).
 
@@ -120,77 +122,4 @@ Tüm endpointler `application.yml` → `theragift.cors.allowed-origins` ile CORS
 - `GET/POST/PUT/DELETE /api/appointments`, `GET /api/appointments/week`, `PUT /api/appointments/{id}/payment`
 - `GET /api/suggestions/client/{clientId}`
 - `GET /api/payments/unpaid`, `GET /api/payments/overdue`, `GET /api/payments/monthly-summary`
-- `GET /api/subscription/current`
-
-## V3 Roadmap
-
-Bkz. [`docs/ROADMAP_V3.md`](docs/ROADMAP_V3.md).
-
-## Notlar
-
-- Kod tabanı sade tutulmuştur; Türkçe yorumlar iş mantığının anlaşılmasını kolaylaştırmak için eklenmiştir.
-- v2 polish çalışması yalnızca frontend'de yapılmıştır; backend API sözleşmesi, entity yapısı ve seed data korunmuştur.
-
-## V2.2F — Pilot Demo Polish & UX Consistency
-
-Bu sprint yeni bir özellik eklemedi; Dashboard, Takvim, Danışan Detayı, Ödemeler,
-Öneriler ve Ayarlar sayfalarında görsel tutarlılık, okunabilirlik ve demo sunum
-kalitesi iyileştirildi (durum rozetleri, boş/loading/hata durumları, modal
-düzeni, mikro metinler). Sadece frontend değişti; hiçbir endpoint, hesaplama
-mantığı veya veri modeli değişmedi.
-
-## V2.3 — Reports, Export and Activity Log
-
-Yeni "Raporlar" sayfası eklendi (Finans / Randevular / Danışanlar / İşlem
-Geçmişi sekmeleri, tarih filtresi: Bu ay / Geçen ay / Son 30 gün / Özel
-aralık). Finans ve randevu raporları, Ödemeler sayfasındaki mevcut
-CANCELLED/NO_SHOW hariç tutma ve PARTIAL_PAID/FREE/PACKAGE_USED kurallarını
-birebir yeniden kullanır; hiçbir hesaplama mantığı değişmedi. CSV dışa
-aktarım (Finans/Randevu/Danışan raporları) tamamen frontend'de üretilir,
-Excel uyumluluğu için UTF-8 BOM eklenir; yeni bir backend export endpoint'i
-açılmadı.
-
-İşlem geçmişi (activity log) için yeni bir tablo oluşturulmadı — Faz 1'den
-beri var olan `audit_logs` tablosu (`AuditLog` entity) `GET /api/activity-logs`
-ile psikolog bazlı sorgulanabilir hale getirildi ve randevu/ödeme kayıtlarına
-ek olarak danışan oluşturma/pasifleştirme, not ekleme, çalışma dışı blok
-ekleme ve toplu ücret güncellemesi de loglanmaya başlandı. KVKK gereği not
-içeriği asla log açıklamasına yazılmaz, sadece kısa operasyonel bir cümle
-("X danışanı için not eklendi.") kaydedilir.
-
-Dashboard'a mevcut yapıyı ağırlaştırmadan küçük bir "Bu Ayın Özeti" kart
-satırı ve "Son İşlemler" mini listesi eklendi; ikisi de yeni Reports/Activity
-Log endpoint'lerini yeniden kullanır. Yeni endpointler: `GET /api/reports/financial`,
-`GET /api/reports/appointments`, `GET /api/reports/clients`, `GET /api/activity-logs`
-— hepsi giriş yapan psikoloğun verisiyle sınırlıdır.
-
-## V2.3.1 — Reports Stabilization and Pilot Readiness
-
-Yeni özellik eklenmedi; V2.3'te eklenen Raporlar/CSV export/activity log/
-Dashboard özet alanları pilot öncesi stabilize edildi. Özel tarih aralığında
-başlangıç bitişten sonraysa artık backend'e hiç istek atılmıyor, kullanıcıya
-net bir uyarı gösteriliyor ve tüm rapor sekmeleri aynı anda bu durumu
-yansıtıyor (tek bir ortak tarih state'i kullanıldığı için zaten garanti
-altındaydı). Finans kartı başlıkları netleştirildi (Dönem Cirosu, Tahsil
-Edilen, Tahsil Edilmeyen, Geciken Ödeme, İptal Edilen Seans, Gelmeyen Seans);
-hesaplama mantığı değişmedi. Danışan raporuna, son/sonraki randevu
-tarihlerinin tarih filtresinden bağımsız hesaplandığını belirten bir açıklama
-eklendi. CSV export butonları, dışa aktarılacak veri yoksa devre dışı kalıyor
-ve toast ile bilgilendiriyor; para değerleri artık CSV'de de `₺` formatlı ve
-okunabilir. Dashboard'daki "Son İşlemler" kartında uzun başlıklar artık
-taşmıyor (truncate + tooltip).
-
-## Pilot Test Checklist
-
-Pilot öncesi hızlı manuel doğrulama için önerilen akış:
-
-1. **Login** — demo hesapla giriş yapılabiliyor mu?
-2. **Dashboard** — bugünün özeti, finansal durum, Bu Ayın Özeti ve Son İşlemler kartları hatasız yükleniyor mu?
-3. **Takvim** — haftalık görünüm açılıyor, randevulara tıklanabiliyor mu?
-4. **Yeni randevu** — randevu oluşturma akışı (danışan seçimi, saat, ücret) çalışıyor mu?
-5. **Ödeme güncelleme** — bir randevunun ödeme durumu güncellenebiliyor mu?
-6. **Danışan notu** — bir danışana not eklenebiliyor, not defteri görüntülenebiliyor mu?
-7. **Ayarlar** — kategori bazlı Ayarlar sayfası (Klinik Profili, Çalışma Takvimi, Ücretler, Formlar) açılıyor mu?
-8. **Raporlar** — tarih filtresi, Finans/Randevu/Danışan/İşlem Geçmişi sekmeleri hatasız çalışıyor mu?
-9. **CSV export** — üç rapor türü de indirilebiliyor, Türkçe karakterler Excel'de düzgün görünüyor mu?
-10. **Activity log** — yeni randevu/ödeme/danışan notu/çalışma dışı blok işlemleri "Raporlar → İşlem Geçmişi" ve Dashboard "Son İşlemler" altında görünüyor mu?
+- `GET /api/subscription/current

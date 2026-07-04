@@ -43,17 +43,4 @@ kullanıldı, yeni entity oluşturulmadı). Kalan geliştirmeler:
 ## 11. Production Deploy Planı
 - Backend: Docker image + managed PostgreSQL (örn. Railway, Render, RDS)
 - Frontend: Statik hosting (Vercel/Netlify) veya aynı container üzerinden Nginx
-- Ortam değişkenleri ile secrets yönetimi (JWT secret, DB credentials)
-- HTTPS zorunluluğu, CORS allowlist'in production domain'e göre güncellenmesi
-- Temel izleme/log toplama (örn. basit health check endpoint zaten mevcut altyapıya eklenebilir)
-
-## 12. Raporlama — Gelişmiş Çıktılar (V2.3 sonrası)
-V2.3 ile Raporlar sayfası (Finans/Randevu/Danışan raporları + CSV export)
-MVP düzeyinde eklendi. Bilinçli olarak kapsam dışı bırakılan ve ileride
-değerlendirilebilecek kısımlar:
-- PDF export
-- Excel (.xlsx) export
-- Gerçek bir grafik kütüphanesi ile görselleştirme (şu an sadece kart/tablo var)
-- Otomatik (zamanlanmış) haftalık/aylık rapor gönderimi (e-posta ile)
-- Muhasebe entegrasyonu
-- AI destekli finansal yorum/özet
+- Ortam değiş

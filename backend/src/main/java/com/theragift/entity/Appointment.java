@@ -75,28 +75,4 @@ public class Appointment {
     private BigDecimal paidAmount;
 
     @Column(precision = 10, scale = 2)
-    private BigDecimal remainingAmount;
-
-    private LocalDate paymentDate;
-
-    private LocalDate paymentDueDate;
-
-    @Column(length = 1000)
-    private String paymentNote;
-
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    void prePersist() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void preUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-}
+    private BigDecimal remainingAmou

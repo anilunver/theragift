@@ -75,46 +75,4 @@ public class ClientNoteService {
         }
         if (request.getTitle() != null) note.setTitle(blankToNull(request.getTitle()));
         if (request.getCategory() != null) note.setCategory(request.getCategory());
-        if (request.getPinned() != null) note.setPinned(request.getPinned());
-        if (request.getAppointmentId() != null) note.setAppointmentId(request.getAppointmentId());
-        if (request.getSessionDate() != null) note.setSessionDate(request.getSessionDate());
-        clientNoteRepository.save(note);
-        return toResponse(note);
-    }
-
-    @Transactional
-    public void delete(User psychologist, Long clientId, Long noteId) {
-        Client client = findClient(psychologist, clientId);
-        ClientNote note = findNote(client, noteId);
-        clientNoteRepository.delete(note);
-    }
-
-    private String blankToNull(String value) {
-        return (value == null || value.isBlank()) ? null : value.trim();
-    }
-
-    private ClientNote findNote(Client client, Long noteId) {
-        return clientNoteRepository.findByIdAndClient(noteId, client)
-                .orElseThrow(() -> new ApiException("Not bulunamadı", HttpStatus.NOT_FOUND));
-    }
-
-    private Client findClient(User psychologist, Long clientId) {
-        return clientRepository.findByIdAndPsychologist(clientId, psychologist)
-                .orElseThrow(() -> new ApiException("Danışan bulunamadı", HttpStatus.NOT_FOUND));
-    }
-
-    private ClientNoteResponse toResponse(ClientNote n) {
-        return ClientNoteResponse.builder()
-                .id(n.getId())
-                .clientId(n.getClient().getId())
-                .title(n.getTitle())
-                .content(n.getContent())
-                .category(n.getCategory() != null ? n.getCategory().name() : null)
-                .pinned(n.isPinned())
-                .appointmentId(n.getAppointmentId())
-                .sessionDate(n.getSessionDate())
-                .createdAt(n.getCreatedAt())
-                .updatedAt(n.getUpdatedAt())
-                .build();
-    }
-}
+        if (request.getPinned() != null

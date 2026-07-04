@@ -45,32 +45,4 @@ public class ClientController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        clientService.delete(currentUserProvider.getCurrentUser(), id);
-    }
-
-    @GetMapping("/{id}/payment-summary")
-    public PaymentSummaryResponse getPaymentSummary(@PathVariable Long id) {
-        return clientService.getPaymentSummary(currentUserProvider.getCurrentUser(), id);
-    }
-
-    // V2.2D.1: Danışanı pasif yapmadan önce, frontend'in onay sorusu göstermesi
-    // gerekip gerekmediğini anlaması için gelecekteki SCHEDULED randevu sayısı.
-    // Hiçbir şeyi DEĞİŞTİRMEZ, sadece okur.
-    @GetMapping("/{id}/future-appointments-count")
-    public FutureAppointmentsCountResponse getFutureAppointmentsCount(@PathVariable Long id) {
-        return clientService.getFutureScheduledAppointmentsCount(currentUserProvider.getCurrentUser(), id);
-    }
-
-    // V2.2D: Danışanı aktif/pasif yapmak için niyeti net, ayrı bir endpoint.
-    // Bu bir SİLME işlemi değildir — geçmiş randevu/ödeme/not kayıtları etkilenmez.
-    // V2.2D.1: cancelFutureAppointments=true ile pasif yapılırsa, SADECE
-    // bugünden sonraki SCHEDULED randevular CANCELLED yapılır (bkz. ClientService).
-    @PatchMapping("/{id}/status")
-    public ClientStatusChangeResponse updateStatus(@PathVariable Long id, @RequestBody ClientStatusRequest request) {
-        if (request.getActive() == null) {
-            throw new ApiException("active alanı zorunludur.", HttpStatus.BAD_REQUEST);
-        }
-        boolean cancelFuture = Boolean.TRUE.equals(request.getCancelFutureAppointments());
-        return clientService.updateStatus(currentUserProvider.getCurrentUser(), id, request.getActive(), cancelFuture);
-    }
-}
+        clientService.delete(currentUserProvider.getCurrentUse

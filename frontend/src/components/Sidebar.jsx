@@ -37,8 +37,4 @@ export default function Sidebar({ onNavigate }) {
         ))}
       </nav>
       <div className="px-6 py-4 text-[11px] text-brand-mint/60 border-t border-white/10">
-        © {new Date().getFullYear()} TheraGift — MVP v1
-      </div>
-    </div>
-  )
-}
+        © {new Date().getFullYear

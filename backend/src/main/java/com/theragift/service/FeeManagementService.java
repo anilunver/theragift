@@ -138,8 +138,4 @@ public class FeeManagementService {
         }
     }
 
-    private PsychologistProfile getOrCreateProfile(User psychologist) {
-        return profileRepository.findByUser(psychologist)
-                .orElseGet(() -> profileRepository.save(PsychologistProfile.builder().user(psychologist).build()));
-    }
-}
+    pr

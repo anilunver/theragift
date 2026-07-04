@@ -53,16 +53,4 @@ public class PaymentController {
     // V2.2A.2: yeni sekmeler — AppointmentStatus'a göre filtreler.
     @GetMapping("/cancelled")
     public List<AppointmentResponse> getCancelled() {
-        return paymentService.getCancelled(currentUserProvider.getCurrentUser());
-    }
-
-    @GetMapping("/no-show")
-    public List<AppointmentResponse> getNoShow() {
-        return paymentService.getNoShow(currentUserProvider.getCurrentUser());
-    }
-
-    @GetMapping("/monthly-summary")
-    public MonthlySummaryResponse getMonthlySummary() {
-        return paymentService.getMonthlySummary(currentUserProvider.getCurrentUser());
-    }
-}
+        return paymentService.ge

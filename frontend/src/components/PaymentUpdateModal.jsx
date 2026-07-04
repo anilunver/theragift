@@ -135,47 +135,4 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
               <input type="number" name="paidAmount" value={form.paidAmount} onChange={handleChange}
                 disabled={paidAmountDisabled}
                 max={fee} min={0}
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm disabled:bg-panel disabled:text-muted" />
-              {form.paymentStatus === 'PARTIAL_PAID' && (
-                <p className="text-[11px] text-muted mt-1">0 ile {formatCurrency(fee)} arasında olmalı.</p>
-              )}
-              {(form.paymentStatus === 'CANCELLED' || form.paymentStatus === 'NO_SHOW') && (
-                <p className="text-[11px] text-muted mt-1">Seans gerçekleşmedi kabul edilir; ciro ve borca dahil edilmez.</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Ödeme Tarihi</label>
-              <input type="date" name="paymentDate" value={form.paymentDate} onChange={handleChange}
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Son Ödeme Tarihi</label>
-              <input type="date" name="paymentDueDate" value={form.paymentDueDate} onChange={handleChange}
-                className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-muted mb-1">Not</label>
-            <textarea name="paymentNote" value={form.paymentNote} onChange={handleChange} rows={2}
-              placeholder="Örn: Danışan seyahatte, ödeme sonra yapılacak"
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
-          </div>
-
-          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>}
-
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel transition-colors">İptal</button>
-            <button type="submit" disabled={saving}
-              className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
-              {saving ? 'Kaydediliyor...' : 'Güncelle'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
-}
+                className="w-full border border-bord

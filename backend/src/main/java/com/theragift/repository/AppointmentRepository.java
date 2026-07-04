@@ -29,20 +29,4 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
             User psychologist, LocalDate date, List<PaymentStatus> statuses);
 
-    List<Appointment> findByPsychologistAndAppointmentDateGreaterThanEqual(User psychologist, LocalDate date);
-
-    // V2.2A.2: Payments sayfasında "İptal Edilenler" / "Gelmeyenler" sekmeleri için.
-    // Not: bu AppointmentStatus'a göre filtreler (PaymentStatus'taki aynı isimli
-    // CANCELLED/NO_SHOW değerleriyle KARIŞTIRILMAMALI — ikisi bağımsız alanlardır).
-    List<Appointment> findByPsychologistAndStatus(User psychologist, AppointmentStatus status);
-
-    // V2.2A.2: Bir sabit randevu kuralı pasifleştirildiğinde, sadece o kurala bağlı
-    // GELECEKTEKİ ve hâlâ SCHEDULED olan randevuları bulmak için (toplu iptal).
-    List<Appointment> findByRecurringAppointmentAndStatusAndAppointmentDateGreaterThanEqual(
-            RecurringAppointment recurringAppointment, AppointmentStatus status, LocalDate date);
-
-    // V2.2D.1: Bir danışan pasif yapılırken, sadece GELECEKTEKİ ve hâlâ SCHEDULED
-    // olan randevularını bulmak için (geçmiş/COMPLETED/NO_SHOW/CANCELLED asla dahil değil).
-    List<Appointment> findByClientAndStatusAndAppointmentDateGreaterThanEqual(
-            Client client, AppointmentStatus status, LocalDate date);
-}
+    List<Appointm

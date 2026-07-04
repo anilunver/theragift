@@ -56,21 +56,4 @@ public class PsychologistProfileService {
 
     private ProfileResponse toResponse(User user, PsychologistProfile profile) {
         return ProfileResponse.builder()
-                .id(profile.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .title(profile.getTitle())
-                .specialty(profile.getSpecialty())
-                .phone(profile.getPhone())
-                .bio(profile.getBio())
-                .defaultSessionFee(profile.getDefaultSessionFee())
-                .defaultPaymentMethod(profile.getDefaultPaymentMethod() != null ? profile.getDefaultPaymentMethod().name() : null)
-                .defaultSessionDurationMinutes(profile.getDefaultSessionDurationMinutes())
-                .clinicName(profile.getClinicName())
-                .defaultSessionType(profile.getDefaultSessionType() != null ? profile.getDefaultSessionType().name() : null)
-                .defaultBufferMinutes(profile.getDefaultBufferMinutes())
-                .currency(profile.getCurrency())
-                .practiceNotes(profile.getPracticeNotes())
-                .build();
-    }
-}
+                .id(profile.
