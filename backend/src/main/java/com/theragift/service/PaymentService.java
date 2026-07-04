@@ -31,39 +31,47 @@ public class PaymentService {
                 .stream().filter(this::isNotCancelledAppointment).map(this::toResponse).toList();
     }
 
-    /** Tahsil Edilecek: ödenmemiş veya "sonra ödenecek" ama henüz vadesi geçmemiş. */
+    /** Tahsil Edilecek: kalan borcu > 0 ve henüz vadesi geçmemiş UNPAID/PAY_LATER kayıtlar. */
     public List<AppointmentResponse> getToCollect(User psychologist) {
         LocalDate today = LocalDate.now();
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
                         List.of(PaymentStatus.UNPAID, PaymentStatus.PAY_LATER))
                 .stream()
                 .filter(this::isNotCancelledAppointment)
+                .filter(this::hasRemainingDebt)
                 .filter(a -> a.getPaymentDueDate() == null || !a.getPaymentDueDate().isBefore(today))
                 .map(this::toResponse)
                 .toList();
     }
 
-    /** Geciken: son ödeme tarihi geçmiş ve kalan borcu olan seanslar. */
+    /** Geciken: kalan borcu > 0 ve son ödeme tarihi geçmiş kayıtlar. */
     public List<AppointmentResponse> getOverdue(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
                         psychologist, LocalDate.now(), OUTSTANDING_STATUSES)
                 .stream()
                 .filter(this::isNotCancelledAppointment)
-                .filter(a -> a.getRemainingAmount() != null && a.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0)
+                .filter(this::hasRemainingDebt)
                 .map(this::toResponse)
                 .toList();
     }
 
-    /** Kısmi Ödenen. */
+    /** Kısmi Ödenen: hem ödenen hem kalan tutarı 0'dan büyük olan kayıtlar. */
     public List<AppointmentResponse> getPartial(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, List.of(PaymentStatus.PARTIAL_PAID))
-                .stream().filter(this::isNotCancelledAppointment).map(this::toResponse).toList();
+                .stream()
+                .filter(this::isNotCancelledAppointment)
+                .filter(a -> isPositive(a.getPaidAmount()) && hasRemainingDebt(a))
+                .map(this::toResponse)
+                .toList();
     }
 
-    /** Ödenenler — tamamen ödenmiş olsa da listeden kaybolmaz. */
+    /** Ödenenler — sadece kalan borcu gerçekten 0 olan PAID kayıtlar; kayıp olmaz. */
     public List<AppointmentResponse> getPaid(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, List.of(PaymentStatus.PAID))
-                .stream().map(this::toResponse).toList();
+                .stream()
+                .filter(a -> !hasRemainingDebt(a))
+                .map(this::toResponse)
+                .toList();
     }
 
     /** Paket / Ücretsiz seanslar — nakit tahsilat veya borç sayılmaz. */
@@ -73,6 +81,17 @@ public class PaymentService {
                 .stream().map(this::toResponse).toList();
     }
 
+    /**
+     * Aylık Ciro / Tahsil Edilen / Tahsil Edilmeyen hesap kuralı:
+     * - İptal edilen randevu (appointment status CANCELLED) tamamen hariç.
+     * - Ödeme durumu FREE, PACKAGE_USED veya CANCELLED ise cirodan ve borçtan hariç
+     *   (paket/ücretsiz nakit tahsilat sayılmaz, iptal edilen ödeme borç sayılmaz).
+     * - PAID: ödenen tutar tahsil edilene, ücret ciroya eklenir.
+     * - PARTIAL_PAID: ödenen tahsil edilene, kalan tahsil edilmeyene eklenir.
+     * - UNPAID / PAY_LATER / NO_SHOW (ödeme durumu): kalan borç varsa tahsil
+     *   edilmeyene eklenir; NO_SHOW tek başına ciroyu sıfırlamaz, gerçek
+     *   paid/remaining değerlerine göre hesaplanır.
+     */
     public MonthlySummaryResponse getMonthlySummary(User psychologist) {
         YearMonth ym = YearMonth.now();
         LocalDate start = ym.atDay(1);
@@ -81,7 +100,7 @@ public class PaymentService {
         List<Appointment> monthly = appointmentRepository
                 .findByPsychologistAndAppointmentDateBetweenOrderByAppointmentDateAscStartTimeAsc(psychologist, start, end)
                 .stream()
-                .filter(this::isNotCancelledAppointment) // İptal edilen randevular ciroya/tahsilata dahil edilmez
+                .filter(this::isNotCancelledAppointment)
                 .toList();
 
         BigDecimal totalRevenue = BigDecimal.ZERO;
@@ -89,17 +108,31 @@ public class PaymentService {
         BigDecimal totalUnpaid = BigDecimal.ZERO;
         int paidCount = 0;
         int unpaidCount = 0;
+        int countedAppointments = 0;
 
         for (Appointment a : monthly) {
+            PaymentStatus ps = a.getPaymentStatus();
+
+            // Ücretsiz / paketten düşülen / ödeme durumu iptal olanlar cirodan ve
+            // borçtan tamamen hariç tutulur.
+            if (ps == PaymentStatus.FREE || ps == PaymentStatus.PACKAGE_USED || ps == PaymentStatus.CANCELLED) {
+                continue;
+            }
+
+            countedAppointments++;
             BigDecimal fee = a.getSessionFee() != null ? a.getSessionFee() : BigDecimal.ZERO;
             BigDecimal paid = a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO;
+            BigDecimal remaining = a.getRemainingAmount() != null ? a.getRemainingAmount() : fee.subtract(paid).max(BigDecimal.ZERO);
+
             totalRevenue = totalRevenue.add(fee);
             totalPaid = totalPaid.add(paid);
-            if (a.getPaymentStatus() == PaymentStatus.PAID) {
+
+            if (ps == PaymentStatus.PAID) {
                 paidCount++;
-            } else if (OUTSTANDING_STATUSES.contains(a.getPaymentStatus())) {
+            } else if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                // UNPAID, PAY_LATER, PARTIAL_PAID, NO_SHOW (kalan borcu olan her durum)
                 unpaidCount++;
-                totalUnpaid = totalUnpaid.add(fee.subtract(paid));
+                totalUnpaid = totalUnpaid.add(remaining);
             }
         }
 
@@ -109,7 +142,7 @@ public class PaymentService {
                 .totalRevenue(totalRevenue)
                 .totalPaid(totalPaid)
                 .totalUnpaid(totalUnpaid)
-                .totalAppointments(monthly.size())
+                .totalAppointments(countedAppointments)
                 .paidCount(paidCount)
                 .unpaidCount(unpaidCount)
                 .build();
@@ -117,6 +150,14 @@ public class PaymentService {
 
     private boolean isNotCancelledAppointment(Appointment a) {
         return a.getStatus() != AppointmentStatus.CANCELLED;
+    }
+
+    private boolean hasRemainingDebt(Appointment a) {
+        return a.getRemainingAmount() != null && a.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    private boolean isPositive(BigDecimal value) {
+        return value != null && value.compareTo(BigDecimal.ZERO) > 0;
     }
 
     private AppointmentResponse toResponse(Appointment a) {

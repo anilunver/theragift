@@ -40,6 +40,14 @@ public final class AvailabilityTextParser {
     private static final Pattern TIME_RANGE_PATTERN =
             Pattern.compile("(\\d{1,2}):(\\d{2})\\s*-\\s*(\\d{1,2}):(\\d{2})");
 
+    // "10 ile 11 arası", "10 ile 11 arasında" gibi ifadeleri yakalar
+    private static final Pattern RANGE_ARASI_PATTERN =
+            Pattern.compile("(\\d{1,2})(?::(\\d{2}))?\\s*ile\\s*(\\d{1,2})(?::(\\d{2}))?\\s*aras");
+
+    // "09:00 civarı", "sabah 9 civarı", "saat 9 sularında" gibi tek saat ifadelerini yakalar
+    private static final Pattern APPROX_TIME_PATTERN =
+            Pattern.compile("(\\d{1,2})(?::(\\d{2}))?\\s*(civar|sular)");
+
     public static List<DayOfWeek> extractPreferredDays(String text) {
         List<DayOfWeek> result = new ArrayList<>();
         if (text == null || text.isBlank()) return result;
@@ -54,15 +62,49 @@ public final class AvailabilityTextParser {
     }
 
     /**
-     * Metinden ilk saat aralığını çıkarır. Bulunamazsa null döner.
+     * Metinden bir saat aralığı çıkarmaya çalışır. Sırasıyla:
+     * "10:00-14:00", "10 ile 11 arası", "09:00 civarı" kalıplarını dener.
+     * Hiçbiri bulunamazsa null döner (bu durumda saat filtresi uygulanmaz).
      */
     public static TimeRange extractPreferredTimeRange(String text) {
         if (text == null || text.isBlank()) return null;
-        Matcher matcher = TIME_RANGE_PATTERN.matcher(text);
-        if (!matcher.find()) return null;
+
+        Matcher rangeMatcher = TIME_RANGE_PATTERN.matcher(text);
+        if (rangeMatcher.find()) {
+            TimeRange range = toRange(rangeMatcher.group(1), rangeMatcher.group(2), rangeMatcher.group(3), rangeMatcher.group(4));
+            if (range != null) return range;
+        }
+
+        Matcher arasiMatcher = RANGE_ARASI_PATTERN.matcher(text);
+        if (arasiMatcher.find()) {
+            String startMin = arasiMatcher.group(2) != null ? arasiMatcher.group(2) : "00";
+            String endMin = arasiMatcher.group(4) != null ? arasiMatcher.group(4) : "00";
+            TimeRange range = toRange(arasiMatcher.group(1), startMin, arasiMatcher.group(3), endMin);
+            if (range != null) return range;
+        }
+
+        Matcher approxMatcher = APPROX_TIME_PATTERN.matcher(text);
+        if (approxMatcher.find()) {
+            try {
+                int hour = Integer.parseInt(approxMatcher.group(1));
+                int minute = approxMatcher.group(2) != null ? Integer.parseInt(approxMatcher.group(2)) : 0;
+                LocalTime center = LocalTime.of(hour, minute);
+                // "civarı/sularında" ifadesi için makul bir tolerans penceresi (±30/+60 dk)
+                LocalTime start = center.isBefore(LocalTime.of(0, 30)) ? LocalTime.MIDNIGHT : center.minusMinutes(30);
+                LocalTime end = center.plusHours(1).isBefore(center) ? LocalTime.of(23, 59) : center.plusMinutes(60);
+                return new TimeRange(start, end);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private static TimeRange toRange(String startHour, String startMin, String endHour, String endMin) {
         try {
-            LocalTime start = LocalTime.of(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
-            LocalTime end = LocalTime.of(Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4)));
+            LocalTime start = LocalTime.of(Integer.parseInt(startHour), Integer.parseInt(startMin));
+            LocalTime end = LocalTime.of(Integer.parseInt(endHour), Integer.parseInt(endMin));
             if (!start.isBefore(end)) return null;
             return new TimeRange(start, end);
         } catch (Exception e) {

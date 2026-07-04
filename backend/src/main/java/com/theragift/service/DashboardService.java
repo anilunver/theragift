@@ -7,7 +7,6 @@ import com.theragift.entity.User;
 import com.theragift.entity.WorkingHour;
 import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.AvailabilityFormStatus;
-import com.theragift.enums.PaymentStatus;
 import com.theragift.repository.AppointmentRepository;
 import com.theragift.repository.AvailabilityFormRepository;
 import com.theragift.repository.WorkingHourRepository;
@@ -42,23 +41,16 @@ public class DashboardService {
                 .map(a -> a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal unpaidAmount = appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
-                        List.of(PaymentStatus.UNPAID, PaymentStatus.PARTIAL_PAID, PaymentStatus.PAY_LATER))
-                .stream()
-                .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED) // iptal edilen randevu borç sayılmaz
-                .map(a -> {
-                    BigDecimal fee = a.getSessionFee() != null ? a.getSessionFee() : BigDecimal.ZERO;
-                    BigDecimal paid = a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO;
-                    return fee.subtract(paid);
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // Dashboard, Payments sayfasıyla aynı sayılara sahip olsun diye aynı
+        // PaymentService metodlarını (getToCollect/getOverdue) kullanır.
+        BigDecimal unpaidAmount = paymentService.getToCollect(psychologist).stream()
+                .map(a -> a.getRemainingAmount() != null ? a.getRemainingAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .add(paymentService.getOverdue(psychologist).stream()
+                        .map(a -> a.getRemainingAmount() != null ? a.getRemainingAmount() : BigDecimal.ZERO)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-        int overdueCount = (int) appointmentRepository.findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
-                psychologist, today, List.of(PaymentStatus.UNPAID, PaymentStatus.PARTIAL_PAID, PaymentStatus.PAY_LATER)
-        ).stream()
-                .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
-                .filter(a -> a.getRemainingAmount() != null && a.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0)
-                .count();
+        int overdueCount = paymentService.getOverdue(psychologist).size();
 
         int pendingForms = formRepository.findByPsychologistAndStatusOrderByCreatedAtDesc(
                 psychologist, AvailabilityFormStatus.PENDING).size();

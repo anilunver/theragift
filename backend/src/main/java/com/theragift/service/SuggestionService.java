@@ -26,16 +26,17 @@ import java.util.List;
  * Randevu öneri algoritması.
  * Adımlar (her biri sırayla uygulanır, hiçbiri atlanmaz):
  * 1. Psikoloğun aktif çalışma günlerini ve saatlerini oku.
- * 2. Önümüzdeki {@value #LOOKAHEAD_DAYS} gün için, çalışma saatlerinden seans
- *    süresi kadar boş slotlar üret.
+ * 2. Bugünden itibaren önümüzdeki {@value #LOOKAHEAD_DAYS} gün için, çalışma
+ *    saatlerinden seans süresi kadar boş slotlar üret.
  * 3. Mola saatine denk gelen slotları tamamen ele — asla önerilmez.
- * 4. Mevcut (iptal olmayan) randevularla çakışan slotları ele — asla önerilmez.
+ * 4. Mevcut (İPTAL EDİLMEMİŞ) randevularla çakışan slotları ele — asla önerilmez.
+ *    CANCELLED randevular çakışma sayılmaz, slotu boşaltır.
  * 5. Danışanın uygunluk notundan çıkarılan gün/saat tercihiyle uyuşmayan slotlar
  *    varsayılan olarak önerilmez (danışan hiç tercih belirtmediyse bu adım atlanır).
- * 6. Kalan adaylar; danışan tercihine uyum, yakın tarihli olma ve o günün genel
- *    yoğunluğuna göre skorlanır, en yüksek skorlu 3 slot döndürülür.
- * Bir gün tamamen doluysa/uygun değilse otomatik olarak bir sonraki uygun güne
- * geçilir (döngü zaten tüm günleri tarar).
+ * 6. Kalan adaylar tarihe göre (EN ERKEN önce) sıralanır ve ilk 3'ü döndürülür.
+ *    Skor, bu 3 slotun ne kadar "iyi" olduğunu açıklamak için hesaplanır ama
+ *    hangi slotların seçileceğini belirlemez — seçim her zaman en erken uygun
+ *    slottan başlar.
  */
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class SuggestionService {
     private final ClientRepository clientRepository;
 
     private static final int SLOT_MINUTES = 50;
-    private static final int LOOKAHEAD_DAYS = 14;
+    private static final int LOOKAHEAD_DAYS = 21;
 
     public List<SuggestionResponse> suggestForClient(User psychologist, Long clientId) {
         Client client = clientRepository.findByIdAndPsychologist(clientId, psychologist)
@@ -64,6 +65,10 @@ public class SuggestionService {
 
         List<SuggestionResponse> candidates = new ArrayList<>();
 
+        // Bugünden başlayarak gün gün ilerler; ilk uygun günler öncelikli olarak
+        // aday listesine eklenir (aşağıdaki sıralama zaten tarihe göre olduğu
+        // için, en erken haftadaki boş slot her zaman sonraki haftalardakinden
+        // önce gelecektir).
         for (int dayOffset = 0; dayOffset < LOOKAHEAD_DAYS; dayOffset++) {
             LocalDate date = today.plusDays(dayOffset);
             DayOfWeek dow = date.getDayOfWeek();
@@ -80,8 +85,15 @@ public class SuggestionService {
                 continue; // Psikolog o gün çalışmıyor
             }
 
-            List<Appointment> existing = appointmentRepository.findByPsychologistAndAppointmentDate(psychologist, date)
-                    .stream().filter(a -> a.getStatus() != AppointmentStatus.CANCELLED).toList();
+            List<Appointment> allThatDay = appointmentRepository.findByPsychologistAndAppointmentDate(psychologist, date);
+            // Sadece İPTAL EDİLMEMİŞ randevular çakışma sayılır. CANCELLED olanlar
+            // slotu boşaltır ve tekrar önerilebilir hale getirir.
+            List<Appointment> active = allThatDay.stream()
+                    .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
+                    .toList();
+            List<Appointment> cancelled = allThatDay.stream()
+                    .filter(a -> a.getStatus() == AppointmentStatus.CANCELLED)
+                    .toList();
 
             for (WorkingHour wh : dayHours) {
                 LocalTime cursor = wh.getStartTime();
@@ -92,7 +104,7 @@ public class SuggestionService {
                     boolean inBreak = wh.getBreakStartTime() != null && wh.getBreakEndTime() != null
                             && slotStart.isBefore(wh.getBreakEndTime()) && slotEnd.isAfter(wh.getBreakStartTime());
 
-                    boolean conflicts = existing.stream().anyMatch(a ->
+                    boolean conflicts = active.stream().anyMatch(a ->
                             slotStart.isBefore(a.getEndTime()) && slotEnd.isAfter(a.getStartTime()));
 
                     boolean isPast = date.isEqual(today) && slotStart.isBefore(LocalTime.now());
@@ -102,8 +114,13 @@ public class SuggestionService {
                     boolean outsidePreferredRange = preferredRange != null && !preferredRange.contains(slotStart, slotEnd);
 
                     if (!inBreak && !conflicts && !isPast && !outsidePreferredRange) {
-                        int score = computeScore(slotStart, dow, preferredDays, preferredRange != null, dayOffset, existing.size());
-                        String reason = buildReason(dow, slotStart, !preferredDays.isEmpty(), preferredRange != null, dayOffset, existing.size());
+                        boolean freedByCancellation = cancelled.stream().anyMatch(a ->
+                                slotStart.isBefore(a.getEndTime()) && slotEnd.isAfter(a.getStartTime()));
+
+                        int score = computeScore(slotStart, dow, preferredDays, preferredRange != null,
+                                dayOffset, active.size(), freedByCancellation);
+                        String reason = buildReason(dow, slotStart, !preferredDays.isEmpty(), preferredRange != null,
+                                dayOffset, active.size(), freedByCancellation);
                         candidates.add(SuggestionResponse.builder()
                                 .date(date)
                                 .startTime(slotStart)
@@ -117,36 +134,35 @@ public class SuggestionService {
             }
         }
 
+        // En erken uygun slot her zaman önce gelir. Skor sadece açıklama amaçlıdır,
+        // seçimi (hangi 3 slotun döneceğini) etkilemez.
         return candidates.stream()
-                .sorted(Comparator.comparingInt(SuggestionResponse::getScore).reversed()
-                        .thenComparing(SuggestionResponse::getDate)
+                .sorted(Comparator.comparing(SuggestionResponse::getDate)
                         .thenComparing(SuggestionResponse::getStartTime))
                 .limit(3)
                 .toList();
     }
 
     private int computeScore(LocalTime start, DayOfWeek dow, List<DayOfWeek> preferredDays,
-                              boolean hasPreferredRange, int dayOffset, int dayLoad) {
+                              boolean hasPreferredRange, int dayOffset, int dayLoad, boolean freedByCancellation) {
         int score = 65;
 
-        // Danışanın tercih ettiği güne denk geliyorsa büyük bonus (bu noktaya kadar
-        // gelen adaylar zaten filtrelenmiş olduğu için preferredDays boş değilse eşleşme kesindir).
         if (!preferredDays.isEmpty()) {
             score += 15;
         }
         if (hasPreferredRange) {
             score += 10;
         }
+        if (freedByCancellation) {
+            score += 5;
+        }
 
-        // Yakın tarihli slotlar biraz daha yüksek puan alır
         if (dayOffset <= 2) score += 6;
         else if (dayOffset <= 7) score += 3;
 
-        // O gün ne kadar az randevu varsa o kadar "az yoğun" kabul edilir
         if (dayLoad == 0) score += 6;
         else if (dayLoad <= 2) score += 3;
 
-        // Sabah/öğleden sonra dengeli saatler (10:00-16:00) hafif bonus
         if (!start.isBefore(LocalTime.of(10, 0)) && !start.isAfter(LocalTime.of(16, 0))) {
             score += 3;
         }
@@ -155,24 +171,28 @@ public class SuggestionService {
     }
 
     private String buildReason(DayOfWeek dow, LocalTime start, boolean matchesDayPreference,
-                                boolean matchesTimePreference, int dayOffset, int dayLoad) {
+                                boolean matchesTimePreference, int dayOffset, int dayLoad, boolean freedByCancellation) {
         List<String> reasons = new ArrayList<>();
         String dayNameTr = AvailabilityTextParser.dayOfWeekToTurkish(dow);
 
-        reasons.add(dayNameTr + " günü saat " + start + " psikoloğun çalışma saatleri içinde.");
+        if (dayOffset == 0) {
+            reasons.add("Bugün için " + dayNameTr.toLowerCase() + " çalışma saatleri içinde ilk uygun slot.");
+        } else {
+            reasons.add(dayNameTr + " günü saat " + start + " için ilk uygun boş slot.");
+        }
         if (matchesDayPreference) {
             reasons.add("Danışanın uygun günüyle eşleşiyor.");
         }
         if (matchesTimePreference) {
-            reasons.add("Danışanın belirttiği saat aralığıyla uyumlu.");
+            reasons.add("Danışanın belirttiği saat aralığıyla eşleşiyor.");
+        }
+        if (freedByCancellation) {
+            reasons.add("İptal edilen bir randevu sayesinde bu slot boşaldı.");
         }
         if (dayLoad == 0) {
             reasons.add("Bu gün henüz hiç randevu yok, daha az yoğun.");
         } else if (dayLoad <= 2) {
             reasons.add("Bu gün daha az yoğun.");
-        }
-        if (dayOffset <= 2) {
-            reasons.add("Yakın tarihli olduğu için önceliklendirildi.");
         }
 
         return String.join(" ", reasons);
