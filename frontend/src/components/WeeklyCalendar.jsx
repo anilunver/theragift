@@ -44,7 +44,7 @@ function findBlockForDate(dateStr, blocks) {
   return matches.find((b) => b.fullDay) || matches[0]
 }
 
-export default function WeeklyCalendar({ weekStart, appointments, unavailableBlocks, onSelectAppointment, onQuickClose }) {
+export default function WeeklyCalendar({ weekStart, appointments, unavailableBlocks, onSelectAppointment, onQuickClose, onBlockClick }) {
   const dates = getWeekDates(weekStart)
 
   return (
@@ -69,10 +69,17 @@ export default function WeeklyCalendar({ weekStart, appointments, unavailableBlo
             </div>
 
             {block && (
-              <div className={`mb-2 text-[10px] font-bold px-2 py-1 rounded-lg ${UNAVAILABLE_BLOCK_TYPE_STYLES[block.type] || 'bg-gray-200 text-gray-700'}`}>
+              <button
+                type="button"
+                onClick={() => onBlockClick && onBlockClick(block)}
+                className={`mb-2 w-full text-left text-[10px] font-bold px-2 py-1 rounded-lg transition-opacity hover:opacity-80 ${UNAVAILABLE_BLOCK_TYPE_STYLES[block.type] || 'bg-gray-200 text-gray-700'}`}
+              >
                 {unavailableBlockTypeLabel(block.type, block.title)}
                 {!block.fullDay && block.startTime && ` (${formatTime(block.startTime)} - ${formatTime(block.endTime)})`}
-              </div>
+                {block.affectedAppointmentsCount > 0 && (
+                  <div className="mt-1 font-semibold normal-case">⚠️ Bu blokta planlı randevu var</div>
+                )}
+              </button>
             )}
 
             <div className="space-y-1.5">

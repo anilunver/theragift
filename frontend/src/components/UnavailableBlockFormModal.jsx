@@ -2,10 +2,13 @@ import { useState } from 'react'
 import api from '../api/axios.js'
 import { useToast } from '../context/ToastContext.jsx'
 import { todayIsoDate } from '../utils/format.js'
+import UnavailableBlockConflictModal from './UnavailableBlockConflictModal.jsx'
 
 // V2.2B: Çalışma dışı gün / tatil bloğu ekleme/düzenleme modalı.
 // Takvimden "Bu günü kapat" ile de (initialDate ile önceden dolu) açılabilir,
 // Ayarlar sayfasından da bağımsız olarak açılabilir.
+// V2.2C: Kaydedince blok aralığında planlı randevu varsa, toast'a EK olarak
+// UnavailableBlockConflictModal gösterilir (sadece bilgilendirme amaçlı).
 export default function UnavailableBlockFormModal({ initialDate, onClose, onSaved }) {
   const { showToast } = useToast()
   const [form, setForm] = useState({
@@ -20,6 +23,7 @@ export default function UnavailableBlockFormModal({ initialDate, onClose, onSave
   })
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [conflictBlock, setConflictBlock] = useState(null)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -51,21 +55,34 @@ export default function UnavailableBlockFormModal({ initialDate, onClose, onSave
         endTime: form.fullDay ? null : form.endTime,
       })
       const affected = res.data?.affectedAppointmentsCount || 0
+      onSaved()
       if (affected > 0) {
         showToast(
           `Bu tarih aralığında ${affected} planlı randevu var. Bu blok randevuları otomatik iptal etmez. Lütfen takvimden kontrol edin.`,
           'warning',
         )
-      } else {
-        showToast('Çalışma dışı gün/tatil bloğu eklendi.')
+        // V2.2C: Ek bilgilendirme modalı — bu, form modalını kapatmadan ÖNCE
+        // gösterilir; kullanıcı "Tamam" veya "Takvimde kontrol et" seçince
+        // asıl form modalı da kapanır (bkz. conflictBlock renderı aşağıda).
+        setConflictBlock(res.data)
+        return
       }
-      onSaved()
+      showToast('Çalışma dışı gün/tatil bloğu eklendi.')
       onClose()
     } catch (err) {
       setError(err.response?.data?.message || 'Blok oluşturulamadı.')
     } finally {
       setSaving(false)
     }
+  }
+
+  if (conflictBlock) {
+    return (
+      <UnavailableBlockConflictModal
+        block={conflictBlock}
+        onClose={onClose}
+      />
+    )
   }
 
   return (

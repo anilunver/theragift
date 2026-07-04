@@ -16,9 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Danışan operasyonel notları. Bilinçli olarak basit tutulmuştur — klinik/terapi
- * notu DEĞİLDİR, hassas terapi içeriğine girilmez (örn. "Ödemeyi genelde ay
- * sonunda yapıyor.", "Online seansı tercih ediyor.").
+ * V2.2C: Danışan "hafızası" / not defteri. Psikoloğun danışanla ilgili
+ * ödeme alışkanlığı, seans sonrası hatırlatma, uygunluk bilgisi vb. tuttuğu
+ * MANUEL notlar. Bilinçli olarak basit tutulmuştur — klinik/terapi notu,
+ * teşhis, risk/kriz yorumu veya AI analizi İÇERMEZ ve içermemelidir.
+ * <p>
+ * Mahremiyet: her metodun ilk adımı findClient() — bu, notun sadece İLGİLİ
+ * PSİKOLOĞA ait bir danışana bağlı olduğunu garanti eder (findByIdAndPsychologist).
+ * Bir psikolog başka bir psikoloğun danışanının notlarına asla erişemez.
  */
 @Service
 @RequiredArgsConstructor
@@ -36,13 +41,18 @@ public class ClientNoteService {
     @Transactional
     public ClientNoteResponse create(User psychologist, Long clientId, ClientNoteRequest request) {
         Client client = findClient(psychologist, clientId);
-        if (request.getNote() == null || request.getNote().isBlank()) {
+        if (request.getContent() == null || request.getContent().isBlank()) {
             throw new ApiException("Not içeriği boş olamaz.", HttpStatus.BAD_REQUEST);
         }
         ClientNote note = ClientNote.builder()
                 .client(client)
-                .note(request.getNote())
+                .psychologist(psychologist)
+                .title(blankToNull(request.getTitle()))
+                .content(request.getContent())
+                .category(request.getCategory())
                 .pinned(Boolean.TRUE.equals(request.getPinned()))
+                .appointmentId(request.getAppointmentId())
+                .sessionDate(request.getSessionDate())
                 .build();
         clientNoteRepository.save(note);
         return toResponse(note);
@@ -52,13 +62,17 @@ public class ClientNoteService {
     public ClientNoteResponse update(User psychologist, Long clientId, Long noteId, ClientNoteRequest request) {
         Client client = findClient(psychologist, clientId);
         ClientNote note = findNote(client, noteId);
-        if (request.getNote() != null) {
-            if (request.getNote().isBlank()) {
+        if (request.getContent() != null) {
+            if (request.getContent().isBlank()) {
                 throw new ApiException("Not içeriği boş olamaz.", HttpStatus.BAD_REQUEST);
             }
-            note.setNote(request.getNote());
+            note.setContent(request.getContent());
         }
+        if (request.getTitle() != null) note.setTitle(blankToNull(request.getTitle()));
+        if (request.getCategory() != null) note.setCategory(request.getCategory());
         if (request.getPinned() != null) note.setPinned(request.getPinned());
+        if (request.getAppointmentId() != null) note.setAppointmentId(request.getAppointmentId());
+        if (request.getSessionDate() != null) note.setSessionDate(request.getSessionDate());
         clientNoteRepository.save(note);
         return toResponse(note);
     }
@@ -68,6 +82,10 @@ public class ClientNoteService {
         Client client = findClient(psychologist, clientId);
         ClientNote note = findNote(client, noteId);
         clientNoteRepository.delete(note);
+    }
+
+    private String blankToNull(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim();
     }
 
     private ClientNote findNote(Client client, Long noteId) {
@@ -84,8 +102,12 @@ public class ClientNoteService {
         return ClientNoteResponse.builder()
                 .id(n.getId())
                 .clientId(n.getClient().getId())
-                .note(n.getNote())
+                .title(n.getTitle())
+                .content(n.getContent())
+                .category(n.getCategory() != null ? n.getCategory().name() : null)
                 .pinned(n.isPinned())
+                .appointmentId(n.getAppointmentId())
+                .sessionDate(n.getSessionDate())
                 .createdAt(n.getCreatedAt())
                 .updatedAt(n.getUpdatedAt())
                 .build();

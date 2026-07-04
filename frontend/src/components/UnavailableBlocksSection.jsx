@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../api/axios.js'
 import { useToast } from '../context/ToastContext.jsx'
 import UnavailableBlockFormModal from './UnavailableBlockFormModal.jsx'
+import UnavailableBlockDetailModal from './UnavailableBlockDetailModal.jsx'
 import EmptyState from './EmptyState.jsx'
 import {
   formatDate,
@@ -17,6 +18,7 @@ export default function UnavailableBlocksSection() {
   const [blocks, setBlocks] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [selectedBlock, setSelectedBlock] = useState(null)
 
   const load = () => {
     setLoading(true)
@@ -28,7 +30,8 @@ export default function UnavailableBlocksSection() {
 
   useEffect(() => { load() }, [])
 
-  const handleDelete = async (block) => {
+  const handleDelete = async (e, block) => {
+    e.stopPropagation()
     if (!window.confirm(`"${block.title}" bloğunu silmek istediğinize emin misiniz?`)) return
     try {
       await api.delete(`/unavailable-blocks/${block.id}`)
@@ -60,13 +63,21 @@ export default function UnavailableBlocksSection() {
       ) : (
         <div className="space-y-2">
           {blocks.map((b) => (
-            <div key={b.id} className="flex items-center justify-between border border-border rounded-xl px-3 py-2.5">
+            <button
+              type="button"
+              key={b.id}
+              onClick={() => setSelectedBlock(b)}
+              className="w-full flex items-center justify-between border border-border rounded-xl px-3 py-2.5 text-left hover:bg-panel transition-colors"
+            >
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${UNAVAILABLE_BLOCK_TYPE_STYLES[b.type] || 'bg-gray-200 text-gray-700'}`}>
                     {unavailableBlockTypeLabel(b.type, b.title)}
                   </span>
                   <span className="text-sm font-semibold text-ink truncate">{b.title}</span>
+                  {b.affectedAppointmentsCount > 0 && (
+                    <span className="text-[10px] font-bold text-amber-700">⚠️ {b.affectedAppointmentsCount} randevu</span>
+                  )}
                 </div>
                 <div className="text-xs text-muted mt-1">
                   {formatDate(b.startDate)}
@@ -75,17 +86,30 @@ export default function UnavailableBlocksSection() {
                 </div>
                 {b.note && <div className="text-xs text-muted mt-0.5">{b.note}</div>}
               </div>
-              <button type="button" onClick={() => handleDelete(b)}
-                className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-red-50 hover:text-red-700 hover:border-red-200 shrink-0 ml-3 transition-colors">
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => handleDelete(e, b)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleDelete(e, b) }}
+                className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-red-50 hover:text-red-700 hover:border-red-200 shrink-0 ml-3 transition-colors"
+              >
                 Sil
-              </button>
-            </div>
+              </span>
+            </button>
           ))}
         </div>
       )}
 
       {showForm && (
         <UnavailableBlockFormModal onClose={() => setShowForm(false)} onSaved={load} />
+      )}
+
+      {selectedBlock && (
+        <UnavailableBlockDetailModal
+          block={selectedBlock}
+          onClose={() => setSelectedBlock(null)}
+          onDeleted={load}
+        />
       )}
     </div>
   )

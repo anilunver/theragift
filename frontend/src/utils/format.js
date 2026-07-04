@@ -76,6 +76,38 @@ export function unavailableBlockTypeLabel(value, customTitle) {
   return UNAVAILABLE_BLOCK_TYPE_LABELS[value] || value
 }
 
+// V2.2C: Danışan not defteri kategorileri.
+export const CLIENT_NOTE_CATEGORY_LABELS = {
+  GENERAL: 'Genel Not',
+  SESSION: 'Seans Notu',
+  PAYMENT: 'Ödeme Notu',
+  AVAILABILITY: 'Uygunluk Notu',
+  REMINDER: 'Hatırlatma',
+  OTHER: 'Diğer',
+}
+
+export const CLIENT_NOTE_CATEGORY_STYLES = {
+  GENERAL: 'bg-gray-200 text-gray-700',
+  SESSION: 'bg-blue-100 text-blue-800',
+  PAYMENT: 'bg-amber-100 text-amber-800',
+  AVAILABILITY: 'bg-teal-100 text-teal-800',
+  REMINDER: 'bg-purple-100 text-purple-800',
+  OTHER: 'bg-gray-200 text-gray-700',
+}
+
+export function clientNoteCategoryLabel(value) {
+  if (!value) return null
+  return CLIENT_NOTE_CATEGORY_LABELS[value] || value
+}
+
+// Tam tarih + saat: "08.07.2026 14:30"
+export function formatDateTime(value) {
+  if (!value) return ''
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
 const DAY_ORDER = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
 
 export function dayOfWeekLabel(value) {

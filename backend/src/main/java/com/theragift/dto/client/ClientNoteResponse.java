@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,8 +15,12 @@ import java.time.LocalDateTime;
 public class ClientNoteResponse {
     private Long id;
     private Long clientId;
-    private String note;
+    private String title;
+    private String content;
+    private String category;
     private boolean pinned;
+    private Long appointmentId;
+    private LocalDate sessionDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

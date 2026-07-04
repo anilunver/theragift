@@ -69,7 +69,11 @@ export default function ClientDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-6">
           <ClientDetailCard client={client} />
-          <ClientNotesSection client={client} />
+          {/* V2.2C: Not defteri genişletildiği için beklenmedik bir hata olursa
+              tüm danışan detay sayfası değil, sadece bu kart çökmeli. */}
+          <ErrorBoundary>
+            <ClientNotesSection client={client} />
+          </ErrorBoundary>
         </div>
 
         <div className="lg:col-span-2 space-y-6">

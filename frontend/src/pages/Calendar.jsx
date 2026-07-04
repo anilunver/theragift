@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import api from '../api/axios.js'
 import WeeklyCalendar from '../components/WeeklyCalendar.jsx'
 import AppointmentModal from '../components/AppointmentModal.jsx'
 import UnavailableBlockFormModal from '../components/UnavailableBlockFormModal.jsx'
+import UnavailableBlockDetailModal from '../components/UnavailableBlockDetailModal.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
-import { toIsoDateString } from '../utils/format.js'
+import { toIsoDateString, parseLocalDate } from '../utils/format.js'
 
 function getMonday(date) {
   const d = new Date(date)
@@ -19,13 +20,20 @@ function getMonday(date) {
 }
 
 export default function Calendar() {
-  const [weekStart, setWeekStart] = useState(getMonday(new Date()))
+  const location = useLocation()
+  // V2.2C: "Takvimde kontrol et" (blok çakışma modalından) belirli bir haftaya
+  // yönlendirebilir — location.state.targetDate varsa o haftanın Pazartesi'sine gidilir.
+  const initialWeekStart = location.state?.targetDate
+    ? getMonday(parseLocalDate(location.state.targetDate) || new Date())
+    : getMonday(new Date())
+  const [weekStart, setWeekStart] = useState(initialWeekStart)
   const [appointments, setAppointments] = useState([])
   const [unavailableBlocks, setUnavailableBlocks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
   const [quickCloseDate, setQuickCloseDate] = useState(null)
+  const [selectedBlock, setSelectedBlock] = useState(null)
 
   const loadWeek = () => {
     setLoading(true)
@@ -87,6 +95,7 @@ export default function Calendar() {
           unavailableBlocks={unavailableBlocks}
           onSelectAppointment={setSelected}
           onQuickClose={setQuickCloseDate}
+          onBlockClick={setSelectedBlock}
         />
       )}
 
@@ -103,6 +112,14 @@ export default function Calendar() {
           initialDate={quickCloseDate}
           onClose={() => setQuickCloseDate(null)}
           onSaved={loadWeek}
+        />
+      )}
+
+      {selectedBlock && (
+        <UnavailableBlockDetailModal
+          block={selectedBlock}
+          onClose={() => setSelectedBlock(null)}
+          onDeleted={loadWeek}
         />
       )}
     </div>

@@ -1,5 +1,6 @@
 package com.theragift.service;
 
+import com.theragift.dto.unavailable.AffectedAppointmentSummary;
 import com.theragift.dto.unavailable.UnavailableBlockRequest;
 import com.theragift.dto.unavailable.UnavailableBlockResponse;
 import com.theragift.entity.Appointment;
@@ -44,16 +45,21 @@ public class UnavailableBlockService {
 
     public List<UnavailableBlockResponse> list(User psychologist) {
         return unavailableBlockRepository.findByPsychologistOrderByStartDateAsc(psychologist)
-                .stream().map(b -> toResponse(b, countAffectedAppointments(psychologist, b))).toList();
+                .stream().map(b -> toResponseWithAffected(psychologist, b)).toList();
     }
 
+    /**
+     * V2.2C: Takvim gün kartlarının "Bu blokta planlı randevu var" uyarısını
+     * ekstra istek atmadan gösterebilmesi için range() sonucu da etkilenen
+     * randevu listesini içerir.
+     */
     public List<UnavailableBlockResponse> range(User psychologist, LocalDate start, LocalDate end) {
         if (start == null || end == null || start.isAfter(end)) {
             throw new ApiException("Geçerli bir tarih aralığı belirtmelisiniz.", HttpStatus.BAD_REQUEST);
         }
         return unavailableBlockRepository
                 .findByPsychologistAndStartDateLessThanEqualAndEndDateGreaterThanEqual(psychologist, end, start)
-                .stream().map(b -> toResponse(b, null)).toList();
+                .stream().map(b -> toResponseWithAffected(psychologist, b)).toList();
     }
 
     @Transactional
@@ -63,7 +69,7 @@ public class UnavailableBlockService {
                 .build();
         applyRequest(block, request);
         unavailableBlockRepository.save(block);
-        return toResponse(block, countAffectedAppointments(psychologist, block));
+        return toResponseWithAffected(psychologist, block);
     }
 
     @Transactional
@@ -71,7 +77,7 @@ public class UnavailableBlockService {
         UnavailableBlock block = findBlock(psychologist, id);
         applyRequest(block, request);
         unavailableBlockRepository.save(block);
-        return toResponse(block, countAffectedAppointments(psychologist, block));
+        return toResponseWithAffected(psychologist, block);
     }
 
     @Transactional
@@ -119,19 +125,19 @@ public class UnavailableBlockService {
     }
 
     /**
-     * V2.2B madde 13: bloğun tarih (ve varsa saat) aralığına denk gelen, henüz
-     * CANCELLED olmayan randevu sayısı. Sadece bilgi amaçlıdır — hiçbir kayıt
-     * bu sayım nedeniyle değiştirilmez/silinmez.
+     * V2.2B madde 13 / V2.2C: bloğun tarih (ve varsa saat) aralığına denk gelen,
+     * henüz CANCELLED olmayan randevuların listesi. Sadece bilgi amaçlıdır —
+     * hiçbir kayıt bu sayım/liste nedeniyle değiştirilmez/silinmez.
      */
-    private int countAffectedAppointments(User psychologist, UnavailableBlock block) {
+    private List<Appointment> findAffectedAppointments(User psychologist, UnavailableBlock block) {
         List<Appointment> inRange = appointmentRepository
                 .findByPsychologistAndAppointmentDateBetweenOrderByAppointmentDateAscStartTimeAsc(
                         psychologist, block.getStartDate(), block.getEndDate());
 
-        return (int) inRange.stream()
+        return inRange.stream()
                 .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
                 .filter(a -> block.isFullDay() || overlapsBlockTime(block, a.getStartTime(), a.getEndTime()))
-                .count();
+                .toList();
     }
 
     private boolean overlapsBlockTime(UnavailableBlock block, LocalTime start, LocalTime end) {
@@ -199,7 +205,20 @@ public class UnavailableBlockService {
                 .orElseThrow(() -> new ApiException("Çalışma dışı gün/tatil bloğu bulunamadı", HttpStatus.NOT_FOUND));
     }
 
-    private UnavailableBlockResponse toResponse(UnavailableBlock b, Integer affectedCount) {
+    private UnavailableBlockResponse toResponseWithAffected(User psychologist, UnavailableBlock b) {
+        List<Appointment> affected = findAffectedAppointments(psychologist, b);
+        List<AffectedAppointmentSummary> summaries = affected.stream()
+                .map(a -> AffectedAppointmentSummary.builder()
+                        .appointmentId(a.getId())
+                        .appointmentDate(a.getAppointmentDate())
+                        .startTime(a.getStartTime())
+                        .endTime(a.getEndTime())
+                        .clientFullName(a.getClient().getFirstName() + " " + a.getClient().getLastName())
+                        .status(a.getStatus().name())
+                        .sessionType(a.getSessionType().name())
+                        .build())
+                .toList();
+
         return UnavailableBlockResponse.builder()
                 .id(b.getId())
                 .title(b.getTitle())
@@ -210,7 +229,8 @@ public class UnavailableBlockService {
                 .startTime(b.getStartTime())
                 .endTime(b.getEndTime())
                 .note(b.getNote())
-                .affectedAppointmentsCount(affectedCount)
+                .affectedAppointmentsCount(summaries.size())
+                .affectedAppointments(summaries)
                 .createdAt(b.getCreatedAt())
                 .build();
     }

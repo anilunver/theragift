@@ -301,21 +301,24 @@ public class SeedDataRunner implements CommandLineRunner {
                 .paymentDueDate(nextSaturday.plusDays(5))
                 .build());
 
-        // --- V2.2A: Danışan operasyonel notları ---
+        // --- V2.2A/V2.2C: Danışan hafızası / not defteri örnekleri ---
         clientNoteRepository.save(ClientNote.builder()
-                .client(client4)
-                .note("Ödemeyi genelde ay sonunda yapıyor.")
+                .client(client4).psychologist(demoUser)
+                .category(ClientNoteCategory.PAYMENT)
+                .content("Ödemeyi genelde ay sonunda yapıyor.")
                 .pinned(true)
                 .build());
 
         clientNoteRepository.save(ClientNote.builder()
-                .client(client5)
-                .note("Online seansı tercih ediyor.")
+                .client(client5).psychologist(demoUser)
+                .category(ClientNoteCategory.AVAILABILITY)
+                .content("Online seansı tercih ediyor.")
                 .build());
 
         clientNoteRepository.save(ClientNote.builder()
-                .client(client1)
-                .note("Çarşamba akşamları daha uygun.")
+                .client(client1).psychologist(demoUser)
+                .category(ClientNoteCategory.AVAILABILITY)
+                .content("Çarşamba akşamları daha uygun.")
                 .build());
 
         // --- V2.2B: Çalışma dışı gün / tatil blok örnekleri ---
