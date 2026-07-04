@@ -43,6 +43,16 @@ export const DAY_OF_WEEK_LABELS = {
   SUNDAY: 'Pazar',
 }
 
+export const RECURRENCE_TYPE_LABELS = {
+  WEEKLY: 'Her hafta',
+  BIWEEKLY: 'İki haftada bir',
+  MONTHLY: 'Ayda bir',
+}
+
+export function recurrenceTypeLabel(value) {
+  return RECURRENCE_TYPE_LABELS[value] || value
+}
+
 const DAY_ORDER = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
 
 export function dayOfWeekLabel(value) {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api/axios.js'
 import PaymentStatusBadge from './PaymentStatusBadge.jsx'
 import AppointmentStatusBadge from './AppointmentStatusBadge.jsx'
+import PaymentUpdateModal from './PaymentUpdateModal.jsx'
 import { useToast } from '../context/ToastContext.jsx'
 import { formatCurrency, formatDate, formatTime, sessionTypeLabel } from '../utils/format.js'
 
@@ -12,6 +13,7 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
   const [status, setStatus] = useState(appointment.status)
   const [saving, setSaving] = useState(false)
   const [confirmingCancel, setConfirmingCancel] = useState(false)
+  const [showPaymentUpdate, setShowPaymentUpdate] = useState(false)
 
   const handleStatusChange = async (newStatus, message) => {
     setSaving(true)
@@ -70,14 +72,22 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
           )}
         </div>
 
-        {appointment.clientId && (
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          {appointment.clientId && (
+            <button
+              onClick={() => navigate(`/clients/${appointment.clientId}`)}
+              className="text-xs font-semibold text-brand-light hover:underline"
+            >
+              Danışan detayına git →
+            </button>
+          )}
           <button
-            onClick={() => navigate(`/clients/${appointment.clientId}`)}
-            className="text-xs font-semibold text-brand-light hover:underline mb-4"
+            onClick={() => setShowPaymentUpdate(true)}
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors"
           >
-            Danışan detayına git →
+            💳 Ödeme Güncelle
           </button>
-        )}
+        </div>
 
         {status !== 'CANCELLED' && (
           <div className="grid grid-cols-2 gap-2 mb-4">
@@ -110,6 +120,14 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
           )}
         </div>
       </div>
+
+      {showPaymentUpdate && (
+        <PaymentUpdateModal
+          appointment={appointment}
+          onClose={() => setShowPaymentUpdate(false)}
+          onUpdated={() => { onUpdated(); onClose(); }}
+        />
+      )}
     </div>
   )
 }

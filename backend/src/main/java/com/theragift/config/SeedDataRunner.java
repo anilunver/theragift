@@ -15,6 +15,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 
 /**
  * Uygulama ilk açıldığında demo verisi oluşturur.
@@ -34,6 +35,8 @@ public class SeedDataRunner implements CommandLineRunner {
     private final SubscriptionRepository subscriptionRepository;
     private final UsageQuotaRepository usageQuotaRepository;
     private final AvailabilityFormRepository formRepository;
+    private final RecurringAppointmentRepository recurringAppointmentRepository;
+    private final ClientNoteRepository clientNoteRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final String DEMO_EMAIL = "demo@theragift.app";
@@ -247,6 +250,71 @@ public class SeedDataRunner implements CommandLineRunner {
                 .sessionFee(BigDecimal.valueOf(1500))
                 .paymentStatus(PaymentStatus.CANCELLED)
                 .remainingAmount(BigDecimal.ZERO)
+                .build());
+
+        // --- V2.2A: Sabit randevu (recurring) örnekleri ---
+        // Kural 1: Selin Aydın, her Çarşamba 16:00 (WEEKLY)
+        recurringAppointmentRepository.save(RecurringAppointment.builder()
+                .client(client5).psychologist(demoUser)
+                .dayOfWeek(DayOfWeek.WEDNESDAY)
+                .startTime(LocalTime.of(16, 0)).endTime(LocalTime.of(16, 50))
+                .sessionType(SessionType.ONLINE)
+                .feeAmount(BigDecimal.valueOf(1500))
+                .paymentStatusDefault(PaymentStatus.UNPAID)
+                .recurrenceType(RecurrenceType.WEEKLY)
+                .startDate(today)
+                .active(true)
+                .note("Her hafta düzenli seans.")
+                .build());
+
+        // Kural 2: Mehmet Kaya, iki haftada bir Cumartesi 11:00 (BIWEEKLY)
+        recurringAppointmentRepository.save(RecurringAppointment.builder()
+                .client(client2).psychologist(demoUser)
+                .dayOfWeek(DayOfWeek.SATURDAY)
+                .startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(11, 50))
+                .sessionType(SessionType.FACE_TO_FACE)
+                .feeAmount(BigDecimal.valueOf(1800))
+                .paymentStatusDefault(PaymentStatus.UNPAID)
+                .recurrenceType(RecurrenceType.BIWEEKLY)
+                .startDate(today)
+                .active(true)
+                .note("İki haftada bir düzenli seans.")
+                .build());
+
+        // Çakışma örneği: Mehmet Kaya kuralının ilk occurrence'ıyla (gelecek Cumartesi
+        // 11:00-11:50) aynı saate denk gelen, başka bir danışana ait randevu. "Önümüzdeki
+        // 4 hafta randevuları oluştur" çalıştırıldığında bu occurrence çakışma nedeniyle
+        // atlanır (skipped) — sistemin geri kalanını bozmadan merkezi çakışma kontrolünü
+        // gösterir.
+        LocalDate nextSaturday = today.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+        appointmentRepository.save(Appointment.builder()
+                .client(client4).psychologist(demoUser)
+                .appointmentDate(nextSaturday)
+                .startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(11, 50))
+                .sessionType(SessionType.FACE_TO_FACE)
+                .status(AppointmentStatus.SCHEDULED)
+                .sessionFee(BigDecimal.valueOf(1600))
+                .paymentStatus(PaymentStatus.UNPAID)
+                .paymentMethod(PaymentMethod.BANK_TRANSFER)
+                .remainingAmount(BigDecimal.valueOf(1600))
+                .paymentDueDate(nextSaturday.plusDays(5))
+                .build());
+
+        // --- V2.2A: Danışan operasyonel notları ---
+        clientNoteRepository.save(ClientNote.builder()
+                .client(client4)
+                .note("Ödemeyi genelde ay sonunda yapıyor.")
+                .pinned(true)
+                .build());
+
+        clientNoteRepository.save(ClientNote.builder()
+                .client(client5)
+                .note("Online seansı tercih ediyor.")
+                .build());
+
+        clientNoteRepository.save(ClientNote.builder()
+                .client(client1)
+                .note("Çarşamba akşamları daha uygun.")
                 .build());
 
         // Gift License planı ve aboneliği

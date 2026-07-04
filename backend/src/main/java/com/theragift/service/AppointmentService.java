@@ -217,6 +217,28 @@ public class AppointmentService {
     }
 
     /**
+     * checkConflict() ile BİREBİR AYNI kuralı uygulayan, dışarıya açık (public)
+     * sürüm. RecurringAppointmentService gibi diğer servislerin, sabit randevu
+     * occurrence'ı oluşturmadan önce merkezi çakışma mantığını tekrar
+     * yazmadan (duplication olmadan) kullanabilmesi için eklenmiştir.
+     * CANCELLED randevular burada da çakışma sayılmaz.
+     */
+    public boolean hasConflict(User psychologist, LocalDate date, LocalTime start, LocalTime end) {
+        List<Appointment> sameDay = appointmentRepository.findByPsychologistAndAppointmentDate(psychologist, date);
+        return sameDay.stream().anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED
+                && start.isBefore(a.getEndTime()) && end.isAfter(a.getStartTime()));
+    }
+
+    /**
+     * computeWarnings() metodunun dışarıya açık sürümü. Sabit randevu üretiminde
+     * (RecurringAppointmentService) her occurrence için bilgilendirme amaçlı
+     * kullanılır — occurrence'ı engellemez, sadece rapora eklenir.
+     */
+    public List<String> computeWarningsPublic(User psychologist, Client client, LocalDate date, LocalTime start, LocalTime end) {
+        return computeWarnings(psychologist, client, date, start, end);
+    }
+
+    /**
      * Sert kural: aynı gün/saat aralığında CANCELLED olmayan başka bir randevu varsa
      * engelle. SCHEDULED / COMPLETED / NO_SHOW aktif kayıt sayılır ve çakışma
      * mantığında dikkate alınır; sadece CANCELLED hariç tutulur.
