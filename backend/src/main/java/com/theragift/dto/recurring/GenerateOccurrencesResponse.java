@@ -12,28 +12,37 @@ import java.util.List;
 
 /**
  * "Önümüzdeki 4 hafta randevuları oluştur" aksiyonunun sonucu.
- * Çakışan occurrence'lar hiç oluşturulmaz ve `skipped` listesinde açık bir
- * sebeple raporlanır — sistemin geri kalanını bozmaz, sadece o tekil slotu atlar.
+ *
+ * Akış (V2.2A.1'de netleştirildi):
+ * - `blockers`: sert engeller (aynı saatte aktif randevu var). Bunlar
+ *   `overrideWarnings=true` gelse bile ASLA oluşturulmaz.
+ * - `warnings`: yumuşak uyarılar (mesai dışı / mola / danışan uygunluğu dışı).
+ *   Eğer hiç warning yoksa randevular DİREKT oluşturulur (requiresConfirmation=false).
+ *   Warning varsa VE `overrideWarnings=false` ise HİÇBİR randevu oluşturulmaz,
+ *   `requiresConfirmation=true` döner ve `createdAppointments` boş olur — frontend
+ *   bu durumda kullanıcıya onay modalı göstermeli. Kullanıcı onaylarsa aynı istek
+ *   `overrideWarnings=true` ile tekrar gönderilir ve bu sefer warning'li (ama
+ *   blocker'sız) occurrence'lar da oluşturulur.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenerateOccurrencesResponse {
+    private boolean requiresConfirmation;
     private int createdCount;
-    private int skippedCount;
-    private List<AppointmentResponse> created;
-    private List<SkippedOccurrence> skipped;
-    private List<String> warnings;
+    private List<AppointmentResponse> createdAppointments;
+    private List<OccurrenceIssue> blockers;
+    private List<OccurrenceIssue> warnings;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SkippedOccurrence {
+    public static class OccurrenceIssue {
         private LocalDate date;
         private LocalTime startTime;
         private LocalTime endTime;
-        private String reason;
+        private String message;
     }
 }

@@ -13,8 +13,10 @@ const PAID_AMOUNT_MODE = {
   FREE: 'zero',
   PACKAGE_USED: 'zero',
   PARTIAL_PAID: 'editable',
-  CANCELLED: 'editable',
-  NO_SHOW: 'editable',
+  // V2.2A.3: İptal Edildi / Gelmedi artık tamamen non-billable — seans hiç
+  // gerçekleşmemiş kabul edilir, ödenen/kalan tutar her zaman 0'a zorlanır.
+  CANCELLED: 'zero',
+  NO_SHOW: 'zero',
 }
 
 export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) {
@@ -136,6 +138,9 @@ export default function PaymentUpdateModal({ appointment, onClose, onUpdated }) 
                 className="w-full border border-border rounded-xl px-3 py-2.5 text-sm disabled:bg-panel disabled:text-muted" />
               {form.paymentStatus === 'PARTIAL_PAID' && (
                 <p className="text-[11px] text-muted mt-1">0 ile {formatCurrency(fee)} arasında olmalı.</p>
+              )}
+              {(form.paymentStatus === 'CANCELLED' || form.paymentStatus === 'NO_SHOW') && (
+                <p className="text-[11px] text-muted mt-1">Seans gerçekleşmedi kabul edilir; ciro ve borca dahil edilmez.</p>
               )}
             </div>
           </div>

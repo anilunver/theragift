@@ -192,7 +192,9 @@ public class AppointmentService {
                 remaining = BigDecimal.ZERO;
             }
             case CANCELLED -> {
-                paid = requestedPaid;
+                // V2.2A.3: "İptal Edildi" seçilince seans hiç gerçekleşmemiş kabul
+                // edilir — ne ödenen ne kalan tutar sayılır (girilen tutar yok sayılır).
+                paid = BigDecimal.ZERO;
                 remaining = BigDecimal.ZERO;
             }
             case PARTIAL_PAID -> {
@@ -202,7 +204,12 @@ public class AppointmentService {
                 paid = requestedPaid;
                 remaining = fee.subtract(paid);
             }
-            default -> { // NO_SHOW ve tanımsız durumlar: kullanıcının girdiği tutara güven
+            case NO_SHOW -> {
+                // V2.2A.3: "Gelmedi" MVP kuralı gereği non-billable — ücretlendirme yok.
+                paid = BigDecimal.ZERO;
+                remaining = BigDecimal.ZERO;
+            }
+            default -> { // tanımsız durumlar: kullanıcının girdiği tutara güven
                 paid = requestedPaid;
                 remaining = fee.subtract(paid).max(BigDecimal.ZERO);
             }
@@ -210,6 +217,17 @@ public class AppointmentService {
 
         appointment.setPaidAmount(paid);
         appointment.setRemainingAmount(remaining);
+
+        // V2.2A.3: PaymentStatus.CANCELLED/NO_SHOW seçilmesi artık randevunun
+        // GERÇEK durumunu (AppointmentStatus) da senkronize eder — daha önce
+        // sadece ödeme durumu değişiyor, randevu SCHEDULED kalmaya devam
+        // ediyordu; bu yüzden kayıt Payments'taki "İptal Edilenler" / "Gelmeyenler"
+        // sekmelerine (AppointmentStatus'a göre filtrelenen) hiç düşmüyordu.
+        if (newStatus == PaymentStatus.CANCELLED) {
+            appointment.setStatus(AppointmentStatus.CANCELLED);
+        } else if (newStatus == PaymentStatus.NO_SHOW) {
+            appointment.setStatus(AppointmentStatus.NO_SHOW);
+        }
 
         appointmentRepository.save(appointment);
         logAudit(psychologist, "PAYMENT_UPDATED", "Appointment", appointment.getId());

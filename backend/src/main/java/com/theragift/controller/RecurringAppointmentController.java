@@ -1,5 +1,6 @@
 package com.theragift.controller;
 
+import com.theragift.dto.recurring.CancelFutureResponse;
 import com.theragift.dto.recurring.GenerateOccurrencesResponse;
 import com.theragift.dto.recurring.RecurringAppointmentRequest;
 import com.theragift.dto.recurring.RecurringAppointmentResponse;
@@ -39,7 +40,17 @@ public class RecurringAppointmentController {
     }
 
     @PostMapping("/{id}/generate")
-    public GenerateOccurrencesResponse generate(@PathVariable Long id) {
-        return recurringAppointmentService.generateNextOccurrences(currentUserProvider.getCurrentUser(), id);
+    public GenerateOccurrencesResponse generate(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "false") boolean overrideWarnings) {
+        return recurringAppointmentService.generateNextOccurrences(currentUserProvider.getCurrentUser(), id, overrideWarnings);
+    }
+
+    // V2.2A.2: "Pasif yap" sonrası opsiyonel ikinci adım — sadece bu kurala bağlı,
+    // gelecekteki ve hâlâ SCHEDULED olan randevuları CANCELLED yapar.
+    @PostMapping("/{id}/cancel-future")
+    public CancelFutureResponse cancelFuture(@PathVariable Long id) {
+        int cancelledCount = recurringAppointmentService.cancelFutureAppointments(currentUserProvider.getCurrentUser(), id);
+        return CancelFutureResponse.builder().cancelledCount(cancelledCount).build();
     }
 }

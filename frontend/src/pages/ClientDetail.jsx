@@ -5,6 +5,7 @@ import ClientDetailCard from '../components/ClientDetailCard.jsx'
 import ClientEditModal from '../components/ClientEditModal.jsx'
 import RecurringAppointmentSection from '../components/RecurringAppointmentSection.jsx'
 import ClientNotesSection from '../components/ClientNotesSection.jsx'
+import ErrorBoundary from '../components/ErrorBoundary.jsx'
 import PaymentStatusBadge from '../components/PaymentStatusBadge.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
@@ -44,11 +45,12 @@ export default function ClientDetail() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <button onClick={() => navigate('/clients')} className="text-sm font-semibold text-muted hover:text-ink transition-colors">
+        <button type="button" onClick={() => navigate('/clients')} className="text-sm font-semibold text-muted hover:text-ink transition-colors">
           ← Danışanlara dön
         </button>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={() => setShowEdit(true)}
             className="border border-border hover:bg-panel text-ink font-semibold px-4 py-2.5 rounded-xl text-sm"
           >
@@ -109,7 +111,11 @@ export default function ClientDetail() {
             )}
           </div>
 
-          <RecurringAppointmentSection client={client} />
+          {/* V2.2A.2: "Önümüzdeki 4 hafta" akışında beklenmeyen bir hata olursa
+              tüm danışan detay sayfası değil, sadece bu kart çökmeli. */}
+          <ErrorBoundary>
+            <RecurringAppointmentSection client={client} />
+          </ErrorBoundary>
         </div>
       </div>
 

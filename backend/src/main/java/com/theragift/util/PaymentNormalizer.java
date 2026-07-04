@@ -1,6 +1,7 @@
 package com.theragift.util;
 
 import com.theragift.entity.Appointment;
+import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.PaymentStatus;
 
 import java.math.BigDecimal;
@@ -24,6 +25,18 @@ public final class PaymentNormalizer {
         BigDecimal newPaid;
         BigDecimal newRemaining;
         PaymentStatus newStatus = status;
+
+        // V2.2A.3: AppointmentStatus (randevu durumu — CANCELLED/NO_SHOW) her zaman
+        // PaymentStatus'tan bağımsız olarak önceliklidir. Randevu gerçekleşmediyse
+        // (iptal edildi ya da danışan gelmedi), ödeme durumu ne olursa olsun
+        // paidAmount/remainingAmount 0'a zorlanır — eski/tutarsız seed verisi dahil.
+        if (a.getStatus() == AppointmentStatus.CANCELLED || a.getStatus() == AppointmentStatus.NO_SHOW) {
+            boolean changedNonBillable = !amountsEqual(a.getPaidAmount(), BigDecimal.ZERO)
+                    || !amountsEqual(a.getRemainingAmount(), BigDecimal.ZERO);
+            a.setPaidAmount(BigDecimal.ZERO);
+            a.setRemainingAmount(BigDecimal.ZERO);
+            return changedNonBillable;
+        }
 
         if (fee.compareTo(BigDecimal.ZERO) <= 0) {
             // Ücret 0 ise ödenen/kalan de 0 olmalı — tutarsızlık olamaz.

@@ -16,6 +16,8 @@ const TABS = [
   { key: 'partial', label: 'Kısmi Ödenen', endpoint: '/payments/partial', empty: 'Kısmi ödenen seans yok.' },
   { key: 'paid', label: 'Ödenenler', endpoint: '/payments/paid', empty: 'Henüz ödenmiş seans yok.' },
   { key: 'packageFree', label: 'Paket / Ücretsiz', endpoint: '/payments/package-free', empty: 'Paket veya ücretsiz seans yok.' },
+  { key: 'cancelled', label: 'İptal Edilenler', endpoint: '/payments/cancelled', empty: 'İptal edilmiş randevu yok.' },
+  { key: 'noShow', label: 'Gelmeyenler', endpoint: '/payments/no-show', empty: 'Gelinmeyen randevu yok.' },
 ]
 
 const SORT_OPTIONS = [

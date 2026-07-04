@@ -33,6 +33,14 @@ public class Appointment {
     @JoinColumn(name = "psychologist_id", nullable = false)
     private User psychologist;
 
+    // V2.2A.2: Bu randevu bir sabit randevu (recurring) kuralından üretildiyse
+    // ilişkilendirilir. Nullable — manuel oluşturulan randevularda null kalır.
+    // Sadece "kuralı pasifleştirince gelecekteki randevuları da iptal et" gibi
+    // opsiyonel toplu işlemler için kullanılır; normal randevu akışını etkilemez.
+    @ManyToOne
+    @JoinColumn(name = "recurring_appointment_id")
+    private RecurringAppointment recurringAppointment;
+
     @Column(nullable = false)
     private LocalDate appointmentDate;
 

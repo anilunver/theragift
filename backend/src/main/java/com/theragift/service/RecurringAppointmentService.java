@@ -5,11 +5,14 @@ import com.theragift.dto.appointment.AppointmentSaveResponse;
 import com.theragift.dto.recurring.GenerateOccurrencesResponse;
 import com.theragift.dto.recurring.RecurringAppointmentRequest;
 import com.theragift.dto.recurring.RecurringAppointmentResponse;
+import com.theragift.entity.Appointment;
 import com.theragift.entity.Client;
 import com.theragift.entity.RecurringAppointment;
 import com.theragift.entity.User;
+import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.PaymentStatus;
 import com.theragift.exception.ApiException;
+import com.theragift.repository.AppointmentRepository;
 import com.theragift.repository.ClientRepository;
 import com.theragift.repository.RecurringAppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,7 @@ public class RecurringAppointmentService {
 
     private final RecurringAppointmentRepository recurringAppointmentRepository;
     private final ClientRepository clientRepository;
+    private final AppointmentRepository appointmentRepository;
     private final AppointmentService appointmentService;
 
     private static final int GENERATE_WINDOW_DAYS = 28; // "önümüzdeki 4 hafta"
@@ -116,19 +120,25 @@ public class RecurringAppointmentService {
 
     /**
      * "Önümüzdeki 4 hafta randevuları oluştur" aksiyonu.
-     * Adımlar:
-     * 1. Kuralın gününe/sıklığına göre bugünden itibaren 28 gün içine düşen
-     *    occurrence tarihleri hesaplanır (computeOccurrenceDates).
-     * 2. Her occurrence için ÖNCE AppointmentService.hasConflict() ile merkezi
-     *    çakışma kontrolü yapılır — aynı saat doluysa o occurrence hiç
-     *    oluşturulmaz, "skipped" listesine sebebiyle eklenir.
-     * 3. Çakışma yoksa AppointmentService.create() ile (overrideWarnings=true)
-     *    gerçek bir Appointment kaydı oluşturulur — mola/mesai dışı gibi yumuşak
-     *    uyarılar occurrence'ı engellemez, sadece bilgi amaçlı "warnings"
-     *    listesine eklenir.
+     *
+     * V2.2A.1 ile netleştirilen akış:
+     * 1. Kuralın gününe/sıklığına göre bugünden itibaren 4 haftalık pencereye
+     *    düşen occurrence tarihleri hesaplanır (computeOccurrenceDates).
+     * 2. Her occurrence için ÖNCE AppointmentService.hasConflict() (SERT engel)
+     *    kontrol edilir — aynı saatte aktif (CANCELLED olmayan) bir randevu
+     *    varsa o occurrence "blocker" olarak raporlanır ve `overrideWarnings`
+     *    ne olursa olsun ASLA oluşturulmaz.
+     * 3. Blocker olmayan occurrence'lar için mola/mesai dışı/danışan uygunluğu
+     *    gibi YUMUŞAK uyarılar hesaplanır (AppointmentService.computeWarningsPublic).
+     *    - Hiç warning yoksa: occurrence'lar DİREKT oluşturulur.
+     *    - Warning varsa VE overrideWarnings=false ise: HİÇBİR occurrence
+     *      oluşturulmaz, requiresConfirmation=true ile warning listesi
+     *      döndürülür — frontend kullanıcıya onay modalı göstermeli.
+     *    - Warning varsa VE overrideWarnings=true ise: occurrence'lar oluşturulur
+     *      (kullanıcı zaten onayladı).
      */
     @Transactional
-    public GenerateOccurrencesResponse generateNextOccurrences(User psychologist, Long ruleId) {
+    public GenerateOccurrencesResponse generateNextOccurrences(User psychologist, Long ruleId, boolean overrideWarnings) {
         RecurringAppointment rule = findRule(psychologist, ruleId);
         if (!rule.isActive()) {
             throw new ApiException("Pasif bir sabit randevu kuralı için randevu üretilemez.", HttpStatus.BAD_REQUEST);
@@ -139,24 +149,44 @@ public class RecurringAppointmentService {
 
         List<LocalDate> occurrenceDates = computeOccurrenceDates(rule, today, rangeEnd);
 
-        List<com.theragift.dto.appointment.AppointmentResponse> created = new ArrayList<>();
-        List<GenerateOccurrencesResponse.SkippedOccurrence> skipped = new ArrayList<>();
-        List<String> warningsAgg = new ArrayList<>();
+        List<GenerateOccurrencesResponse.OccurrenceIssue> blockers = new ArrayList<>();
+        List<GenerateOccurrencesResponse.OccurrenceIssue> warnings = new ArrayList<>();
+        List<LocalDate> creatableDates = new ArrayList<>();
 
         for (LocalDate date : occurrenceDates) {
             if (appointmentService.hasConflict(psychologist, date, rule.getStartTime(), rule.getEndTime())) {
-                skipped.add(GenerateOccurrencesResponse.SkippedOccurrence.builder()
-                        .date(date)
-                        .startTime(rule.getStartTime())
-                        .endTime(rule.getEndTime())
-                        .reason("Bu saatte zaten başka bir randevu var, occurrence oluşturulmadı.")
+                blockers.add(GenerateOccurrencesResponse.OccurrenceIssue.builder()
+                        .date(date).startTime(rule.getStartTime()).endTime(rule.getEndTime())
+                        .message("Bu saatte zaten aktif bir randevu var — occurrence oluşturulamaz.")
                         .build());
                 continue;
             }
 
-            List<String> warnings = appointmentService.computeWarningsPublic(
+            List<String> occWarnings = appointmentService.computeWarningsPublic(
                     psychologist, rule.getClient(), date, rule.getStartTime(), rule.getEndTime());
+            for (String w : occWarnings) {
+                warnings.add(GenerateOccurrencesResponse.OccurrenceIssue.builder()
+                        .date(date).startTime(rule.getStartTime()).endTime(rule.getEndTime())
+                        .message(w)
+                        .build());
+            }
+            creatableDates.add(date);
+        }
 
+        // Warning varsa ve kullanıcı henüz onaylamadıysa: HİÇBİR randevu oluşturmadan
+        // onay iste. Bu, "uyarı gösterip yine de sessizce oluşturma" hatasının düzeltmesidir.
+        if (!warnings.isEmpty() && !overrideWarnings) {
+            return GenerateOccurrencesResponse.builder()
+                    .requiresConfirmation(true)
+                    .createdCount(0)
+                    .createdAppointments(List.of())
+                    .blockers(blockers)
+                    .warnings(warnings)
+                    .build();
+        }
+
+        List<com.theragift.dto.appointment.AppointmentResponse> created = new ArrayList<>();
+        for (LocalDate date : creatableDates) {
             AppointmentRequest req = new AppointmentRequest();
             req.setClientId(rule.getClient().getId());
             req.setAppointmentDate(date);
@@ -165,32 +195,73 @@ public class RecurringAppointmentService {
             req.setSessionType(rule.getSessionType());
             req.setSessionFee(rule.getFeeAmount());
             req.setPaymentStatus(rule.getPaymentStatusDefault());
+            // Warning'ler zaten yukarıda ya hiç yoktu ya da kullanıcı tarafından
+            // onaylandı (overrideWarnings=true) — bu yüzden burada create() çağrısı
+            // her zaman overrideWarnings=true ile yapılır. Blocker (çakışma) kontrolü
+            // zaten yukarıda yapıldığı ve creatableDates'e blocker'lı tarihler hiç
+            // eklenmediği için create() içindeki checkConflict() burada tetiklenmez.
             req.setOverrideWarnings(true);
 
             AppointmentSaveResponse saveResponse = appointmentService.create(psychologist, req);
             created.add(saveResponse.getAppointment());
-            if (!warnings.isEmpty()) {
-                warningsAgg.add(date + ": " + String.join(" ", warnings));
-            }
+
+            // Bu occurrence'ı kurala bağla — sadece "kuralı pasifleştirince gelecekteki
+            // randevuları da iptal et" gibi opsiyonel toplu işlemler için kullanılır,
+            // AppointmentService.create()'in kendi davranışını etkilemez.
+            Long createdId = saveResponse.getAppointment().getId();
+            appointmentRepository.findById(createdId).ifPresent(a -> {
+                a.setRecurringAppointment(rule);
+                appointmentRepository.save(a);
+            });
         }
 
         return GenerateOccurrencesResponse.builder()
+                .requiresConfirmation(false)
                 .createdCount(created.size())
-                .skippedCount(skipped.size())
-                .created(created)
-                .skipped(skipped)
-                .warnings(warningsAgg)
+                .createdAppointments(created)
+                .blockers(blockers)
+                .warnings(warnings)
                 .build();
     }
 
     /**
-     * Kuralın gününe/sıklığına göre [rangeStart, rangeEnd] aralığına düşen
-     * occurrence tarihlerini üretir. rule.startDate'ten başlar, kuralın
+     * "Pasif yap" sonrası opsiyonel ikinci adım: bu kurala bağlı, GELECEKTEKİ
+     * (bugün dahil, bugünden önce değil) ve hâlâ SCHEDULED durumda olan
+     * randevuları CANCELLED yapar. Geçmiş randevulara, COMPLETED/NO_SHOW/zaten
+     * CANCELLED olanlara asla dokunmaz. Kuralın kendisini etkilemez (zaten
+     * pasifleştirilmiş olmalı, ama bu metod kuralın active durumunu kontrol
+     * etmez — psikolog isterse aktif bir kural için de kullanabilir).
+     */
+    @Transactional
+    public int cancelFutureAppointments(User psychologist, Long ruleId) {
+        RecurringAppointment rule = findRule(psychologist, ruleId);
+        LocalDate today = LocalDate.now();
+
+        List<Appointment> futureScheduled = appointmentRepository
+                .findByRecurringAppointmentAndStatusAndAppointmentDateGreaterThanEqual(
+                        rule, AppointmentStatus.SCHEDULED, today);
+
+        for (Appointment a : futureScheduled) {
+            a.setStatus(AppointmentStatus.CANCELLED);
+        }
+        appointmentRepository.saveAll(futureScheduled);
+        return futureScheduled.size();
+    }
+
+    /**
+     * Kuralın gününe/sıklığına göre [rangeStart, rangeEnd) aralığına (rangeEnd HARİÇ)
+     * düşen occurrence tarihlerini üretir. rule.startDate'ten başlar, kuralın
      * dayOfWeek'ine hizalanır, rangeStart'tan önceki occurrence'lar atlanır
      * (geçmişte randevu üretilmez), rule.endDate varsa onu geçmez.
-     * NOT (MVP sınırı): MONTHLY, 28 günlük "önümüzdeki 4 hafta" penceresinde
-     * pratikte tek bir occurrence anlamına gelir (gerçek takvim ayı değil,
-     * haftalık hizalama kullanılır) — bu buton bağlamında yeterlidir.
+     *
+     * ÖNEMLİ (V2.2A.1 düzeltmesi): rangeEnd HARİÇ tutulur, çünkü GENERATE_WINDOW_DAYS=28
+     * ile "bugün dahil 28 gün" tam olarak 4 haftalık bir pencere ifade eder — üst sınırı
+     * dahil etmek WEEKLY bir kural için (0., 7., 14., 21., 28. gün) 5 occurrence üretip
+     * "Önümüzdeki 4 hafta" butonunun beklentisiyle tutarsız bir sonuç veriyordu.
+     *
+     * NOT (MVP sınırı): MONTHLY, 4 haftalık pencerede pratikte tek bir occurrence
+     * anlamına gelir (gerçek takvim ayı değil, haftalık hizalama kullanılır) — bu
+     * buton bağlamında yeterlidir.
      */
     private List<LocalDate> computeOccurrenceDates(RecurringAppointment rule, LocalDate rangeStart, LocalDate rangeEnd) {
         List<LocalDate> dates = new ArrayList<>();
@@ -211,7 +282,7 @@ public class RecurringAppointmentService {
             cursor = cursor.plusDays(stepDays);
         }
 
-        while (!cursor.isAfter(rangeEnd)) {
+        while (cursor.isBefore(rangeEnd)) {
             if (rule.getEndDate() == null || !cursor.isAfter(rule.getEndDate())) {
                 dates.add(cursor);
             }

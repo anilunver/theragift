@@ -6,6 +6,7 @@ import com.theragift.dto.client.PaymentSummaryResponse;
 import com.theragift.entity.Appointment;
 import com.theragift.entity.Client;
 import com.theragift.entity.User;
+import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.PaymentStatus;
 import com.theragift.exception.ApiException;
 import com.theragift.repository.AppointmentRepository;
@@ -81,6 +82,14 @@ public class ClientService {
         clientRepository.save(client);
     }
 
+    /**
+     * V2.2A.3: AppointmentStatus = CANCELLED veya NO_SHOW olan randevular
+     * danışan ödeme özetindeki toplam ciro/tahsilat/borç hesaplarına dahil
+     * edilmez (non-billable). Bu randevular listede ("appointments" / lines)
+     * görünürlük için hâlâ yer alır (geçmişi görmek isteyebilir), ancak
+     * kalan tutarları 0 olarak gösterilir ve toplamlara/borç sayaçlarına
+     * hiç katılmazlar.
+     */
     public PaymentSummaryResponse getPaymentSummary(User psychologist, Long id) {
         Client client = findClient(psychologist, id);
         List<Appointment> appointments = appointmentRepository.findByClient(client);
@@ -90,11 +99,15 @@ public class ClientService {
         BigDecimal totalRemaining = BigDecimal.ZERO;
         int unpaidCount = 0;
         int overdueCount = 0;
+        int billableCount = 0;
 
         List<PaymentSummaryResponse.AppointmentPaymentLine> lines = appointments.stream().map(a -> {
+            boolean billable = isBillableAppointment(a);
             BigDecimal fee = a.getSessionFee() != null ? a.getSessionFee() : BigDecimal.ZERO;
-            BigDecimal paid = a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO;
-            BigDecimal remaining = a.getRemainingAmount() != null ? a.getRemainingAmount() : fee.subtract(paid);
+            BigDecimal paid = billable ? (a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO) : BigDecimal.ZERO;
+            BigDecimal remaining = billable
+                    ? (a.getRemainingAmount() != null ? a.getRemainingAmount() : fee.subtract(paid))
+                    : BigDecimal.ZERO;
             return PaymentSummaryResponse.AppointmentPaymentLine.builder()
                     .appointmentId(a.getId())
                     .appointmentDate(a.getAppointmentDate().toString())
@@ -106,6 +119,12 @@ public class ClientService {
         }).toList();
 
         for (Appointment a : appointments) {
+            if (!isBillableAppointment(a)) {
+                // CANCELLED / NO_SHOW: seans gerçekleşmedi — ciro/borç toplamlarına
+                // ve tahsil edilmeyen/geciken sayaçlarına hiç eklenmez.
+                continue;
+            }
+            billableCount++;
             BigDecimal fee = a.getSessionFee() != null ? a.getSessionFee() : BigDecimal.ZERO;
             BigDecimal paid = a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO;
             BigDecimal remaining = a.getRemainingAmount() != null ? a.getRemainingAmount() : fee.subtract(paid);
@@ -125,7 +144,7 @@ public class ClientService {
         return PaymentSummaryResponse.builder()
                 .clientId(client.getId())
                 .clientFullName(client.getFirstName() + " " + client.getLastName())
-                .totalAppointments(appointments.size())
+                .totalAppointments(billableCount)
                 .totalFeeCharged(totalFee)
                 .totalPaid(totalPaid)
                 .totalRemaining(totalRemaining)
@@ -133,6 +152,14 @@ public class ClientService {
                 .overdueCount(overdueCount)
                 .appointments(lines)
                 .build();
+    }
+
+    /**
+     * V2.2A.3: CANCELLED ve NO_SHOW artık tamamen non-billable — ciro/borç
+     * hesaplarının hiçbirine dahil edilmez.
+     */
+    private boolean isBillableAppointment(Appointment a) {
+        return a.getStatus() != AppointmentStatus.CANCELLED && a.getStatus() != AppointmentStatus.NO_SHOW;
     }
 
     private Client findClient(User psychologist, Long id) {

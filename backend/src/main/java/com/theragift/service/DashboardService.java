@@ -28,14 +28,23 @@ public class DashboardService {
     private final PaymentService paymentService;
     private final SubscriptionService subscriptionService;
 
-    private static final int SLOT_MINUTES = 50;
+    // V2.2A.1: SuggestionService ile tutarlı olsun diye 50 -> 60 ve tam saate
+    // hizalama (bkz. computeAvailableSlotsToday) — "Boş Slot" sayısı artık
+    // Öneriler ekranının önerebileceği gerçek slot sayısını yansıtır.
+    private static final int SLOT_MINUTES = 60;
 
     public DashboardSummaryResponse getSummary(User psychologist) {
         LocalDate today = LocalDate.now();
 
+        // V2.2A.3: "Toplam Seans" (todayAppointmentsCount) yalnızca aktif/
+        // ücretlendirilebilir (billable) seansları sayar — CANCELLED ve NO_SHOW
+        // hariç tutulur (Payments tarafındaki isBillableAppointment kuralıyla
+        // tutarlı olsun diye).
         List<Appointment> todayAppointments = appointmentRepository
                 .findByPsychologistAndAppointmentDate(psychologist, today)
-                .stream().filter(a -> a.getStatus() != AppointmentStatus.CANCELLED).toList();
+                .stream()
+                .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED && a.getStatus() != AppointmentStatus.NO_SHOW)
+                .toList();
 
         BigDecimal todayRevenue = todayAppointments.stream()
                 .map(a -> a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO)
@@ -81,7 +90,10 @@ public class DashboardService {
 
         int count = 0;
         for (WorkingHour wh : hours) {
-            LocalTime cursor = wh.getStartTime();
+            // Tam saate hizala (SuggestionService ile aynı kural).
+            LocalTime cursor = wh.getStartTime().getMinute() == 0
+                    ? wh.getStartTime()
+                    : wh.getStartTime().plusMinutes(60 - wh.getStartTime().getMinute());
             while (!cursor.plusMinutes(SLOT_MINUTES).isAfter(wh.getEndTime())) {
                 LocalTime slotStart = cursor;
                 LocalTime slotEnd = cursor.plusMinutes(SLOT_MINUTES);

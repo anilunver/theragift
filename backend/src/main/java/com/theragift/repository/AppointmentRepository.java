@@ -2,7 +2,9 @@ package com.theragift.repository;
 
 import com.theragift.entity.Appointment;
 import com.theragift.entity.Client;
+import com.theragift.entity.RecurringAppointment;
 import com.theragift.entity.User;
+import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -28,4 +30,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             User psychologist, LocalDate date, List<PaymentStatus> statuses);
 
     List<Appointment> findByPsychologistAndAppointmentDateGreaterThanEqual(User psychologist, LocalDate date);
+
+    // V2.2A.2: Payments sayfasında "İptal Edilenler" / "Gelmeyenler" sekmeleri için.
+    // Not: bu AppointmentStatus'a göre filtreler (PaymentStatus'taki aynı isimli
+    // CANCELLED/NO_SHOW değerleriyle KARIŞTIRILMAMALI — ikisi bağımsız alanlardır).
+    List<Appointment> findByPsychologistAndStatus(User psychologist, AppointmentStatus status);
+
+    // V2.2A.2: Bir sabit randevu kuralı pasifleştirildiğinde, sadece o kurala bağlı
+    // GELECEKTEKİ ve hâlâ SCHEDULED olan randevuları bulmak için (toplu iptal).
+    List<Appointment> findByRecurringAppointmentAndStatusAndAppointmentDateGreaterThanEqual(
+            RecurringAppointment recurringAppointment, AppointmentStatus status, LocalDate date);
 }

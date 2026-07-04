@@ -28,7 +28,7 @@ public class PaymentService {
     /** Geriye dönük uyumluluk için korunuyor: tüm "tahsil edilecek ailesi" (geciken dahil). */
     public List<AppointmentResponse> getUnpaid(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, OUTSTANDING_STATUSES)
-                .stream().filter(this::isNotCancelledAppointment).map(this::toResponse).toList();
+                .stream().filter(this::isBillableAppointment).map(this::toResponse).toList();
     }
 
     /** Tahsil Edilecek: kalan borcu > 0 ve henüz vadesi geçmemiş UNPAID/PAY_LATER kayıtlar. */
@@ -37,7 +37,7 @@ public class PaymentService {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
                         List.of(PaymentStatus.UNPAID, PaymentStatus.PAY_LATER))
                 .stream()
-                .filter(this::isNotCancelledAppointment)
+                .filter(this::isBillableAppointment)
                 .filter(this::hasRemainingDebt)
                 .filter(a -> a.getPaymentDueDate() == null || !a.getPaymentDueDate().isBefore(today))
                 .map(this::toResponse)
@@ -49,7 +49,7 @@ public class PaymentService {
         return appointmentRepository.findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
                         psychologist, LocalDate.now(), OUTSTANDING_STATUSES)
                 .stream()
-                .filter(this::isNotCancelledAppointment)
+                .filter(this::isBillableAppointment)
                 .filter(this::hasRemainingDebt)
                 .map(this::toResponse)
                 .toList();
@@ -59,7 +59,7 @@ public class PaymentService {
     public List<AppointmentResponse> getPartial(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, List.of(PaymentStatus.PARTIAL_PAID))
                 .stream()
-                .filter(this::isNotCancelledAppointment)
+                .filter(this::isBillableAppointment)
                 .filter(a -> isPositive(a.getPaidAmount()) && hasRemainingDebt(a))
                 .map(this::toResponse)
                 .toList();
@@ -69,6 +69,7 @@ public class PaymentService {
     public List<AppointmentResponse> getPaid(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, List.of(PaymentStatus.PAID))
                 .stream()
+                .filter(this::isBillableAppointment)
                 .filter(a -> !hasRemainingDebt(a))
                 .map(this::toResponse)
                 .toList();
@@ -78,19 +79,45 @@ public class PaymentService {
     public List<AppointmentResponse> getPackageOrFree(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
                         List.of(PaymentStatus.PACKAGE_USED, PaymentStatus.FREE))
+                .stream()
+                .filter(this::isBillableAppointment)
+                .map(this::toResponse).toList();
+    }
+
+    /**
+     * İptal Edilenler — AppointmentStatus = CANCELLED kayıtlar.
+     * ÖNEMLİ: bu AppointmentStatus.CANCELLED'a göre filtreler, PaymentStatus.CANCELLED'a
+     * göre DEĞİL — bu iki alan bağımsızdır (bir randevu appointment olarak iptal
+     * edilmeden de ödeme durumu "İptal Edildi" olarak işaretlenebilir, ya da tam tersi).
+     */
+    public List<AppointmentResponse> getCancelled(User psychologist) {
+        return appointmentRepository.findByPsychologistAndStatus(psychologist, AppointmentStatus.CANCELLED)
                 .stream().map(this::toResponse).toList();
     }
 
     /**
-     * Aylık Ciro / Tahsil Edilen / Tahsil Edilmeyen hesap kuralı:
-     * - İptal edilen randevu (appointment status CANCELLED) tamamen hariç.
-     * - Ödeme durumu FREE, PACKAGE_USED veya CANCELLED ise cirodan ve borçtan hariç
-     *   (paket/ücretsiz nakit tahsilat sayılmaz, iptal edilen ödeme borç sayılmaz).
+     * Gelmeyenler — AppointmentStatus = NO_SHOW kayıtlar. Ödeme durumu ne olursa
+     * olsun (UNPAID/PAY_LATER borçlu kalabilir, FREE borçsuzdur, PAID tahsil
+     * edilmiş sayılır) burada listelenir — sekme sadece randevu durumuna bakar,
+     * ödeme durumu rozet olarak ayrıca gösterilir.
+     */
+    public List<AppointmentResponse> getNoShow(User psychologist) {
+        return appointmentRepository.findByPsychologistAndStatus(psychologist, AppointmentStatus.NO_SHOW)
+                .stream().map(this::toResponse).toList();
+    }
+
+    /**
+     * Aylık Ciro / Tahsil Edilen / Tahsil Edilmeyen hesap kuralı (V2.2A.3):
+     * - AppointmentStatus = CANCELLED veya NO_SHOW olan randevular TAMAMEN hariç
+     *   (non-billable — MVP kuralı: "seans gerçekleşmedi = ciro/borç dışı").
+     *   Bu, PaymentStatus'tan BAĞIMSIZ bir kontroldür.
+     * - Ödeme durumu FREE veya PACKAGE_USED ise cirodan ve borçtan hariç
+     *   (paket/ücretsiz nakit tahsilat sayılmaz).
      * - PAID: ödenen tutar tahsil edilene, ücret ciroya eklenir.
      * - PARTIAL_PAID: ödenen tahsil edilene, kalan tahsil edilmeyene eklenir.
-     * - UNPAID / PAY_LATER / NO_SHOW (ödeme durumu): kalan borç varsa tahsil
-     *   edilmeyene eklenir; NO_SHOW tek başına ciroyu sıfırlamaz, gerçek
-     *   paid/remaining değerlerine göre hesaplanır.
+     * - UNPAID / PAY_LATER: kalan borç varsa tahsil edilmeyene eklenir.
+     * - "Toplam Seans" artık sadece aktif/ücretlendirilebilir (billable) seansları
+     *   sayar — CANCELLED ve NO_SHOW hiç sayılmaz.
      */
     public MonthlySummaryResponse getMonthlySummary(User psychologist) {
         YearMonth ym = YearMonth.now();
@@ -100,7 +127,7 @@ public class PaymentService {
         List<Appointment> monthly = appointmentRepository
                 .findByPsychologistAndAppointmentDateBetweenOrderByAppointmentDateAscStartTimeAsc(psychologist, start, end)
                 .stream()
-                .filter(this::isNotCancelledAppointment)
+                .filter(this::isBillableAppointment)
                 .toList();
 
         BigDecimal totalRevenue = BigDecimal.ZERO;
@@ -113,8 +140,10 @@ public class PaymentService {
         for (Appointment a : monthly) {
             PaymentStatus ps = a.getPaymentStatus();
 
-            // Ücretsiz / paketten düşülen / ödeme durumu iptal olanlar cirodan ve
-            // borçtan tamamen hariç tutulur.
+            // Ücretsiz / paketten düşülenler cirodan ve borçtan tamamen hariç tutulur.
+            // (PaymentStatus.CANCELLED de burada hariç tutulur — AppointmentStatus
+            // zaten billable olsa bile ödeme durumu "İptal Edildi" işaretlenmiş
+            // eski/tutarsız bir kayıt varsa yine de ciroya/borca eklenmesin diye.)
             if (ps == PaymentStatus.FREE || ps == PaymentStatus.PACKAGE_USED || ps == PaymentStatus.CANCELLED) {
                 continue;
             }
@@ -130,7 +159,7 @@ public class PaymentService {
             if (ps == PaymentStatus.PAID) {
                 paidCount++;
             } else if (remaining.compareTo(BigDecimal.ZERO) > 0) {
-                // UNPAID, PAY_LATER, PARTIAL_PAID, NO_SHOW (kalan borcu olan her durum)
+                // UNPAID, PAY_LATER, PARTIAL_PAID (kalan borcu olan her durum)
                 unpaidCount++;
                 totalUnpaid = totalUnpaid.add(remaining);
             }
@@ -148,8 +177,14 @@ public class PaymentService {
                 .build();
     }
 
-    private boolean isNotCancelledAppointment(Appointment a) {
-        return a.getStatus() != AppointmentStatus.CANCELLED;
+    /**
+     * "Billable" (ücretlendirilebilir) — randevu durumu CANCELLED veya NO_SHOW
+     * DEĞİLSE true döner. V2.2A.3 MVP kuralı: iptal edilen ya da gelinmeyen bir
+     * seans hiç gerçekleşmemiş sayılır; ciro/tahsilat/borç hesaplarının hiçbirine
+     * dahil edilmez, sadece kendi sekmesinde (İptal Edilenler / Gelmeyenler) görünür.
+     */
+    private boolean isBillableAppointment(Appointment a) {
+        return a.getStatus() != AppointmentStatus.CANCELLED && a.getStatus() != AppointmentStatus.NO_SHOW;
     }
 
     private boolean hasRemainingDebt(Appointment a) {
