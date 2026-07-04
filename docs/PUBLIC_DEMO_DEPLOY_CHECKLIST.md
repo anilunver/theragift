@@ -13,31 +13,25 @@ Bu doküman, TheraGift'i gerçek bir public demo olarak (Vercel + Render/Railway
 - [ ] Veritabanı oluşturduktan sonra şu bilgileri not alın: **Host/URL**, **kullanıcı adı**, **şifre**, **port**, **DB adı**.
 - [ ] JDBC URL formatına çevirin: `jdbc:postgresql://HOST:PORT/DBADI` (bazı sağlayıcılar `postgres://` formatında verir — `jdbc:` öneki eklemeniz gerekir).
 
-## 3. Backend deploy servisi oluştur: Render veya Railway
+## 3. Backend deploy servisi oluştur: Render (Docker)
 
-- [ ] Render veya Railway'de yeni bir "Web Service" (Render) veya "Service" (Railway) oluşturun, GitHub reponuza bağlayın.
+- [ ] Render'da yeni bir **"Web Service"** oluşturun, GitHub reponuza (`theragift`) bağlayın.
+- [ ] Render'ın "Runtime" seçiminde **Docker** seçin (Render'da native Java runtime seçeneği görünmeyebiliyor; bu yüzden `backend/Dockerfile` üzerinden build alınacak).
 
 ## 4. Backend root directory
 
-- [ ] Root/Base directory: **`backend`**
+- [ ] Root Directory: **`backend`** (bu dizinde `Dockerfile`, `pom.xml` ve `src/` bulunur — monorepo olduğu için ZORUNLUDUR.)
 
-## 5. Backend build command
+## 5. Backend build ayarı (Docker)
 
-```
-mvn clean package -DskipTests
-```
+- [ ] Docker runtime seçildiğinde Render Build/Start Command alanlarını göstermez — Root Directory içindeki **`Dockerfile`**'ı otomatik bulup onunla build alır. Ayrıca bir şey girmenize gerek yok.
+- [ ] Render "Dockerfile Path" sorarsa: **`Dockerfile`** (Root Directory zaten `backend` olduğu için tam yol otomatik `backend/Dockerfile` olur).
 
-> Not: Bu repoda şu an bir Maven Wrapper (`mvnw`) dosyası **yoktur**. Render/Railway'in Java buildpack'i genelde kendi Maven'ını sağlar, bu yüzden düz `mvn` komutu çoğu zaman yeterlidir. Eğer platform "mvnw bulunamadı" hatası verirse, kendi bilgisayarınızda (Maven kurulu olduğu için) `cd backend && mvn -N wrapper:wrapper` çalıştırıp oluşan `mvnw`, `mvnw.cmd` ve `.mvn/` dosyalarını commit edin, sonra build command'ı `./mvnw clean package -DskipTests` olarak güncelleyin.
+`backend/Dockerfile`, multi-stage build ile çalışır: `maven:3.9-eclipse-temurin-17` image'ında Java 17 + Maven ile `mvn clean package -DskipTests` çalıştırır, ardından üretilen jar'ı hafif bir `eclipse-temurin:17-jre` runtime image'ına `app.jar` olarak kopyalar. Bu sayede Render'da Java runtime seçimi yapmanıza gerek kalmaz; her şey Docker image'ının içinde tanımlıdır.
 
 ## 6. Backend start command
 
-```
-java -jar target/theragift-backend.jar
-```
-
-(`pom.xml` içinde `<finalName>theragift-backend</finalName>` tanımlı olduğu için jar adı sabittir; `java -jar target/*.jar` de çalışır.)
-
-- [ ] Platformda **Java 17** runtime seçildiğinden emin olun (proje Java 17 gerektirir, daha eski sürümle derlenmez).
+- [ ] Docker runtime'da start command'ı da Render sormaz — `Dockerfile`'ın `ENTRYPOINT`'i otomatik çalışır ve Render'ın verdiği `PORT` değişkenine otomatik uyum sağlar (bkz. Adım 7'deki `PORT` satırı).
 
 ## 7. Backend environment variables
 
@@ -52,7 +46,8 @@ Platformun "Environment Variables" bölümüne şunları girin:
 | `JWT_EXPIRATION_MS` | `86400000` | İsteğe bağlı, varsayılan 24 saat |
 | `CORS_ALLOWED_ORIGINS` | `https://<vercel-domain>` | Adım 9'da Vercel domain'i alındıktan sonra güncellenecek |
 | `SEED_DATA_ENABLED` | `true` (demo için) / `false` (gerçek veri için) | Public demo'da `true` kalabilir ama bkz. Adım 19 |
-| `SERVER_PORT` | Genelde platform kendi portunu env ile verir (örn. Render `PORT`) | Render/Railway kendi port değişkenini otomatik enjekte edebilir; gerekirse `SERVER_PORT` yerine platformun kendi port mekanizmasını kullanın |
+
+- [ ] `PORT` değişkeni için ayrıca bir şey **eklemenize gerek yok** — Render bunu otomatik enjekte eder, `Dockerfile`'ın `ENTRYPOINT`'i bunu okuyup uygulamayı doğru portta başlatır. `SERVER_PORT`'u elle set etmenize gerek yoktur (istenirse hâlâ desteklenir, ama Render'da `PORT` önceliklidir).
 
 ## 8. Backend deploy sonrası test ✅
 
@@ -123,7 +118,7 @@ dist
 
 1. GitHub push ✅
 2. Hosted PostgreSQL oluştur
-3. Render/Railway'de backend servisi oluştur (root: `backend`, build: `mvn clean package -DskipTests`, start: `java -jar target/theragift-backend.jar`)
+3. Render'da backend servisi oluştur — Runtime: **Docker**, Root Directory: `backend` (build/start command Render tarafından `backend/Dockerfile`'dan otomatik alınır)
 4. Backend env değişkenlerini gir, deploy et
 5. `/api/health` test et
 6. Vercel'de frontend projesi oluştur (root: `frontend`, framework: Vite, build: `npm run build`, output: `dist`)
