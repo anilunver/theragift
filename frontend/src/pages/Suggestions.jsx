@@ -17,7 +17,8 @@ export default function Suggestions() {
   const [searched, setSearched] = useState(false)
 
   useEffect(() => {
-    api.get('/clients').then((res) => setClients(res.data))
+    // V2.2D: Pasif danışanlar öneri listesinde varsayılan olarak gösterilmez.
+    api.get('/clients').then((res) => setClients((res.data || []).filter((c) => c.active)))
   }, [])
 
   const fetchSuggestions = async (id) => {

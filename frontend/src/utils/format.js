@@ -141,6 +141,19 @@ export function formatTime(value) {
   return value.slice(0, 5)
 }
 
+// V2.2D: "10:00" + 50 -> "10:50" (saat sarımını da destekler, "HH:mm" formatında döner).
+// Danışan/pratik ayarları varsayılan seans süresine göre bitiş saatini otomatik hesaplamak için kullanılır.
+export function addMinutes(timeStr, minutes) {
+  if (!timeStr) return timeStr
+  const [h, m] = timeStr.slice(0, 5).split(':').map(Number)
+  if (Number.isNaN(h) || Number.isNaN(m)) return timeStr
+  let total = h * 60 + m + Number(minutes || 0)
+  total = ((total % (24 * 60)) + 24 * 60) % (24 * 60)
+  const newH = Math.floor(total / 60)
+  const newM = total % 60
+  return `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`
+}
+
 // "2026-07-08" -> "08.07.2026"
 export function formatDate(value) {
   if (!value) return '-'

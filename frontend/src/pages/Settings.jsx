@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../api/axios.js'
 import WorkingHoursForm from '../components/WorkingHoursForm.jsx'
 import UnavailableBlocksSection from '../components/UnavailableBlocksSection.jsx'
+import FeeManagementSection from '../components/FeeManagementSection.jsx'
 import GiftLicenseCard from '../components/GiftLicenseCard.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import LoadingState from '../components/LoadingState.jsx'
@@ -117,11 +118,50 @@ export default function Settings() {
           </div>
 
           <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
+            <h3 className="font-extrabold text-ink mb-1">Klinik / Pratik Ayarları</h3>
+            <p className="text-sm text-muted mb-4">Yeni danışan ve randevu oluştururken kullanılacak varsayılan değerler.</p>
+            <form onSubmit={handleProfileSubmit} className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <input name="clinicName" value={profile.clinicName || ''} onChange={handleProfileChange} placeholder="Klinik / Pratik Adı"
+                  className="border border-border rounded-xl px-3 py-2.5 text-sm" />
+                <select name="currency" value={profile.currency || 'TRY'} onChange={handleProfileChange}
+                  className="border border-border rounded-xl px-3 py-2.5 text-sm">
+                  <option value="TRY">TRY (₺)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <input type="number" name="defaultSessionDurationMinutes" value={profile.defaultSessionDurationMinutes || ''}
+                  onChange={handleProfileChange} placeholder="Varsayılan Seans Süresi (dk)"
+                  className="border border-border rounded-xl px-3 py-2.5 text-sm" />
+                <select name="defaultSessionType" value={profile.defaultSessionType || 'ONLINE'} onChange={handleProfileChange}
+                  className="border border-border rounded-xl px-3 py-2.5 text-sm">
+                  <option value="ONLINE">Online</option>
+                  <option value="FACE_TO_FACE">Yüz Yüze</option>
+                </select>
+                <input type="number" name="defaultBufferMinutes" value={profile.defaultBufferMinutes || ''}
+                  onChange={handleProfileChange} placeholder="Randevu Arası (dk)"
+                  className="border border-border rounded-xl px-3 py-2.5 text-sm" />
+              </div>
+              <textarea name="practiceNotes" value={profile.practiceNotes || ''} onChange={handleProfileChange} rows={2}
+                placeholder="Pratik notları (opsiyonel)" className="border border-border rounded-xl px-3 py-2.5 text-sm w-full" />
+
+              <button type="submit" disabled={saving}
+                className="bg-brand hover:bg-brand-light text-white font-bold px-5 py-2.5 rounded-xl text-sm disabled:opacity-60 transition-colors">
+                {saving ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
+              </button>
+            </form>
+          </div>
+
+          <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
             <h3 className="font-extrabold text-ink mb-4">Çalışma Saatleri</h3>
             <WorkingHoursForm workingHours={workingHours} onChanged={loadAll} />
           </div>
 
           <UnavailableBlocksSection />
+
+          <FeeManagementSection profile={profile} onApplied={loadAll} />
 
           <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
             <h3 className="font-extrabold text-ink mb-2">Danışan Uygunluk Formu</h3>

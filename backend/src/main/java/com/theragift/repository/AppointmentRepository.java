@@ -40,4 +40,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     // GELECEKTEKİ ve hâlâ SCHEDULED olan randevuları bulmak için (toplu iptal).
     List<Appointment> findByRecurringAppointmentAndStatusAndAppointmentDateGreaterThanEqual(
             RecurringAppointment recurringAppointment, AppointmentStatus status, LocalDate date);
+
+    // V2.2D.1: Bir danışan pasif yapılırken, sadece GELECEKTEKİ ve hâlâ SCHEDULED
+    // olan randevularını bulmak için (geçmiş/COMPLETED/NO_SHOW/CANCELLED asla dahil değil).
+    List<Appointment> findByClientAndStatusAndAppointmentDateGreaterThanEqual(
+            Client client, AppointmentStatus status, LocalDate date);
 }

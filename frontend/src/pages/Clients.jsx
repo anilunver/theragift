@@ -23,6 +23,8 @@ export default function Clients() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('ACTIVE')
+  const [practiceDefaults, setPracticeDefaults] = useState(null)
 
   const loadClients = () => {
     setLoading(true)
@@ -34,6 +36,23 @@ export default function Clients() {
   }
 
   useEffect(() => { loadClients() }, [])
+
+  useEffect(() => {
+    api.get('/psychologist/profile')
+      .then((res) => setPracticeDefaults(res.data))
+      .catch(() => {})
+  }, [])
+
+  const openNewClientModal = () => {
+    setForm({
+      ...EMPTY_FORM,
+      sessionTypePreference: practiceDefaults?.defaultSessionType || 'ONLINE',
+      defaultSessionFee: practiceDefaults?.defaultSessionFee || '',
+      defaultPaymentMethod: practiceDefaults?.defaultPaymentMethod || 'BANK_TRANSFER',
+    })
+    setFormError('')
+    setShowModal(true)
+  }
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -63,9 +82,15 @@ export default function Clients() {
     }
   }
 
-  const filtered = clients.filter((c) =>
-    `${c.firstName} ${c.lastName}`.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = clients
+    .filter((c) => {
+      if (statusFilter === 'ACTIVE') return c.active
+      if (statusFilter === 'INACTIVE') return !c.active
+      return true
+    })
+    .filter((c) =>
+      `${c.firstName} ${c.lastName}`.toLowerCase().includes(search.toLowerCase())
+    )
 
   return (
     <div className="space-y-5">
@@ -81,7 +106,8 @@ export default function Clients() {
               className="border border-border rounded-xl px-3 py-2 text-sm w-36 sm:w-44"
             />
             <button
-              onClick={() => { setForm(EMPTY_FORM); setFormError(''); setShowModal(true) }}
+              type="button"
+              onClick={openNewClientModal}
               className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm whitespace-nowrap"
             >
               + Danışan Ekle
@@ -89,6 +115,27 @@ export default function Clients() {
           </>
         }
       />
+
+      <div className="flex gap-2">
+        {[
+          { value: 'ACTIVE', label: 'Aktifler' },
+          { value: 'INACTIVE', label: 'Pasifler' },
+          { value: 'ALL', label: 'Tümü' },
+        ].map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => setStatusFilter(opt.value)}
+            className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-colors ${
+              statusFilter === opt.value
+                ? 'bg-brand text-white border-brand'
+                : 'bg-white text-muted border-border hover:bg-panel'
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
 
       {loading ? (
         <LoadingState text="Danışanlar yükleniyor..." />

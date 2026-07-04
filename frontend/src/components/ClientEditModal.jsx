@@ -35,6 +35,7 @@ export default function ClientEditModal({ client, onClose, onUpdated }) {
       setError('Ad ve soyad zorunludur.')
       return
     }
+    const isDeactivating = client.active && !form.active
     setSaving(true)
     try {
       await api.put(`/clients/${client.id}`, {
@@ -43,7 +44,31 @@ export default function ClientEditModal({ client, onClose, onUpdated }) {
         lastName: toTitleCase(form.lastName),
         defaultSessionFee: form.defaultSessionFee ? Number(form.defaultSessionFee) : null,
       })
-      showToast('Danışan güncellendi.')
+
+      if (isDeactivating) {
+        // V2.2D.1: Danışan pasif yapılırken, gelecekte hâlâ SCHEDULED randevusu
+        // varsa kullanıcıya bunları da iptal etmek isteyip istemediğini sor.
+        // "Hayır" derse (ya da hiç gelecek randevusu yoksa) sadece active=false
+        // kalır, randevulara dokunulmaz.
+        try {
+          const countRes = await api.get(`/clients/${client.id}/future-appointments-count`)
+          const futureCount = countRes.data?.count || 0
+          if (futureCount > 0) {
+            const wantsCancel = window.confirm(
+              `Bu danışanın gelecekte planlı ${futureCount} randevusu var. Pasif yaparken bu randevuları iptal etmek ister misiniz?`
+            )
+            if (wantsCancel) {
+              await api.patch(`/clients/${client.id}/status`, { active: false, cancelFutureAppointments: true })
+            }
+          }
+        } catch {
+          // Ön kontrol/iptal isteği başarısız olsa bile danışan zaten pasif yapıldı —
+          // bu ek adımdaki bir hata ana kaydı geçersiz kılmamalı, sessizce yok sayılır.
+        }
+        showToast('Danışan pasif yapıldı.')
+      } else {
+        showToast('Danışan güncellendi.')
+      }
       onUpdated()
       onClose()
     } catch (err) {

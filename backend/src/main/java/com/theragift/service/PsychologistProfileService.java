@@ -37,6 +37,13 @@ public class PsychologistProfileService {
         if (request.getDefaultSessionDurationMinutes() != null)
             profile.setDefaultSessionDurationMinutes(request.getDefaultSessionDurationMinutes());
 
+        // --- V2.2D: Klinik / Pratik Ayarları (PracticeSettings) ---
+        if (request.getClinicName() != null) profile.setClinicName(request.getClinicName());
+        if (request.getDefaultSessionType() != null) profile.setDefaultSessionType(request.getDefaultSessionType());
+        if (request.getDefaultBufferMinutes() != null) profile.setDefaultBufferMinutes(request.getDefaultBufferMinutes());
+        if (request.getCurrency() != null) profile.setCurrency(request.getCurrency());
+        if (request.getPracticeNotes() != null) profile.setPracticeNotes(request.getPracticeNotes());
+
         profileRepository.save(profile);
 
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
@@ -59,6 +66,11 @@ public class PsychologistProfileService {
                 .defaultSessionFee(profile.getDefaultSessionFee())
                 .defaultPaymentMethod(profile.getDefaultPaymentMethod() != null ? profile.getDefaultPaymentMethod().name() : null)
                 .defaultSessionDurationMinutes(profile.getDefaultSessionDurationMinutes())
+                .clinicName(profile.getClinicName())
+                .defaultSessionType(profile.getDefaultSessionType() != null ? profile.getDefaultSessionType().name() : null)
+                .defaultBufferMinutes(profile.getDefaultBufferMinutes())
+                .currency(profile.getCurrency())
+                .practiceNotes(profile.getPracticeNotes())
                 .build();
     }
 }

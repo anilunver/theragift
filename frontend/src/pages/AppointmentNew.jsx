@@ -3,15 +3,18 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../api/axios.js'
 import PageHeader from '../components/PageHeader.jsx'
 import { useToast } from '../context/ToastContext.jsx'
-import { todayIsoDate } from '../utils/format.js'
+import { todayIsoDate, addMinutes } from '../utils/format.js'
 
 export default function AppointmentNew() {
   const location = useLocation()
   const navigate = useNavigate()
   const { showToast } = useToast()
   const preselectedClientId = location.state?.clientId || ''
+  const hasPrefillEnd = Boolean(location.state?.prefillEnd)
 
   const [clients, setClients] = useState([])
+  const [practiceProfile, setPracticeProfile] = useState(null)
+  const [endTimeTouched, setEndTimeTouched] = useState(hasPrefillEnd)
   const [form, setForm] = useState({
     clientId: preselectedClientId,
     appointmentDate: location.state?.prefillDate || todayIsoDate(),
@@ -27,10 +30,32 @@ export default function AppointmentNew() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    api.get('/clients').then((res) => setClients(res.data))
+    // V2.2D: Pasif danışanlar yeni randevu formunda varsayılan olarak gösterilmez.
+    api.get('/clients').then((res) => setClients((res.data || []).filter((c) => c.active)))
+    api.get('/psychologist/profile').then((res) => {
+      setPracticeProfile(res.data)
+      // Danışan seçilmeden önce, formun varsayılanlarını pratik ayarlarından doldur.
+      setForm((prev) => ({
+        ...prev,
+        sessionFee: prev.sessionFee || res.data.defaultSessionFee || '',
+        sessionType: res.data.defaultSessionType || prev.sessionType,
+        paymentMethod: res.data.defaultPaymentMethod || prev.paymentMethod,
+        endTime: hasPrefillEnd ? prev.endTime : addMinutes(prev.startTime, res.data.defaultSessionDurationMinutes || 50),
+      }))
+    }).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    if (name === 'endTime') setEndTimeTouched(true)
+    if (name === 'startTime' && !endTimeTouched) {
+      const duration = practiceProfile?.defaultSessionDurationMinutes || 50
+      setForm((prev) => ({ ...prev, startTime: value, endTime: addMinutes(value, duration) }))
+      return
+    }
+    setForm({ ...form, [name]: value })
+  }
 
   const handleClientChange = (e) => {
     const clientId = e.target.value
@@ -38,10 +63,11 @@ export default function AppointmentNew() {
     setForm({
       ...form,
       clientId,
-      // Danışanın varsayılan ücreti / seans tercihi / ödeme yöntemi otomatik dolsun
-      sessionFee: client?.defaultSessionFee ?? form.sessionFee,
-      sessionType: client?.sessionTypePreference || form.sessionType,
-      paymentMethod: client?.defaultPaymentMethod || form.paymentMethod,
+      // Danışanın varsayılan ücreti / seans tercihi / ödeme yöntemi otomatik dolsun;
+      // danışanda tanımlı değilse pratik ayarlarının varsayılanına düşülür.
+      sessionFee: client?.defaultSessionFee ?? practiceProfile?.defaultSessionFee ?? form.sessionFee,
+      sessionType: client?.sessionTypePreference || practiceProfile?.defaultSessionType || form.sessionType,
+      paymentMethod: client?.defaultPaymentMethod || practiceProfile?.defaultPaymentMethod || form.paymentMethod,
     })
   }
 

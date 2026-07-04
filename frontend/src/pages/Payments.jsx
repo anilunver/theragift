@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import api from '../api/axios.js'
 import PaymentStatusBadge from '../components/PaymentStatusBadge.jsx'
 import PaymentUpdateModal from '../components/PaymentUpdateModal.jsx'
@@ -50,13 +50,37 @@ export default function Payments() {
 
   const activeTab = TABS.find((t) => t.key === tab)
 
+  // V2.2D bugfix: Sekmeler hızlıca değiştirildiğinde önceki sekmenin isteği
+  // (örn. "Tahsil Edilecek") yeni sekmenin isteğinden (örn. "İptal Edilenler")
+  // SONRA dönebiliyordu — bu durumda eski/yanlış sekmenin verisi state'e
+  // yazılıyor ve "İptal Edilenler" gibi sekmelerde geçici olarak iptal
+  // olmayan kayıtlar görünüyordu (race condition). Her isteğin hangi sekme
+  // için atıldığını bir ref'te tutup, sadece HÂLÂ GÜNCEL olan sekmenin
+  // cevabı state'e yazılarak bu düzeltilir.
+  const requestedTabRef = useRef(tab)
+
   const loadTab = () => {
+    const requestedTab = tab
+    requestedTabRef.current = requestedTab
     setLoading(true)
     setError('')
+    // V2.2D.1: Sekme değişir değişmez önceki sekmenin verisi ekrandan temizlenir —
+    // "loading" göstergesi zaten eski veriyi gizliyordu ama bu ek bir güvenlik katmanı:
+    // yeni istek dönene kadar state'te asla başka bir sekmenin kayıtları kalmaz.
+    setItems([])
     api.get(activeTab.endpoint)
-      .then((res) => setItems(res.data))
-      .catch(() => setError('Ödeme verileri yüklenemedi.'))
-      .finally(() => setLoading(false))
+      .then((res) => {
+        if (requestedTabRef.current !== requestedTab) return // eski/artık geçersiz istek — yok say
+        setItems(Array.isArray(res.data) ? res.data : [])
+      })
+      .catch(() => {
+        if (requestedTabRef.current !== requestedTab) return
+        setError('Ödeme verileri yüklenemedi.')
+      })
+      .finally(() => {
+        if (requestedTabRef.current !== requestedTab) return
+        setLoading(false)
+      })
   }
 
   const loadMonthly = () => {
@@ -77,6 +101,12 @@ export default function Payments() {
   // yani "Ödenenler" sekmesindeyken arama sadece ödenen kayıtlar içinde yapılır.
   const filteredItems = useMemo(() => {
     let result = items.filter((a) => {
+      // V2.2D bugfix: ek güvenlik katmanı — backend zaten AppointmentStatus'a göre
+      // doğru filtreliyor, ama sekme değişimi sırasında yarış durumu (race condition)
+      // ya da ileride bir regresyon olursa bile İptal Edilenler/Gelmeyenler
+      // sekmelerinde yanlış kayıt asla GÖRÜNMEZ.
+      if (tab === 'cancelled' && a.status !== 'CANCELLED') return false
+      if (tab === 'noShow' && a.status !== 'NO_SHOW') return false
       if (filters.search && !a.clientFullName.toLowerCase().includes(filters.search.toLowerCase())) return false
       if (filters.dateFrom && a.appointmentDate < filters.dateFrom) return false
       if (filters.dateTo && a.appointmentDate > filters.dateTo) return false
@@ -103,7 +133,7 @@ export default function Payments() {
     })
 
     return result
-  }, [items, filters, sort])
+  }, [items, filters, sort, tab])
 
   const activeFilterCount = Object.values(filters).filter((v) => v !== '').length
 

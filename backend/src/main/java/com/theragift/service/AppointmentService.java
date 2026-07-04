@@ -7,14 +7,17 @@ import com.theragift.dto.appointment.PaymentUpdateRequest;
 import com.theragift.entity.Appointment;
 import com.theragift.entity.AuditLog;
 import com.theragift.entity.Client;
+import com.theragift.entity.PsychologistProfile;
 import com.theragift.entity.User;
 import com.theragift.entity.WorkingHour;
 import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.PaymentStatus;
+import com.theragift.enums.SessionType;
 import com.theragift.exception.ApiException;
 import com.theragift.repository.AppointmentRepository;
 import com.theragift.repository.AuditLogRepository;
 import com.theragift.repository.ClientRepository;
+import com.theragift.repository.PsychologistProfileRepository;
 import com.theragift.repository.WorkingHourRepository;
 import com.theragift.util.AvailabilityTextParser;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +41,7 @@ public class AppointmentService {
     private final AuditLogRepository auditLogRepository;
     private final WorkingHourRepository workingHourRepository;
     private final UnavailableBlockService unavailableBlockService;
+    private final PsychologistProfileRepository psychologistProfileRepository;
 
     public List<AppointmentResponse> getAll(User psychologist) {
         return appointmentRepository.findByPsychologistOrderByAppointmentDateDescStartTimeDesc(psychologist)
@@ -86,7 +90,20 @@ public class AppointmentService {
                     .build();
         }
 
-        BigDecimal fee = request.getSessionFee() != null ? request.getSessionFee() : client.getDefaultSessionFee();
+        // V2.2D: Ücret/seans türü/ödeme yöntemi için sıralı fallback zinciri —
+        // 1) formda girilen değer, 2) danışanın kendi varsayılanı, 3) psikoloğun
+        // Klinik/Pratik Ayarları'ndaki (PsychologistProfile) genel varsayılanı.
+        // Bu SADECE bir güvenlik ağıdır; asıl otomatik doldurma frontend'de
+        // (Yeni Randevu formu) yapılır, psikolog formda değerleri değiştirebilir.
+        PsychologistProfile profile = psychologistProfileRepository.findByUser(psychologist).orElse(null);
+
+        BigDecimal fee = request.getSessionFee() != null ? request.getSessionFee()
+                : client.getDefaultSessionFee() != null ? client.getDefaultSessionFee()
+                : (profile != null ? profile.getDefaultSessionFee() : null);
+
+        SessionType sessionType = request.getSessionType() != null ? request.getSessionType()
+                : client.getSessionTypePreference() != null ? client.getSessionTypePreference()
+                : (profile != null ? profile.getDefaultSessionType() : SessionType.ONLINE);
 
         Appointment appointment = Appointment.builder()
                 .client(client)
@@ -94,12 +111,14 @@ public class AppointmentService {
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
-                .sessionType(request.getSessionType())
+                .sessionType(sessionType)
                 .status(request.getStatus() != null ? request.getStatus() : AppointmentStatus.SCHEDULED)
                 .notes(request.getNotes())
                 .sessionFee(fee)
                 .paymentStatus(request.getPaymentStatus() != null ? request.getPaymentStatus() : PaymentStatus.UNPAID)
-                .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : client.getDefaultPaymentMethod())
+                .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod()
+                        : client.getDefaultPaymentMethod() != null ? client.getDefaultPaymentMethod()
+                        : (profile != null ? profile.getDefaultPaymentMethod() : null))
                 .paymentDueDate(request.getPaymentDueDate())
                 .remainingAmount(fee)
                 .build();
