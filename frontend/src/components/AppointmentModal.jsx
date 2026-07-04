@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../api/axios.js'
 import PaymentStatusBadge from './PaymentStatusBadge.jsx'
 import AppointmentStatusBadge from './AppointmentStatusBadge.jsx'
@@ -7,6 +8,7 @@ import { formatCurrency, formatDate, formatTime, sessionTypeLabel } from '../uti
 
 export default function AppointmentModal({ appointment, onClose, onUpdated }) {
   const { showToast } = useToast()
+  const navigate = useNavigate()
   const [status, setStatus] = useState(appointment.status)
   const [saving, setSaving] = useState(false)
   const [confirmingCancel, setConfirmingCancel] = useState(false)
@@ -50,6 +52,12 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
           </div>
         </div>
 
+        {appointment.outOfWorkingHours && (
+          <div className="text-xs font-semibold text-purple-800 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 mb-3">
+            Bu randevu psikoloğun tanımlı mesai saatleri dışında oluşturulmuş.
+          </div>
+        )}
+
         <div className="space-y-2 text-sm mb-5 bg-panel rounded-xl p-3">
           <div className="flex justify-between"><span className="text-muted">Tarih</span> <strong>{formatDate(appointment.appointmentDate)}</strong></div>
           <div className="flex justify-between"><span className="text-muted">Saat</span> <strong>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}</strong></div>
@@ -61,6 +69,15 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
             </div>
           )}
         </div>
+
+        {appointment.clientId && (
+          <button
+            onClick={() => navigate(`/clients/${appointment.clientId}`)}
+            className="text-xs font-semibold text-brand-light hover:underline mb-4"
+          >
+            Danışan detayına git →
+          </button>
+        )}
 
         {status !== 'CANCELLED' && (
           <div className="grid grid-cols-2 gap-2 mb-4">

@@ -10,6 +10,7 @@ import com.theragift.exception.ApiException;
 import com.theragift.repository.AppointmentRepository;
 import com.theragift.repository.ClientRepository;
 import com.theragift.repository.WorkingHourRepository;
+import com.theragift.util.AvailabilityTextParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,21 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
- * Basit ama çalışan randevu öneri algoritması.
- * Adımlar:
- * 1. Psikoloğun çalışma saatlerini oku
- * 2. Önümüzdeki 14 gün için her gün çalışma saatlerinden boş slotlar üret
- * 3. Mevcut randevularla çakışan / mola saatlerine denk gelen slotları ele
- * 4. Danışanın uygunluk notunu dikkate alarak skor hesapla
- * 5. En yüksek skorlu 3 slotu döndür
+ * Randevu öneri algoritması.
+ * Adımlar (her biri sırayla uygulanır, hiçbiri atlanmaz):
+ * 1. Psikoloğun aktif çalışma günlerini ve saatlerini oku.
+ * 2. Önümüzdeki {@value #LOOKAHEAD_DAYS} gün için, çalışma saatlerinden seans
+ *    süresi kadar boş slotlar üret.
+ * 3. Mola saatine denk gelen slotları tamamen ele — asla önerilmez.
+ * 4. Mevcut (iptal olmayan) randevularla çakışan slotları ele — asla önerilmez.
+ * 5. Danışanın uygunluk notundan çıkarılan gün/saat tercihiyle uyuşmayan slotlar
+ *    varsayılan olarak önerilmez (danışan hiç tercih belirtmediyse bu adım atlanır).
+ * 6. Kalan adaylar; danışan tercihine uyum, yakın tarihli olma ve o günün genel
+ *    yoğunluğuna göre skorlanır, en yüksek skorlu 3 slot döndürülür.
+ * Bir gün tamamen doluysa/uygun değilse otomatik olarak bir sonraki uygun güne
+ * geçilir (döngü zaten tüm günleri tarar).
  */
 @Service
 @RequiredArgsConstructor
@@ -43,19 +48,6 @@ public class SuggestionService {
     private static final int SLOT_MINUTES = 50;
     private static final int LOOKAHEAD_DAYS = 14;
 
-    private static final Map<String, DayOfWeek> TR_DAY_MAP = Map.ofEntries(
-            Map.entry("pazartesi", DayOfWeek.MONDAY),
-            Map.entry("salı", DayOfWeek.TUESDAY),
-            Map.entry("sali", DayOfWeek.TUESDAY),
-            Map.entry("çarşamba", DayOfWeek.WEDNESDAY),
-            Map.entry("carsamba", DayOfWeek.WEDNESDAY),
-            Map.entry("perşembe", DayOfWeek.THURSDAY),
-            Map.entry("persembe", DayOfWeek.THURSDAY),
-            Map.entry("cuma", DayOfWeek.FRIDAY),
-            Map.entry("cumartesi", DayOfWeek.SATURDAY),
-            Map.entry("pazar", DayOfWeek.SUNDAY)
-    );
-
     public List<SuggestionResponse> suggestForClient(User psychologist, Long clientId) {
         Client client = clientRepository.findByIdAndPsychologist(clientId, psychologist)
                 .orElseThrow(() -> new ApiException("Danışan bulunamadı", HttpStatus.NOT_FOUND));
@@ -65,23 +57,33 @@ public class SuggestionService {
             return List.of();
         }
 
-        List<DayOfWeek> preferredDays = extractPreferredDays(client.getAvailabilityNotes());
+        List<DayOfWeek> preferredDays = AvailabilityTextParser.extractPreferredDays(client.getAvailabilityNotes());
+        AvailabilityTextParser.TimeRange preferredRange = AvailabilityTextParser.extractPreferredTimeRange(client.getAvailabilityNotes());
+
+        LocalDate today = LocalDate.now();
 
         List<SuggestionResponse> candidates = new ArrayList<>();
-        LocalDate today = LocalDate.now();
 
         for (int dayOffset = 0; dayOffset < LOOKAHEAD_DAYS; dayOffset++) {
             LocalDate date = today.plusDays(dayOffset);
             DayOfWeek dow = date.getDayOfWeek();
 
+            // Danışan belirli gün(ler) belirtmişse, uymayan günler öneri listesine hiç girmesin.
+            if (!preferredDays.isEmpty() && !preferredDays.contains(dow)) {
+                continue;
+            }
+
             List<WorkingHour> dayHours = workingHours.stream()
                     .filter(wh -> wh.getDayOfWeek() == dow)
                     .toList();
+            if (dayHours.isEmpty()) {
+                continue; // Psikolog o gün çalışmıyor
+            }
+
+            List<Appointment> existing = appointmentRepository.findByPsychologistAndAppointmentDate(psychologist, date)
+                    .stream().filter(a -> a.getStatus() != AppointmentStatus.CANCELLED).toList();
 
             for (WorkingHour wh : dayHours) {
-                List<Appointment> existing = appointmentRepository.findByPsychologistAndAppointmentDate(psychologist, date)
-                        .stream().filter(a -> a.getStatus() != AppointmentStatus.CANCELLED).toList();
-
                 LocalTime cursor = wh.getStartTime();
                 while (!cursor.plusMinutes(SLOT_MINUTES).isAfter(wh.getEndTime())) {
                     LocalTime slotStart = cursor;
@@ -95,9 +97,13 @@ public class SuggestionService {
 
                     boolean isPast = date.isEqual(today) && slotStart.isBefore(LocalTime.now());
 
-                    if (!inBreak && !conflicts && !isPast) {
-                        int score = computeScore(date, slotStart, dow, preferredDays, dayOffset);
-                        String reason = buildReason(dow, slotStart, preferredDays.contains(dow), dayOffset);
+                    // Danışan belirli bir saat aralığı belirtmişse, bu aralığın dışındaki
+                    // slotlar öneri listesine hiç girmesin.
+                    boolean outsidePreferredRange = preferredRange != null && !preferredRange.contains(slotStart, slotEnd);
+
+                    if (!inBreak && !conflicts && !isPast && !outsidePreferredRange) {
+                        int score = computeScore(slotStart, dow, preferredDays, preferredRange != null, dayOffset, existing.size());
+                        String reason = buildReason(dow, slotStart, !preferredDays.isEmpty(), preferredRange != null, dayOffset, existing.size());
                         candidates.add(SuggestionResponse.builder()
                                 .date(date)
                                 .startTime(slotStart)
@@ -119,61 +125,56 @@ public class SuggestionService {
                 .toList();
     }
 
-    private int computeScore(LocalDate date, LocalTime start, DayOfWeek dow, List<DayOfWeek> preferredDays, int dayOffset) {
-        int score = 70;
+    private int computeScore(LocalTime start, DayOfWeek dow, List<DayOfWeek> preferredDays,
+                              boolean hasPreferredRange, int dayOffset, int dayLoad) {
+        int score = 65;
 
-        // Danışanın tercih ettiği güne denk geliyorsa büyük bonus
-        if (!preferredDays.isEmpty() && preferredDays.contains(dow)) {
-            score += 20;
+        // Danışanın tercih ettiği güne denk geliyorsa büyük bonus (bu noktaya kadar
+        // gelen adaylar zaten filtrelenmiş olduğu için preferredDays boş değilse eşleşme kesindir).
+        if (!preferredDays.isEmpty()) {
+            score += 15;
+        }
+        if (hasPreferredRange) {
+            score += 10;
         }
 
         // Yakın tarihli slotlar biraz daha yüksek puan alır
-        if (dayOffset <= 2) score += 8;
-        else if (dayOffset <= 7) score += 4;
+        if (dayOffset <= 2) score += 6;
+        else if (dayOffset <= 7) score += 3;
+
+        // O gün ne kadar az randevu varsa o kadar "az yoğun" kabul edilir
+        if (dayLoad == 0) score += 6;
+        else if (dayLoad <= 2) score += 3;
 
         // Sabah/öğleden sonra dengeli saatler (10:00-16:00) hafif bonus
         if (!start.isBefore(LocalTime.of(10, 0)) && !start.isAfter(LocalTime.of(16, 0))) {
-            score += 4;
+            score += 3;
         }
 
-        return Math.min(score, 98);
+        return Math.min(score, 97);
     }
 
-    private String buildReason(DayOfWeek dow, LocalTime start, boolean matchesPreference, int dayOffset) {
-        String dayNameTr = dayOfWeekToTurkish(dow);
-        StringBuilder sb = new StringBuilder();
-        sb.append(dayNameTr).append(" günü saat ").append(start).append(" için uygun boş slot.");
-        if (matchesPreference) {
-            sb.append(" Danışanın belirttiği uygunluk günüyle örtüşüyor.");
+    private String buildReason(DayOfWeek dow, LocalTime start, boolean matchesDayPreference,
+                                boolean matchesTimePreference, int dayOffset, int dayLoad) {
+        List<String> reasons = new ArrayList<>();
+        String dayNameTr = AvailabilityTextParser.dayOfWeekToTurkish(dow);
+
+        reasons.add(dayNameTr + " günü saat " + start + " psikoloğun çalışma saatleri içinde.");
+        if (matchesDayPreference) {
+            reasons.add("Danışanın uygun günüyle eşleşiyor.");
+        }
+        if (matchesTimePreference) {
+            reasons.add("Danışanın belirttiği saat aralığıyla uyumlu.");
+        }
+        if (dayLoad == 0) {
+            reasons.add("Bu gün henüz hiç randevu yok, daha az yoğun.");
+        } else if (dayLoad <= 2) {
+            reasons.add("Bu gün daha az yoğun.");
         }
         if (dayOffset <= 2) {
-            sb.append(" Yakın tarihli olduğu için önceliklendirildi.");
+            reasons.add("Yakın tarihli olduğu için önceliklendirildi.");
         }
-        return sb.toString();
-    }
 
-    private List<DayOfWeek> extractPreferredDays(String availabilityNotes) {
-        List<DayOfWeek> result = new ArrayList<>();
-        if (availabilityNotes == null || availabilityNotes.isBlank()) return result;
-
-        String normalized = availabilityNotes.toLowerCase(new Locale("tr", "TR"));
-        for (Map.Entry<String, DayOfWeek> entry : TR_DAY_MAP.entrySet()) {
-            if (normalized.contains(entry.getKey()) && !result.contains(entry.getValue())) {
-                result.add(entry.getValue());
-            }
-        }
-        return result;
-    }
-
-    private String dayOfWeekToTurkish(DayOfWeek dow) {
-        return switch (dow) {
-            case MONDAY -> "Pazartesi";
-            case TUESDAY -> "Salı";
-            case WEDNESDAY -> "Çarşamba";
-            case THURSDAY -> "Perşembe";
-            case FRIDAY -> "Cuma";
-            case SATURDAY -> "Cumartesi";
-            case SUNDAY -> "Pazar";
-        };
+        return String.join(" ", reasons);
     }
 }

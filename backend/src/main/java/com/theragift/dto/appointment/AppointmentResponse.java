@@ -31,4 +31,5 @@ public class AppointmentResponse {
     private LocalDate paymentDate;
     private LocalDate paymentDueDate;
     private String paymentNote;
+    private boolean outOfWorkingHours;
 }

@@ -85,11 +85,42 @@ export function formatDate(value) {
   return `${day}.${month}.${year}`
 }
 
+// --- Tarih kayması (timezone) düzeltmesi ---
+// ÖNEMLİ: "YYYY-MM-DD" gibi saat içermeyen ISO tarih string'lerini `new Date(str)`
+// ile parse etmek, string'i UTC gece yarısı olarak yorumlar. Kullanıcının tarayıcı
+// saat dilimi UTC'den farklıysa (örn. Türkiye +3), bu Date nesnesini local saatte
+// okurken (getDay/getDate) veya `toISOString()` ile geri stringe çevirirken bir gün
+// kaymasına yol açar. Bu yüzden ISO tarih string'leri HER ZAMAN elle (yıl, ay, gün)
+// parçalanıp `new Date(y, m-1, d)` ile LOCAL tarih olarak oluşturulmalı; asla
+// toISOString() ile geri stringe çevrilmemeli (o da UTC'ye çevirir).
+
+// "2026-07-08" -> local Date(2026, 6, 8) — UTC dönüşümü yok, gün kayması olmaz.
+export function parseLocalDate(value) {
+  if (!value) return null
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number)
+  if (!year || !month || !day) return null
+  return new Date(year, month - 1, day)
+}
+
+// Local bir Date nesnesini "YYYY-MM-DD" string'ine çevirir.
+// toISOString() KULLANMAZ çünkü o UTC'ye çevirip gün kaydırabilir.
+export function toIsoDateString(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// Bugünün tarihini local saat dilimine göre "YYYY-MM-DD" olarak döner.
+export function todayIsoDate() {
+  return toIsoDateString(new Date())
+}
+
 // Kısa gün adıyla birlikte tarih: "08.07.2026 (Çrş)"
 export function formatDateWithDay(value) {
   if (!value) return '-'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return formatDate(value)
+  const date = parseLocalDate(value)
+  if (!date || Number.isNaN(date.getTime())) return formatDate(value)
   const shortDays = ['Paz', 'Pzt', 'Sal', 'Çrş', 'Per', 'Cum', 'Cmt']
   return `${formatDate(value)} (${shortDays[date.getDay()]})`
 }

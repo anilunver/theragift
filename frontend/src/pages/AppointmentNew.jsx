@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../api/axios.js'
 import PageHeader from '../components/PageHeader.jsx'
 import { useToast } from '../context/ToastContext.jsx'
+import { todayIsoDate } from '../utils/format.js'
 
 export default function AppointmentNew() {
   const location = useLocation()
@@ -13,7 +14,7 @@ export default function AppointmentNew() {
   const [clients, setClients] = useState([])
   const [form, setForm] = useState({
     clientId: preselectedClientId,
-    appointmentDate: location.state?.prefillDate || new Date().toISOString().slice(0, 10),
+    appointmentDate: location.state?.prefillDate || todayIsoDate(),
     startTime: location.state?.prefillStart || '10:00',
     endTime: location.state?.prefillEnd || '10:50',
     sessionType: 'ONLINE',
@@ -44,6 +45,31 @@ export default function AppointmentNew() {
     })
   }
 
+  // Backend, çakışma (conflict) dışındaki durumlar için (mola/mesai dışı/danışan
+  // uygunluğu) "yumuşak" uyarılar döner ve randevuyu KAYDETMEDEN önce onay ister.
+  // Bu kontrol backend'de zorunlu — frontend sadece uyarıyı gösterip kullanıcı
+  // onaylarsa overrideWarnings=true ile aynı isteği tekrar gönderir.
+  const submitAppointment = async (overrideWarnings) => {
+    const payload = {
+      ...form,
+      clientId: Number(form.clientId),
+      sessionFee: form.sessionFee ? Number(form.sessionFee) : null,
+      overrideWarnings,
+    }
+    const res = await api.post('/appointments', payload)
+
+    if (res.data.requiresConfirmation) {
+      const message = res.data.warnings.join('\n\n') + '\n\nYine de oluşturmak istiyor musunuz?'
+      if (window.confirm(message)) {
+        await submitAppointment(true)
+      }
+      return
+    }
+
+    showToast('Randevu oluşturuldu.')
+    navigate('/calendar')
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -59,15 +85,13 @@ export default function AppointmentNew() {
 
     setSaving(true)
     try {
-      await api.post('/appointments', {
-        ...form,
-        clientId: Number(form.clientId),
-        sessionFee: form.sessionFee ? Number(form.sessionFee) : null,
-      })
-      showToast('Randevu oluşturuldu.')
-      navigate('/calendar')
+      await submitAppointment(false)
     } catch (err) {
-      setError(err.response?.data?.message || 'Randevu oluşturulamadı. Lütfen tekrar deneyin.')
+      if (err.response?.status === 409) {
+        setError(err.response?.data?.message || 'Bu saat aralığında zaten bir randevu var.')
+      } else {
+        setError(err.response?.data?.message || 'Randevu oluşturulamadı. Lütfen tekrar deneyin.')
+      }
     } finally {
       setSaving(false)
     }

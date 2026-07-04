@@ -23,4 +23,13 @@ public class AppointmentRequest {
     private PaymentStatus paymentStatus;
     private PaymentMethod paymentMethod;
     private LocalDate paymentDueDate;
+
+    // true ise: mola/mesai dışı/danışan uygunluğu gibi "yumuşak" uyarılar göz ardı
+    // edilip randevu yine de oluşturulur. Çakışma (conflict) kontrolü bundan etkilenmez,
+    // o her zaman kesin engeldir.
+    private Boolean overrideWarnings;
+
+    public boolean isOverrideWarnings() {
+        return Boolean.TRUE.equals(overrideWarnings);
+    }
 }

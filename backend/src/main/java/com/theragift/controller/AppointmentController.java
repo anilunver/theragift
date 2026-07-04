@@ -2,6 +2,7 @@ package com.theragift.controller;
 
 import com.theragift.dto.appointment.AppointmentRequest;
 import com.theragift.dto.appointment.AppointmentResponse;
+import com.theragift.dto.appointment.AppointmentSaveResponse;
 import com.theragift.dto.appointment.PaymentUpdateRequest;
 import com.theragift.service.AppointmentService;
 import com.theragift.util.CurrentUserProvider;
@@ -26,7 +27,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public AppointmentResponse create(@RequestBody AppointmentRequest request) {
+    public AppointmentSaveResponse create(@RequestBody AppointmentRequest request) {
         return appointmentService.create(currentUserProvider.getCurrentUser(), request);
     }
 

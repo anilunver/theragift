@@ -41,12 +41,16 @@ export default function Suggestions() {
   }
 
   const handleUse = (suggestion) => {
+    // Backend LocalTime alanlarını "HH:mm:ss" olarak serileştirebilir; <input type="time">
+    // ile tutarlı olması için "HH:mm" olacak şekilde kırpıyoruz. Tarih zaten "YYYY-MM-DD"
+    // string olarak backend'den geldiği gibi aktarılır — Date objesine hiç çevrilmez,
+    // bu yüzden zaman dilimi kaynaklı gün kayması burada oluşmaz.
     navigate('/appointments/new', {
       state: {
         clientId: Number(clientId),
         prefillDate: suggestion.date,
-        prefillStart: suggestion.startTime,
-        prefillEnd: suggestion.endTime,
+        prefillStart: suggestion.startTime.slice(0, 5),
+        prefillEnd: suggestion.endTime.slice(0, 5),
       },
     })
   }
@@ -76,7 +80,7 @@ export default function Suggestions() {
       {!loading && error && <ErrorState text={error} />}
 
       {!loading && !error && searched && suggestions.length === 0 && (
-        <EmptyState text="Uygun boş slot bulunamadı. Ayarlar sayfasından çalışma saatlerini kontrol edin." icon="🔍" />
+        <EmptyState text="Bu danışan için uygun boş slot bulunamadı." icon="🔍" />
       )}
 
       {!loading && !error && suggestions.length > 0 && (

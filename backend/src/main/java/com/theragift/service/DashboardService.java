@@ -45,6 +45,7 @@ public class DashboardService {
         BigDecimal unpaidAmount = appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
                         List.of(PaymentStatus.UNPAID, PaymentStatus.PARTIAL_PAID, PaymentStatus.PAY_LATER))
                 .stream()
+                .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED) // iptal edilen randevu borç sayılmaz
                 .map(a -> {
                     BigDecimal fee = a.getSessionFee() != null ? a.getSessionFee() : BigDecimal.ZERO;
                     BigDecimal paid = a.getPaidAmount() != null ? a.getPaidAmount() : BigDecimal.ZERO;
@@ -52,9 +53,12 @@ public class DashboardService {
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        int overdueCount = appointmentRepository.findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
+        int overdueCount = (int) appointmentRepository.findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
                 psychologist, today, List.of(PaymentStatus.UNPAID, PaymentStatus.PARTIAL_PAID, PaymentStatus.PAY_LATER)
-        ).size();
+        ).stream()
+                .filter(a -> a.getStatus() != AppointmentStatus.CANCELLED)
+                .filter(a -> a.getRemainingAmount() != null && a.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0)
+                .count();
 
         int pendingForms = formRepository.findByPsychologistAndStatusOrderByCreatedAtDesc(
                 psychologist, AvailabilityFormStatus.PENDING).size();

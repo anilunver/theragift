@@ -6,6 +6,7 @@ import AppointmentModal from '../components/AppointmentModal.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
+import { toIsoDateString } from '../utils/format.js'
 
 function getMonday(date) {
   const d = new Date(date)
@@ -26,7 +27,8 @@ export default function Calendar() {
   const loadWeek = () => {
     setLoading(true)
     setError('')
-    const dateStr = weekStart.toISOString().slice(0, 10)
+    // Local tarih kullanılır — toISOString() UTC'ye çevirdiği için gün kaymasına yol açar.
+    const dateStr = toIsoDateString(weekStart)
     api.get('/appointments/week', { params: { weekStart: dateStr } })
       .then((res) => setAppointments(res.data))
       .catch(() => setError('Randevular yüklenemedi.'))

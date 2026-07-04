@@ -4,6 +4,7 @@ import com.theragift.dto.appointment.AppointmentResponse;
 import com.theragift.dto.payment.MonthlySummaryResponse;
 import com.theragift.entity.Appointment;
 import com.theragift.entity.User;
+import com.theragift.enums.AppointmentStatus;
 import com.theragift.enums.PaymentStatus;
 import com.theragift.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +21,55 @@ public class PaymentService {
 
     private final AppointmentRepository appointmentRepository;
 
+    // Borç sayılabilecek ("tahsil edilecek" ailesindeki) ödeme durumları
     private static final List<PaymentStatus> OUTSTANDING_STATUSES =
             List.of(PaymentStatus.UNPAID, PaymentStatus.PARTIAL_PAID, PaymentStatus.PAY_LATER);
 
+    /** Geriye dönük uyumluluk için korunuyor: tüm "tahsil edilecek ailesi" (geciken dahil). */
     public List<AppointmentResponse> getUnpaid(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, OUTSTANDING_STATUSES)
-                .stream().map(this::toResponse).toList();
+                .stream().filter(this::isNotCancelledAppointment).map(this::toResponse).toList();
     }
 
+    /** Tahsil Edilecek: ödenmemiş veya "sonra ödenecek" ama henüz vadesi geçmemiş. */
+    public List<AppointmentResponse> getToCollect(User psychologist) {
+        LocalDate today = LocalDate.now();
+        return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
+                        List.of(PaymentStatus.UNPAID, PaymentStatus.PAY_LATER))
+                .stream()
+                .filter(this::isNotCancelledAppointment)
+                .filter(a -> a.getPaymentDueDate() == null || !a.getPaymentDueDate().isBefore(today))
+                .map(this::toResponse)
+                .toList();
+    }
+
+    /** Geciken: son ödeme tarihi geçmiş ve kalan borcu olan seanslar. */
     public List<AppointmentResponse> getOverdue(User psychologist) {
         return appointmentRepository.findByPsychologistAndPaymentDueDateBeforeAndPaymentStatusIn(
                         psychologist, LocalDate.now(), OUTSTANDING_STATUSES)
+                .stream()
+                .filter(this::isNotCancelledAppointment)
+                .filter(a -> a.getRemainingAmount() != null && a.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0)
+                .map(this::toResponse)
+                .toList();
+    }
+
+    /** Kısmi Ödenen. */
+    public List<AppointmentResponse> getPartial(User psychologist) {
+        return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, List.of(PaymentStatus.PARTIAL_PAID))
+                .stream().filter(this::isNotCancelledAppointment).map(this::toResponse).toList();
+    }
+
+    /** Ödenenler — tamamen ödenmiş olsa da listeden kaybolmaz. */
+    public List<AppointmentResponse> getPaid(User psychologist) {
+        return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist, List.of(PaymentStatus.PAID))
+                .stream().map(this::toResponse).toList();
+    }
+
+    /** Paket / Ücretsiz seanslar — nakit tahsilat veya borç sayılmaz. */
+    public List<AppointmentResponse> getPackageOrFree(User psychologist) {
+        return appointmentRepository.findByPsychologistAndPaymentStatusIn(psychologist,
+                        List.of(PaymentStatus.PACKAGE_USED, PaymentStatus.FREE))
                 .stream().map(this::toResponse).toList();
     }
 
@@ -40,7 +79,10 @@ public class PaymentService {
         LocalDate end = ym.atEndOfMonth();
 
         List<Appointment> monthly = appointmentRepository
-                .findByPsychologistAndAppointmentDateBetweenOrderByAppointmentDateAscStartTimeAsc(psychologist, start, end);
+                .findByPsychologistAndAppointmentDateBetweenOrderByAppointmentDateAscStartTimeAsc(psychologist, start, end)
+                .stream()
+                .filter(this::isNotCancelledAppointment) // İptal edilen randevular ciroya/tahsilata dahil edilmez
+                .toList();
 
         BigDecimal totalRevenue = BigDecimal.ZERO;
         BigDecimal totalPaid = BigDecimal.ZERO;
@@ -71,6 +113,10 @@ public class PaymentService {
                 .paidCount(paidCount)
                 .unpaidCount(unpaidCount)
                 .build();
+    }
+
+    private boolean isNotCancelledAppointment(Appointment a) {
+        return a.getStatus() != AppointmentStatus.CANCELLED;
     }
 
     private AppointmentResponse toResponse(Appointment a) {

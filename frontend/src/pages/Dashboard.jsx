@@ -7,6 +7,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
 import EmptyState from '../components/EmptyState.jsx'
+import AppointmentModal from '../components/AppointmentModal.jsx'
 import { formatCurrency, formatDate, formatTime, sessionTypeLabel } from '../utils/format.js'
 
 export default function Dashboard() {
@@ -15,8 +16,9 @@ export default function Dashboard() {
   const [weekAppointments, setWeekAppointments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [selected, setSelected] = useState(null)
 
-  useEffect(() => {
+  const loadAll = () => {
     Promise.all([
       api.get('/dashboard/summary'),
       api.get('/subscription/current'),
@@ -29,7 +31,9 @@ export default function Dashboard() {
       })
       .catch(() => setError('Dashboard verileri yüklenirken bir hata oluştu. Sayfayı yenilemeyi deneyin.'))
       .finally(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(() => { loadAll() }, [])
 
   if (loading) return <LoadingState text="Dashboard yükleniyor..." />
   if (error) return <ErrorState text={error} />
@@ -79,7 +83,11 @@ export default function Dashboard() {
           ) : (
             <div className="space-y-2">
               {weekAppointments.slice(0, 8).map((a) => (
-                <div key={a.id} className="flex items-center justify-between border border-border rounded-xl px-4 py-3">
+                <button
+                  key={a.id}
+                  onClick={() => setSelected(a)}
+                  className="w-full flex items-center justify-between border border-border rounded-xl px-4 py-3 hover:bg-panel transition-colors text-left"
+                >
                   <div className="min-w-0">
                     <div className="font-semibold text-sm text-ink truncate">{a.clientFullName}</div>
                     <div className="text-xs text-muted">{formatDate(a.appointmentDate)} · {formatTime(a.startTime)} - {formatTime(a.endTime)}</div>
@@ -87,7 +95,7 @@ export default function Dashboard() {
                   <span className="text-xs font-semibold px-2 py-1 rounded-full bg-brand-soft text-brand-dark shrink-0 ml-3">
                     {sessionTypeLabel(a.sessionType)}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
           )}
@@ -95,6 +103,14 @@ export default function Dashboard() {
 
         <GiftLicenseCard subscription={subscription} />
       </div>
+
+      {selected && (
+        <AppointmentModal
+          appointment={selected}
+          onClose={() => setSelected(null)}
+          onUpdated={loadAll}
+        />
+      )}
     </div>
   )
 }
