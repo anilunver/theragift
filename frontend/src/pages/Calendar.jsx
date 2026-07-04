@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios.js'
 import WeeklyCalendar from '../components/WeeklyCalendar.jsx'
 import AppointmentModal from '../components/AppointmentModal.jsx'
+import UnavailableBlockFormModal from '../components/UnavailableBlockFormModal.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
@@ -20,19 +21,31 @@ function getMonday(date) {
 export default function Calendar() {
   const [weekStart, setWeekStart] = useState(getMonday(new Date()))
   const [appointments, setAppointments] = useState([])
+  const [unavailableBlocks, setUnavailableBlocks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
+  const [quickCloseDate, setQuickCloseDate] = useState(null)
 
   const loadWeek = () => {
     setLoading(true)
     setError('')
     // Local tarih kullanılır — toISOString() UTC'ye çevirdiği için gün kaymasına yol açar.
     const dateStr = toIsoDateString(weekStart)
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekEnd.getDate() + 6)
+    const weekEndStr = toIsoDateString(weekEnd)
+
     api.get('/appointments/week', { params: { weekStart: dateStr } })
       .then((res) => setAppointments(res.data))
       .catch(() => setError('Randevular yüklenemedi.'))
       .finally(() => setLoading(false))
+
+    // V2.2B: Bu haftaya denk gelen çalışma dışı gün/tatil bloklarını da yükle.
+    // Bu isteğin başarısız olması takvimi çökertmemeli, sadece badge'ler görünmez.
+    api.get('/unavailable-blocks/range', { params: { startDate: dateStr, endDate: weekEndStr } })
+      .then((res) => setUnavailableBlocks(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setUnavailableBlocks([]))
   }
 
   useEffect(() => { loadWeek() }, [weekStart])
@@ -68,7 +81,13 @@ export default function Calendar() {
       ) : error ? (
         <ErrorState text={error} />
       ) : (
-        <WeeklyCalendar weekStart={weekStart} appointments={appointments} onSelectAppointment={setSelected} />
+        <WeeklyCalendar
+          weekStart={weekStart}
+          appointments={appointments}
+          unavailableBlocks={unavailableBlocks}
+          onSelectAppointment={setSelected}
+          onQuickClose={setQuickCloseDate}
+        />
       )}
 
       {selected && (
@@ -76,6 +95,14 @@ export default function Calendar() {
           appointment={selected}
           onClose={() => setSelected(null)}
           onUpdated={loadWeek}
+        />
+      )}
+
+      {quickCloseDate && (
+        <UnavailableBlockFormModal
+          initialDate={quickCloseDate}
+          onClose={() => setQuickCloseDate(null)}
+          onSaved={loadWeek}
         />
       )}
     </div>

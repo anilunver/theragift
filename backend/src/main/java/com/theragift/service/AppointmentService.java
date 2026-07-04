@@ -37,6 +37,7 @@ public class AppointmentService {
     private final ClientRepository clientRepository;
     private final AuditLogRepository auditLogRepository;
     private final WorkingHourRepository workingHourRepository;
+    private final UnavailableBlockService unavailableBlockService;
 
     public List<AppointmentResponse> getAll(User psychologist) {
         return appointmentRepository.findByPsychologistOrderByAppointmentDateDescStartTimeDesc(psychologist)
@@ -298,6 +299,10 @@ public class AppointmentService {
         if (isOutsideClientAvailability(client, dow, start, end)) {
             warnings.add("Bu saat danışanın belirttiği uygunluk dışında. Yine de oluşturmak istiyor musunuz?");
         }
+
+        // V2.2B: Psikoloğun tanımladığı "çalışma dışı gün / tatil" bloğuna denk
+        // geliyorsa yumuşak uyarı ekle — sert engel DEĞİL, override edilebilir.
+        unavailableBlockService.findBlockingMessage(psychologist, date, start, end).ifPresent(warnings::add);
 
         return warnings;
     }

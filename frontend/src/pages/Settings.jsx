@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../api/axios.js'
 import WorkingHoursForm from '../components/WorkingHoursForm.jsx'
+import UnavailableBlocksSection from '../components/UnavailableBlocksSection.jsx'
 import GiftLicenseCard from '../components/GiftLicenseCard.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import LoadingState from '../components/LoadingState.jsx'
@@ -119,6 +120,8 @@ export default function Settings() {
             <h3 className="font-extrabold text-ink mb-4">Çalışma Saatleri</h3>
             <WorkingHoursForm workingHours={workingHours} onChanged={loadAll} />
           </div>
+
+          <UnavailableBlocksSection />
 
           <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
             <h3 className="font-extrabold text-ink mb-2">Danışan Uygunluk Formu</h3>

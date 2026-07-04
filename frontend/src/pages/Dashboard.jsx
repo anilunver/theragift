@@ -8,12 +8,13 @@ import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import AppointmentModal from '../components/AppointmentModal.jsx'
-import { formatCurrency, formatDate, formatTime, sessionTypeLabel } from '../utils/format.js'
+import { formatCurrency, formatDate, formatTime, sessionTypeLabel, todayIsoDate, unavailableBlockTypeLabel } from '../utils/format.js'
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null)
   const [subscription, setSubscription] = useState(null)
   const [weekAppointments, setWeekAppointments] = useState([])
+  const [unavailableBlocks, setUnavailableBlocks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
@@ -31,9 +32,23 @@ export default function Dashboard() {
       })
       .catch(() => setError('Dashboard verileri yüklenirken bir hata oluştu. Sayfayı yenilemeyi deneyin.'))
       .finally(() => setLoading(false))
+
+    // V2.2B: Çalışma dışı gün/tatil bilgi kartı için bloklar ayrıca yüklenir.
+    // Bu isteğin başarısız olması Dashboard'un geri kalanını etkilemez.
+    api.get('/unavailable-blocks')
+      .then((res) => setUnavailableBlocks(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setUnavailableBlocks([]))
   }
 
   useEffect(() => { loadAll() }, [])
+
+  const today = todayIsoDate()
+  const todayBlock = unavailableBlocks.find((b) => b.startDate <= today && b.endDate >= today)
+  const upcomingBlock = !todayBlock
+    ? unavailableBlocks
+        .filter((b) => b.startDate > today)
+        .sort((a, b) => a.startDate.localeCompare(b.startDate))[0]
+    : null
 
   if (loading) return <LoadingState text="Dashboard yükleniyor..." />
   if (error) return <ErrorState text={error} />
@@ -60,6 +75,18 @@ export default function Dashboard() {
           </>
         }
       />
+
+      {todayBlock && (
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm font-semibold text-gray-700">
+          🚫 Bugün {unavailableBlockTypeLabel(todayBlock.type, todayBlock.title)} olarak işaretlendi.
+        </div>
+      )}
+      {!todayBlock && upcomingBlock && (
+        <div className="bg-purple-50 border border-purple-200 rounded-2xl px-4 py-3 text-sm font-semibold text-purple-800">
+          📅 Yaklaşan çalışma dışı dönem: {formatDate(upcomingBlock.startDate)} - {formatDate(upcomingBlock.endDate)}
+          {' '}({unavailableBlockTypeLabel(upcomingBlock.type, upcomingBlock.title)})
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Bugünkü Seans" value={summary.todayAppointmentsCount} hint="Planlanan randevu sayısı" />

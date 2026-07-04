@@ -53,6 +53,29 @@ export function recurrenceTypeLabel(value) {
   return RECURRENCE_TYPE_LABELS[value] || value
 }
 
+// V2.2B: Çalışma dışı gün / tatil blok türleri.
+export const UNAVAILABLE_BLOCK_TYPE_LABELS = {
+  DAY_OFF: 'Çalışma dışı',
+  VACATION: 'Tatil',
+  PERSONAL: 'Özel iş',
+  HOLIDAY: 'Resmi tatil',
+  CUSTOM: 'Diğer',
+}
+
+// Badge renkleri — mevcut tasarım sistemine uygun sade tonlar.
+export const UNAVAILABLE_BLOCK_TYPE_STYLES = {
+  DAY_OFF: 'bg-gray-200 text-gray-700',
+  VACATION: 'bg-purple-100 text-purple-800',
+  PERSONAL: 'bg-amber-100 text-amber-800',
+  HOLIDAY: 'bg-red-100 text-red-800',
+  CUSTOM: 'bg-gray-200 text-gray-700',
+}
+
+export function unavailableBlockTypeLabel(value, customTitle) {
+  if (value === 'CUSTOM' && customTitle) return customTitle
+  return UNAVAILABLE_BLOCK_TYPE_LABELS[value] || value
+}
+
 const DAY_ORDER = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
 
 export function dayOfWeekLabel(value) {

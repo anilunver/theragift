@@ -49,6 +49,7 @@ public class SuggestionService {
     private final WorkingHourRepository workingHourRepository;
     private final AppointmentRepository appointmentRepository;
     private final ClientRepository clientRepository;
+    private final UnavailableBlockService unavailableBlockService;
 
     // V2.2A.1: 50 -> 60. Öneriler artık her zaman tam saatlik bloklar halinde
     // ve saat başlarında (09:00, 10:00, ...) başlar.
@@ -104,6 +105,12 @@ public class SuggestionService {
                 continue; // Psikolog o gün çalışmıyor
             }
 
+            // V2.2B: Tam gün çalışma dışı / tatil olarak işaretlenmiş günler hiç
+            // aday üretmez — bir sonraki uygun güne/haftaya otomatik geçilir.
+            if (unavailableBlockService.isDateFullyBlocked(psychologist, date)) {
+                continue;
+            }
+
             List<Appointment> allThatDay = appointmentRepository.findByPsychologistAndAppointmentDate(psychologist, date);
             // Sadece İPTAL EDİLMEMİŞ randevular çakışma sayılır. CANCELLED olanlar
             // slotu boşaltır ve tekrar önerilebilir hale getirir.
@@ -140,7 +147,11 @@ public class SuggestionService {
                     boolean matchesTimePreference = preferredRange != null && preferredRange.contains(slotStart, slotEnd);
                     boolean outsidePreferredRange = preferredRange != null && !matchesTimePreference;
 
-                    if (!inBreak && !conflicts && !isPast && !outsidePreferredRange) {
+                    // V2.2B: kısmi saat kapalı bloğuna denk gelen slotlar önerilmez
+                    // (tam gün blok zaten yukarıda elendi, burada kısmi saat kontrolü yapılır).
+                    boolean unavailableBlocked = unavailableBlockService.isTimeRangeBlocked(psychologist, date, slotStart, slotEnd);
+
+                    if (!inBreak && !conflicts && !isPast && !outsidePreferredRange && !unavailableBlocked) {
                         boolean freedByCancellation = cancelled.stream().anyMatch(a ->
                                 slotStart.isBefore(a.getEndTime()) && slotEnd.isAfter(a.getStartTime()));
 

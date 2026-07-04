@@ -23,6 +23,8 @@ export function ToastProvider({ children }) {
             className={`rounded-xl px-4 py-3 text-sm font-semibold shadow-lg border ${
               t.type === 'error'
                 ? 'bg-red-50 text-red-700 border-red-200'
+                : t.type === 'warning'
+                ? 'bg-amber-50 text-amber-800 border-amber-200'
                 : 'bg-white text-brand-dark border-brand/30'
             }`}
           >

@@ -37,6 +37,7 @@ public class SeedDataRunner implements CommandLineRunner {
     private final AvailabilityFormRepository formRepository;
     private final RecurringAppointmentRepository recurringAppointmentRepository;
     private final ClientNoteRepository clientNoteRepository;
+    private final UnavailableBlockRepository unavailableBlockRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final String DEMO_EMAIL = "demo@theragift.app";
@@ -315,6 +316,29 @@ public class SeedDataRunner implements CommandLineRunner {
         clientNoteRepository.save(ClientNote.builder()
                 .client(client1)
                 .note("Çarşamba akşamları daha uygun.")
+                .build());
+
+        // --- V2.2B: Çalışma dışı gün / tatil blok örnekleri ---
+        // Tek günlük özel iş: bugünden 5 gün sonrası, tam gün kapalı.
+        unavailableBlockRepository.save(UnavailableBlock.builder()
+                .psychologist(demoUser)
+                .title("Özel iş")
+                .type(UnavailableBlockType.DAY_OFF)
+                .startDate(today.plusDays(5))
+                .endDate(today.plusDays(5))
+                .fullDay(true)
+                .note("Kişisel bir iş nedeniyle bu gün çalışılmıyor.")
+                .build());
+
+        // Yunanistan tatili örneği: bugünden 20-26 gün sonrası arası, tam gün kapalı.
+        unavailableBlockRepository.save(UnavailableBlock.builder()
+                .psychologist(demoUser)
+                .title("Yunanistan Tatili")
+                .type(UnavailableBlockType.VACATION)
+                .startDate(today.plusDays(20))
+                .endDate(today.plusDays(26))
+                .fullDay(true)
+                .note("Yıllık izin — bu aralıkta randevu alınmıyor.")
                 .build());
 
         // Gift License planı ve aboneliği

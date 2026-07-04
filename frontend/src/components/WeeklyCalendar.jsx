@@ -1,4 +1,4 @@
-import { formatTime, toIsoDateString } from '../utils/format.js'
+import { formatTime, toIsoDateString, unavailableBlockTypeLabel, UNAVAILABLE_BLOCK_TYPE_STYLES } from '../utils/format.js'
 
 const DAY_LABELS = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
 
@@ -36,7 +36,15 @@ const PAYMENT_DOT_STYLES = {
   FREE: 'bg-teal-500',
 }
 
-export default function WeeklyCalendar({ weekStart, appointments, onSelectAppointment }) {
+// V2.2B: Bir tarihe denk gelen çalışma dışı/tatil bloğunu bulur. Tam gün blok
+// varsa o öncelikli gösterilir; yoksa kısmi saat bloğu gösterilir.
+function findBlockForDate(dateStr, blocks) {
+  const matches = (blocks || []).filter((b) => b.startDate <= dateStr && b.endDate >= dateStr)
+  if (matches.length === 0) return null
+  return matches.find((b) => b.fullDay) || matches[0]
+}
+
+export default function WeeklyCalendar({ weekStart, appointments, unavailableBlocks, onSelectAppointment, onQuickClose }) {
   const dates = getWeekDates(weekStart)
 
   return (
@@ -48,6 +56,7 @@ export default function WeeklyCalendar({ weekStart, appointments, onSelectAppoin
           .sort((a, b) => a.startTime.localeCompare(b.startTime))
 
         const isToday = dateStr === toIsoDateString(new Date())
+        const block = findBlockForDate(dateStr, unavailableBlocks)
 
         return (
           <div key={dateStr} className={`bg-white border rounded-2xl p-3 min-h-[160px] shadow-sm ${isToday ? 'border-brand ring-1 ring-brand/30' : 'border-border'}`}>
@@ -58,6 +67,14 @@ export default function WeeklyCalendar({ weekStart, appointments, onSelectAppoin
               </div>
               {isToday && <span className="text-[10px] font-bold text-brand-light bg-brand-soft px-2 py-0.5 rounded-full">Bugün</span>}
             </div>
+
+            {block && (
+              <div className={`mb-2 text-[10px] font-bold px-2 py-1 rounded-lg ${UNAVAILABLE_BLOCK_TYPE_STYLES[block.type] || 'bg-gray-200 text-gray-700'}`}>
+                {unavailableBlockTypeLabel(block.type, block.title)}
+                {!block.fullDay && block.startTime && ` (${formatTime(block.startTime)} - ${formatTime(block.endTime)})`}
+              </div>
+            )}
+
             <div className="space-y-1.5">
               {dayAppointments.length === 0 && <div className="text-[11px] text-muted">Randevu yok</div>}
               {dayAppointments.map((a) => (
@@ -76,6 +93,16 @@ export default function WeeklyCalendar({ weekStart, appointments, onSelectAppoin
                 </button>
               ))}
             </div>
+
+            {onQuickClose && !block && (
+              <button
+                type="button"
+                onClick={() => onQuickClose(dateStr)}
+                className="mt-2 w-full text-[10px] font-semibold text-muted hover:text-ink border border-dashed border-border rounded-lg py-1 transition-colors"
+              >
+                Bu günü kapat
+              </button>
+            )}
           </div>
         )
       })}
