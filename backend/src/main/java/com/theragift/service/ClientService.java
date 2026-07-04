@@ -31,6 +31,7 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final AppointmentRepository appointmentRepository;
     private final PsychologistProfileRepository psychologistProfileRepository;
+    private final ActivityLogService activityLogService;
 
     public List<ClientResponse> getAll(User psychologist) {
         return clientRepository.findByPsychologistOrderByCreatedAtDesc(psychologist)
@@ -77,6 +78,10 @@ public class ClientService {
                 .active(request.getActive() == null || request.getActive())
                 .build();
         clientRepository.save(client);
+        // V2.3: Activity Log — kısa, operasyonel bir kayıt. Danışanın notu/
+        // klinik bilgisi değil, sadece adı yazılır.
+        activityLogService.log(psychologist, "CLIENT_CREATED", "CLIENT", client.getId(),
+                client.getFirstName() + " " + client.getLastName() + " danışan olarak eklendi.");
         return toResponse(client);
     }
 
@@ -135,6 +140,7 @@ public class ClientService {
     @Transactional
     public ClientStatusChangeResponse updateStatus(User psychologist, Long id, boolean active, boolean cancelFutureAppointments) {
         Client client = findClient(psychologist, id);
+        boolean wasActive = client.isActive();
         client.setActive(active);
         clientRepository.save(client);
 
@@ -147,6 +153,13 @@ public class ClientService {
             }
             appointmentRepository.saveAll(future);
             cancelledCount = future.size();
+        }
+
+        // V2.3: Activity Log — sadece PASİF yapma olayı loglanır (aktif yapma
+        // MVP'de öncelikli listede değil, gürültü azaltmak için atlanır).
+        if (wasActive && !active) {
+            activityLogService.log(psychologist, "CLIENT_DEACTIVATED", "CLIENT", client.getId(),
+                    client.getFirstName() + " " + client.getLastName() + " pasif yapıldı.");
         }
 
         return ClientStatusChangeResponse.builder()

@@ -10,6 +10,7 @@ import Calendar from './pages/Calendar.jsx'
 import AppointmentNew from './pages/AppointmentNew.jsx'
 import Suggestions from './pages/Suggestions.jsx'
 import Payments from './pages/Payments.jsx'
+import Reports from './pages/Reports.jsx'
 import Settings from './pages/Settings.jsx'
 import PublicFormPage from './pages/PublicFormPage.jsx'
 
@@ -33,6 +34,7 @@ export default function App() {
                 <Route path="/appointments/new" element={<AppointmentNew />} />
                 <Route path="/suggestions" element={<Suggestions />} />
                 <Route path="/payments" element={<Payments />} />
+                <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>

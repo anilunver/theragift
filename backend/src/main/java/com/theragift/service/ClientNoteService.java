@@ -31,6 +31,7 @@ public class ClientNoteService {
 
     private final ClientNoteRepository clientNoteRepository;
     private final ClientRepository clientRepository;
+    private final ActivityLogService activityLogService;
 
     public List<ClientNoteResponse> list(User psychologist, Long clientId) {
         Client client = findClient(psychologist, clientId);
@@ -55,6 +56,10 @@ public class ClientNoteService {
                 .sessionDate(request.getSessionDate())
                 .build();
         clientNoteRepository.save(note);
+        // V2.3: Activity Log — KVKK/hassasiyet gereği notun İÇERİĞİ asla loglanmaz,
+        // sadece hangi danışan için bir not eklendiği (operasyonel bilgi) yazılır.
+        activityLogService.log(psychologist, "CLIENT_NOTE_CREATED", "CLIENT_NOTE", note.getId(),
+                client.getFirstName() + " " + client.getLastName() + " için not eklendi.");
         return toResponse(note);
     }
 

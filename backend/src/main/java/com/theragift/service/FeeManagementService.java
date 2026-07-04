@@ -40,6 +40,7 @@ public class FeeManagementService {
 
     private final ClientRepository clientRepository;
     private final PsychologistProfileRepository profileRepository;
+    private final ActivityLogService activityLogService;
 
     public FeeUpdatePreviewResponse preview(User psychologist, FeeUpdateRequest request) {
         validateRequest(request);
@@ -83,6 +84,9 @@ public class FeeManagementService {
 
         profile.setDefaultSessionFee(request.getNewFee());
         profileRepository.save(profile);
+
+        activityLogService.log(psychologist, "FEE_UPDATE_APPLIED", "PRACTICE_SETTINGS", profile.getId(),
+                targets.size() + " danışanın varsayılan ücreti güncellendi.");
 
         return FeeUpdateApplyResponse.builder()
                 .updatedCount(targets.size())

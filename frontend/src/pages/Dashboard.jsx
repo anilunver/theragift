@@ -9,13 +9,15 @@ import ErrorState from '../components/ErrorState.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import AppointmentModal from '../components/AppointmentModal.jsx'
 import AppointmentStatusBadge from '../components/AppointmentStatusBadge.jsx'
-import { formatCurrency, formatDate, formatTime, sessionTypeLabel, todayIsoDate, unavailableBlockTypeLabel } from '../utils/format.js'
+import { formatCurrency, formatDate, formatDateTime, formatTime, sessionTypeLabel, todayIsoDate, unavailableBlockTypeLabel } from '../utils/format.js'
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null)
   const [subscription, setSubscription] = useState(null)
   const [weekAppointments, setWeekAppointments] = useState([])
   const [unavailableBlocks, setUnavailableBlocks] = useState([])
+  const [monthlyReport, setMonthlyReport] = useState(null)
+  const [recentActivity, setRecentActivity] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
@@ -39,6 +41,19 @@ export default function Dashboard() {
     api.get('/unavailable-blocks')
       .then((res) => setUnavailableBlocks(Array.isArray(res.data) ? res.data : []))
       .catch(() => setUnavailableBlocks([]))
+
+    // V2.3: "Bu ayın özeti" mini rapor kartı — parametre verilmezse backend
+    // varsayılan olarak içinde bulunulan ayı döner (ReportController.resolveRange),
+    // bu yüzden Dashboard'u ağırlaştırmadan mevcut Reports endpoint'i yeniden kullanılır.
+    // Bu isteğin başarısız olması Dashboard'un geri kalanını etkilemez.
+    api.get('/reports/financial')
+      .then((res) => setMonthlyReport(res.data))
+      .catch(() => setMonthlyReport(null))
+
+    // V2.3: Son işlemler mini kartı — activity log'un son 5 kaydı.
+    api.get('/activity-logs', { params: { limit: 5 } })
+      .then((res) => setRecentActivity(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setRecentActivity([]))
   }
 
   useEffect(() => { loadAll() }, [])
@@ -109,6 +124,21 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {monthlyReport && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-muted">Bu Ayın Özeti</h3>
+            <Link to="/reports" className="text-xs font-semibold text-brand-light hover:underline">Raporlara git →</Link>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard label="Tamamlanan Seans" value={monthlyReport.sessionCount} hint="Bu ay tamamlanan/ücretlendirilen seans" />
+            <StatCard label="Tahsil Edilen" value={formatCurrency(monthlyReport.collectedAmount)} tone="positive" hint="Bu ay tahsil edilen tutar" />
+            <StatCard label="Kalan Borç" value={formatCurrency(monthlyReport.outstandingAmount)} tone="warning" hint="Bu ay tahsil edilmeyen tutar" />
+            <StatCard label="İptal / Gelmedi" value={monthlyReport.cancelledCount + monthlyReport.noShowCount} tone="danger" hint="Bu ay iptal edilen + gelinmeyen seans" />
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white border border-border rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
@@ -147,7 +177,28 @@ export default function Dashboard() {
           )}
         </div>
 
-        <GiftLicenseCard subscription={subscription} />
+        <div className="flex flex-col gap-6">
+          <GiftLicenseCard subscription={subscription} />
+
+          <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-ink text-sm">Son İşlemler</h3>
+              <Link to="/reports" className="text-xs font-semibold text-brand-light hover:underline">Tümü →</Link>
+            </div>
+            {recentActivity.length === 0 ? (
+              <p className="text-xs text-muted">Henüz kayıtlı işlem yok.</p>
+            ) : (
+              <div className="space-y-2.5">
+                {recentActivity.map((log) => (
+                  <div key={log.id} className="text-xs">
+                    <div className="font-semibold text-ink">{log.title}</div>
+                    <div className="text-muted mt-0.5">{formatDateTime(log.createdAt)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {selected && (

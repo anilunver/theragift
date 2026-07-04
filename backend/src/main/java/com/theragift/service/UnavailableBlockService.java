@@ -42,6 +42,7 @@ public class UnavailableBlockService {
 
     private final UnavailableBlockRepository unavailableBlockRepository;
     private final AppointmentRepository appointmentRepository;
+    private final ActivityLogService activityLogService;
 
     public List<UnavailableBlockResponse> list(User psychologist) {
         return unavailableBlockRepository.findByPsychologistOrderByStartDateAsc(psychologist)
@@ -69,6 +70,8 @@ public class UnavailableBlockService {
                 .build();
         applyRequest(block, request);
         unavailableBlockRepository.save(block);
+        activityLogService.log(psychologist, "UNAVAILABLE_BLOCK_CREATED", "UNAVAILABLE_BLOCK", block.getId(),
+                block.getTitle() + " (" + formatDate(block.getStartDate()) + " - " + formatDate(block.getEndDate()) + ") eklendi.");
         return toResponseWithAffected(psychologist, block);
     }
 

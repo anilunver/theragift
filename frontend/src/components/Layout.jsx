@@ -10,6 +10,7 @@ const titles = {
   '/appointments/new': 'Yeni Randevu',
   '/suggestions': 'Randevu Önerileri',
   '/payments': 'Ödeme Takibi',
+  '/reports': 'Raporlar',
   '/settings': 'Ayarlar',
 }
 

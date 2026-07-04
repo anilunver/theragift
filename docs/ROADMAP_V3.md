@@ -32,10 +32,13 @@ Frontend'in PWA (installable, offline-first temel önbellekleme) haline getirilm
 Danışan verilerinin işlenmesi, saklanması ve public form üzerinden toplanan verilerin aydınlatma metni. Hem uygulama içi hem public form sayfasında gösterilmeli.
 
 ## 10. Audit Log Geliştirmesi
-Şu anda temel CRUD aksiyonları loglanıyor. V3'te:
-- Audit log görüntüleme ekranı (psikolog kendi geçmişini görebilsin)
+V2.3 ile temel bir görüntüleme ekranı (Raporlar → İşlem Geçmişi) ve psikolog
+bazlı tarih filtreleme eklendi (mevcut `audit_logs` tablosu yeniden
+kullanıldı, yeni entity oluşturulmadı). Kalan geliştirmeler:
 - Daha detaylı diff (ne değişti, eski/yeni değer)
-- Filtreleme (tarih, aksiyon tipi)
+- Şu an önceliklendirilmiş bir aksiyon listesi loglanıyor; her CRUD işlemi
+  henüz kapsanmıyor — kapsam genişletilebilir
+- Aksiyon tipine göre filtreleme/arama arayüzü
 
 ## 11. Production Deploy Planı
 - Backend: Docker image + managed PostgreSQL (örn. Railway, Render, RDS)
@@ -43,3 +46,14 @@ Danışan verilerinin işlenmesi, saklanması ve public form üzerinden toplanan
 - Ortam değişkenleri ile secrets yönetimi (JWT secret, DB credentials)
 - HTTPS zorunluluğu, CORS allowlist'in production domain'e göre güncellenmesi
 - Temel izleme/log toplama (örn. basit health check endpoint zaten mevcut altyapıya eklenebilir)
+
+## 12. Raporlama — Gelişmiş Çıktılar (V2.3 sonrası)
+V2.3 ile Raporlar sayfası (Finans/Randevu/Danışan raporları + CSV export)
+MVP düzeyinde eklendi. Bilinçli olarak kapsam dışı bırakılan ve ileride
+değerlendirilebilecek kısımlar:
+- PDF export
+- Excel (.xlsx) export
+- Gerçek bir grafik kütüphanesi ile görselleştirme (şu an sadece kart/tablo var)
+- Otomatik (zamanlanmış) haftalık/aylık rapor gönderimi (e-posta ile)
+- Muhasebe entegrasyonu
+- AI destekli finansal yorum/özet

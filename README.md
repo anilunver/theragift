@@ -138,3 +138,28 @@ Bu sprint yeni bir özellik eklemedi; Dashboard, Takvim, Danışan Detayı, Öde
 kalitesi iyileştirildi (durum rozetleri, boş/loading/hata durumları, modal
 düzeni, mikro metinler). Sadece frontend değişti; hiçbir endpoint, hesaplama
 mantığı veya veri modeli değişmedi.
+
+## V2.3 — Reports, Export and Activity Log
+
+Yeni "Raporlar" sayfası eklendi (Finans / Randevular / Danışanlar / İşlem
+Geçmişi sekmeleri, tarih filtresi: Bu ay / Geçen ay / Son 30 gün / Özel
+aralık). Finans ve randevu raporları, Ödemeler sayfasındaki mevcut
+CANCELLED/NO_SHOW hariç tutma ve PARTIAL_PAID/FREE/PACKAGE_USED kurallarını
+birebir yeniden kullanır; hiçbir hesaplama mantığı değişmedi. CSV dışa
+aktarım (Finans/Randevu/Danışan raporları) tamamen frontend'de üretilir,
+Excel uyumluluğu için UTF-8 BOM eklenir; yeni bir backend export endpoint'i
+açılmadı.
+
+İşlem geçmişi (activity log) için yeni bir tablo oluşturulmadı — Faz 1'den
+beri var olan `audit_logs` tablosu (`AuditLog` entity) `GET /api/activity-logs`
+ile psikolog bazlı sorgulanabilir hale getirildi ve randevu/ödeme kayıtlarına
+ek olarak danışan oluşturma/pasifleştirme, not ekleme, çalışma dışı blok
+ekleme ve toplu ücret güncellemesi de loglanmaya başlandı. KVKK gereği not
+içeriği asla log açıklamasına yazılmaz, sadece kısa operasyonel bir cümle
+("X danışanı için not eklendi.") kaydedilir.
+
+Dashboard'a mevcut yapıyı ağırlaştırmadan küçük bir "Bu Ayın Özeti" kart
+satırı ve "Son İşlemler" mini listesi eklendi; ikisi de yeni Reports/Activity
+Log endpoint'lerini yeniden kullanır. Yeni endpointler: `GET /api/reports/financial`,
+`GET /api/reports/appointments`, `GET /api/reports/clients`, `GET /api/activity-logs`
+— hepsi giriş yapan psikoloğun verisiyle sınırlıdır.

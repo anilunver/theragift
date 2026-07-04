@@ -6,6 +6,7 @@ const links = [
   { to: '/clients', label: 'Danışanlar', icon: '👥' },
   { to: '/payments', label: 'Ödemeler', icon: '💳' },
   { to: '/suggestions', label: 'Öneriler', icon: '✨' },
+  { to: '/reports', label: 'Raporlar', icon: '📈' },
   { to: '/settings', label: 'Ayarlar', icon: '⚙️' },
 ]
 
