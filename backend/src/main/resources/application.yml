@@ -9,14 +9,26 @@ spring:
     time-zone: Europe/Istanbul
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 theragift:
   jwt:
-    secret: "theragift-super-secret-key-change-in-production-2026-please"
-    expiration-ms: 86400000 # 24 saat
+    # V2.4.1: Production'da JWT_SECRET env değişkeni ile override edilmelidir.
+    # ":" sonrası local geliştirme için varsayılan değerdir — hiçbir env
+    # verilmezse local davranış aynen korunur.
+    secret: "${JWT_SECRET:theragift-super-secret-key-change-in-production-2026-please}"
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 saat
   cors:
-    allowed-origins: "http://localhost:5173"
+    # V2.4.1: Production'da CORS_ALLOWED_ORIGINS env değişkeni ile (virgülle
+    # ayrılmış, örn. "https://app.theragift.com,https://theragift.com")
+    # override edilebilir. Env verilmezse local frontend origin'i kullanılır.
+    allowed-origins: "${CORS_ALLOWED_ORIGINS:http://localhost:5173}"
+  seed:
+    # V2.4.1: SeedDataRunner'ın çalışıp çalışmayacağını kontrol eder. Local
+    # geliştirmede varsayılan olarak açıktır (demo psikolog + demo veri).
+    # Production/gerçek danışan verisiyle kullanmadan önce SEED_DATA_ENABLED=false
+    # ile kapatılması ÖNERİLİR (bkz. docs/DEPLOYMENT_NOTES.md).
+    enabled: ${SEED_DATA_ENABLED:true}
 
 ---
 spring:
@@ -24,9 +36,13 @@ spring:
     activate:
       on-profile: postgres
   datasource:
-    url: jdbc:postgresql://localhost:5432/theragift_db
-    username: theragift
-    password: theragift123
+    # V2.4.1: Production'da SPRING_DATASOURCE_URL / _USERNAME / _PASSWORD env
+    # değişkenleriyle override edilebilir. Hiçbir env verilmezse local
+    # Docker Compose PostgreSQL'ine (theragift_db / theragift / theragift123)
+    # bağlanmaya devam eder — local davranış bozulmaz.
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/theragift_db}
+    username: ${SPRING_DATASOURCE_USERNAME:theragift}
+    password: ${SPRING_DATASOURCE_PASSWORD:theragift123}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

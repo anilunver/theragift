@@ -18,4 +18,7 @@ public class SuggestionResponse {
     private LocalTime endTime;
     private int score;
     private String reason;
-  
+    // V2.2A.2: "En uygun" / "Uygun" / "Alternatif" / "Yoğun gün" — skorun yanında
+    // gösterilecek kısa, backend'de tutarlı hesaplanan etiket.
+    private String matchLabel;
+}

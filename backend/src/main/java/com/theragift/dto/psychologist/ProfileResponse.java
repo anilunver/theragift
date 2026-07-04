@@ -23,4 +23,10 @@ public class ProfileResponse {
     private String defaultPaymentMethod;
     private Integer defaultSessionDurationMinutes;
 
- 
+    // --- V2.2D: Klinik / Pratik Ayarları (PracticeSettings) ---
+    private String clinicName;
+    private String defaultSessionType;
+    private Integer defaultBufferMinutes;
+    private String currency;
+    private String practiceNotes;
+}

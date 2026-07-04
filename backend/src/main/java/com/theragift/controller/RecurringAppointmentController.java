@@ -42,4 +42,15 @@ public class RecurringAppointmentController {
     @PostMapping("/{id}/generate")
     public GenerateOccurrencesResponse generate(
             @PathVariable Long id,
-            @RequestParam(defaultValue = "false") 
+            @RequestParam(defaultValue = "false") boolean overrideWarnings) {
+        return recurringAppointmentService.generateNextOccurrences(currentUserProvider.getCurrentUser(), id, overrideWarnings);
+    }
+
+    // V2.2A.2: "Pasif yap" sonrası opsiyonel ikinci adım — sadece bu kurala bağlı,
+    // gelecekteki ve hâlâ SCHEDULED olan randevuları CANCELLED yapar.
+    @PostMapping("/{id}/cancel-future")
+    public CancelFutureResponse cancelFuture(@PathVariable Long id) {
+        int cancelledCount = recurringAppointmentService.cancelFutureAppointments(currentUserProvider.getCurrentUser(), id);
+        return CancelFutureResponse.builder().cancelledCount(cancelledCount).build();
+    }
+}

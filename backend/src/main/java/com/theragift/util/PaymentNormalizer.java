@@ -83,4 +83,26 @@ public final class PaymentNormalizer {
             }
         }
 
-        boolea
+        boolean changed = !amountsEqual(a.getPaidAmount(), newPaid)
+                || !amountsEqual(a.getRemainingAmount(), newRemaining)
+                || newStatus != status;
+
+        a.setPaidAmount(newPaid);
+        a.setRemainingAmount(newRemaining);
+        a.setPaymentStatus(newStatus);
+        return changed;
+    }
+
+    private static BigDecimal clamp(BigDecimal value, BigDecimal max) {
+        BigDecimal v = value == null ? BigDecimal.ZERO : value;
+        if (v.compareTo(BigDecimal.ZERO) < 0) return BigDecimal.ZERO;
+        if (v.compareTo(max) > 0) return max;
+        return v;
+    }
+
+    private static boolean amountsEqual(BigDecimal a, BigDecimal b) {
+        BigDecimal x = a == null ? BigDecimal.ZERO : a;
+        BigDecimal y = b == null ? BigDecimal.ZERO : b;
+        return x.compareTo(y) == 0;
+    }
+}

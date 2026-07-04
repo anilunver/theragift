@@ -15,4 +15,12 @@ public class ProfileUpdateRequest {
     private String bio;
     private BigDecimal defaultSessionFee;
     private PaymentMethod defaultPaymentMethod;
-    private I
+    private Integer defaultSessionDurationMinutes;
+
+    // --- V2.2D: Klinik / Pratik Ayarları (PracticeSettings) ---
+    private String clinicName;
+    private SessionType defaultSessionType;
+    private Integer defaultBufferMinutes;
+    private String currency;
+    private String practiceNotes;
+}

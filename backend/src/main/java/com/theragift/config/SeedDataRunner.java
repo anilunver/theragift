@@ -275,4 +275,124 @@ public class SeedDataRunner implements CommandLineRunner {
                 .paymentStatusDefault(PaymentStatus.UNPAID)
                 .recurrenceType(RecurrenceType.WEEKLY)
                 .startDate(today)
-                .active(tru
+                .active(true)
+                .note("Her hafta düzenli seans.")
+                .build());
+
+        // Kural 2: Mehmet Kaya, iki haftada bir Cumartesi 11:00 (BIWEEKLY)
+        recurringAppointmentRepository.save(RecurringAppointment.builder()
+                .client(client2).psychologist(demoUser)
+                .dayOfWeek(DayOfWeek.SATURDAY)
+                .startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(11, 50))
+                .sessionType(SessionType.FACE_TO_FACE)
+                .feeAmount(BigDecimal.valueOf(1800))
+                .paymentStatusDefault(PaymentStatus.UNPAID)
+                .recurrenceType(RecurrenceType.BIWEEKLY)
+                .startDate(today)
+                .active(true)
+                .note("İki haftada bir düzenli seans.")
+                .build());
+
+        // Çakışma örneği: Mehmet Kaya kuralının ilk occurrence'ıyla (gelecek Cumartesi
+        // 11:00-11:50) aynı saate denk gelen, başka bir danışana ait randevu. "Önümüzdeki
+        // 4 hafta randevuları oluştur" çalıştırıldığında bu occurrence çakışma nedeniyle
+        // atlanır (skipped) — sistemin geri kalanını bozmadan merkezi çakışma kontrolünü
+        // gösterir.
+        LocalDate nextSaturday = today.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+        appointmentRepository.save(Appointment.builder()
+                .client(client4).psychologist(demoUser)
+                .appointmentDate(nextSaturday)
+                .startTime(LocalTime.of(11, 0)).endTime(LocalTime.of(11, 50))
+                .sessionType(SessionType.FACE_TO_FACE)
+                .status(AppointmentStatus.SCHEDULED)
+                .sessionFee(BigDecimal.valueOf(1600))
+                .paymentStatus(PaymentStatus.UNPAID)
+                .paymentMethod(PaymentMethod.BANK_TRANSFER)
+                .remainingAmount(BigDecimal.valueOf(1600))
+                .paymentDueDate(nextSaturday.plusDays(5))
+                .build());
+
+        // --- V2.2A/V2.2C: Danışan hafızası / not defteri örnekleri ---
+        clientNoteRepository.save(ClientNote.builder()
+                .client(client4).psychologist(demoUser)
+                .category(ClientNoteCategory.PAYMENT)
+                .content("Ödemeyi genelde ay sonunda yapıyor.")
+                .pinned(true)
+                .build());
+
+        clientNoteRepository.save(ClientNote.builder()
+                .client(client5).psychologist(demoUser)
+                .category(ClientNoteCategory.AVAILABILITY)
+                .content("Online seansı tercih ediyor.")
+                .build());
+
+        clientNoteRepository.save(ClientNote.builder()
+                .client(client1).psychologist(demoUser)
+                .category(ClientNoteCategory.AVAILABILITY)
+                .content("Çarşamba akşamları daha uygun.")
+                .build());
+
+        // --- V2.2B: Çalışma dışı gün / tatil blok örnekleri ---
+        // Tek günlük özel iş: bugünden 5 gün sonrası, tam gün kapalı.
+        unavailableBlockRepository.save(UnavailableBlock.builder()
+                .psychologist(demoUser)
+                .title("Özel iş")
+                .type(UnavailableBlockType.DAY_OFF)
+                .startDate(today.plusDays(5))
+                .endDate(today.plusDays(5))
+                .fullDay(true)
+                .note("Kişisel bir iş nedeniyle bu gün çalışılmıyor.")
+                .build());
+
+        // Yunanistan tatili örneği: bugünden 20-26 gün sonrası arası, tam gün kapalı.
+        unavailableBlockRepository.save(UnavailableBlock.builder()
+                .psychologist(demoUser)
+                .title("Yunanistan Tatili")
+                .type(UnavailableBlockType.VACATION)
+                .startDate(today.plusDays(20))
+                .endDate(today.plusDays(26))
+                .fullDay(true)
+                .note("Yıllık izin — bu aralıkta randevu alınmıyor.")
+                .build());
+
+        // Gift License planı ve aboneliği
+        SubscriptionPlan giftPlan = planRepository.save(SubscriptionPlan.builder()
+                .name("Gift License")
+                .description("TheraGift tarafından hediye edilen ücretsiz lisans")
+                .price(BigDecimal.ZERO)
+                .durationDays(365)
+                .aiQuotaLimit(50)
+                .giftLicense(true)
+                .build());
+
+        subscriptionRepository.save(Subscription.builder()
+                .psychologist(demoUser)
+                .plan(giftPlan)
+                .status(SubscriptionStatus.ACTIVE)
+                .startDate(today.minusDays(30))
+                .endDate(today.plusDays(335))
+                .build());
+
+        usageQuotaRepository.save(UsageQuota.builder()
+                .psychologist(demoUser)
+                .aiQuotaUsed(12)
+                .aiQuotaLimit(50)
+                .lastResetAt(LocalDateTime.now())
+                .build());
+
+        // Bekleyen uygunluk formu örneği
+        formRepository.save(AvailabilityForm.builder()
+                .psychologist(demoUser)
+                .client(null)
+                .token("demoformtoken1234567890")
+                .status(AvailabilityFormStatus.PENDING)
+                .build());
+
+        formRepository.save(AvailabilityForm.builder()
+                .psychologist(demoUser)
+                .client(client2)
+                .token("demoformtoken0987654321")
+                .status(AvailabilityFormStatus.PENDING)
+                .build());
+    }
+}

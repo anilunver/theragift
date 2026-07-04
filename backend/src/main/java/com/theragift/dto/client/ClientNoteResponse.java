@@ -18,4 +18,9 @@ public class ClientNoteResponse {
     private String title;
     private String content;
     private String category;
-    private boolea
+    private boolean pinned;
+    private Long appointmentId;
+    private LocalDate sessionDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+}

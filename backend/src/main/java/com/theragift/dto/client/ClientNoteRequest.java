@@ -6,4 +6,11 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class
+public class ClientNoteRequest {
+    private String title;
+    private String content;
+    private ClientNoteCategory category;
+    private Boolean pinned;
+    private Long appointmentId;
+    private LocalDate sessionDate;
+}

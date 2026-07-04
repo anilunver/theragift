@@ -306,4 +306,88 @@ public class AppointmentService {
                 .anyMatch(wh -> !start.isBefore(wh.getStartTime()) && !end.isAfter(wh.getEndTime()));
         if (!withinAnyWorkingHour) {
             warnings.add("Bu randevu psikoloğun tanımlı mesai saatleri dışında. Yine de oluşturmak istiyor musunuz?");
-  
+        }
+
+        boolean duringBreak = dayHours.stream().anyMatch(wh ->
+                wh.getBreakStartTime() != null && wh.getBreakEndTime() != null
+                        && start.isBefore(wh.getBreakEndTime()) && end.isAfter(wh.getBreakStartTime()));
+        if (duringBreak) {
+            warnings.add("Bu randevu psikoloğun mola saatine denk geliyor. Yine de oluşturmak istiyor musunuz?");
+        }
+
+        if (isOutsideClientAvailability(client, dow, start, end)) {
+            warnings.add("Bu saat danışanın belirttiği uygunluk dışında. Yine de oluşturmak istiyor musunuz?");
+        }
+
+        // V2.2B: Psikoloğun tanımladığı "çalışma dışı gün / tatil" bloğuna denk
+        // geliyorsa yumuşak uyarı ekle — sert engel DEĞİL, override edilebilir.
+        unavailableBlockService.findBlockingMessage(psychologist, date, start, end).ifPresent(warnings::add);
+
+        return warnings;
+    }
+
+    private boolean isOutsideClientAvailability(Client client, DayOfWeek dow, LocalTime start, LocalTime end) {
+        String notes = client.getAvailabilityNotes();
+        if (notes == null || notes.isBlank()) return false;
+
+        List<DayOfWeek> preferredDays = AvailabilityTextParser.extractPreferredDays(notes);
+        if (!preferredDays.isEmpty() && !preferredDays.contains(dow)) {
+            return true;
+        }
+
+        AvailabilityTextParser.TimeRange range = AvailabilityTextParser.extractPreferredTimeRange(notes);
+        if (range != null && !range.contains(start, end)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Takvimde "mesai dışı" / mola etiketi gösterebilmek için randevunun
+     * psikoloğun tanımlı çalışma saatleriyle uyumlu olup olmadığını hesaplar.
+     */
+    private boolean computeOutOfWorkingHours(User psychologist, LocalDate date, LocalTime start, LocalTime end) {
+        List<WorkingHour> dayHours = workingHourRepository.findByPsychologistAndDayOfWeekAndActiveTrue(psychologist, date.getDayOfWeek());
+        if (dayHours.isEmpty()) return true;
+        return dayHours.stream().noneMatch(wh -> !start.isBefore(wh.getStartTime()) && !end.isAfter(wh.getEndTime()));
+    }
+
+    private void logAudit(User user, String action, String entityType, Long entityId) {
+        auditLogRepository.save(AuditLog.builder()
+                .user(user)
+                .action(action)
+                .entityType(entityType)
+                .entityId(entityId)
+                .build());
+    }
+
+    private Appointment findAppointment(User psychologist, Long id) {
+        return appointmentRepository.findByIdAndPsychologist(id, psychologist)
+                .orElseThrow(() -> new ApiException("Randevu bulunamadı", HttpStatus.NOT_FOUND));
+    }
+
+    private AppointmentResponse toResponse(Appointment a, User psychologist) {
+        boolean outOfHours = computeOutOfWorkingHours(psychologist, a.getAppointmentDate(), a.getStartTime(), a.getEndTime());
+        return AppointmentResponse.builder()
+                .id(a.getId())
+                .clientId(a.getClient().getId())
+                .clientFullName(a.getClient().getFirstName() + " " + a.getClient().getLastName())
+                .appointmentDate(a.getAppointmentDate())
+                .startTime(a.getStartTime())
+                .endTime(a.getEndTime())
+                .sessionType(a.getSessionType().name())
+                .status(a.getStatus().name())
+                .notes(a.getNotes())
+                .sessionFee(a.getSessionFee())
+                .paymentStatus(a.getPaymentStatus().name())
+                .paymentMethod(a.getPaymentMethod() != null ? a.getPaymentMethod().name() : null)
+                .paidAmount(a.getPaidAmount())
+                .remainingAmount(a.getRemainingAmount())
+                .paymentDate(a.getPaymentDate())
+                .paymentDueDate(a.getPaymentDueDate())
+                .paymentNote(a.getPaymentNote())
+                .outOfWorkingHours(outOfHours)
+                .build();
+    }
+}

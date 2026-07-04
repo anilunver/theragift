@@ -229,4 +229,12 @@ public class UnavailableBlockService {
                 .startDate(b.getStartDate())
                 .endDate(b.getEndDate())
                 .fullDay(b.isFullDay())
-          
+                .startTime(b.getStartTime())
+                .endTime(b.getEndTime())
+                .note(b.getNote())
+                .affectedAppointmentsCount(summaries.size())
+                .affectedAppointments(summaries)
+                .createdAt(b.getCreatedAt())
+                .build();
+    }
+}
