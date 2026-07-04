@@ -186,12 +186,15 @@ export default function Dashboard() {
               <Link to="/reports" className="text-xs font-semibold text-brand-light hover:underline">Tümü →</Link>
             </div>
             {recentActivity.length === 0 ? (
-              <p className="text-xs text-muted">Henüz kayıtlı işlem yok.</p>
+              <div className="text-center py-3">
+                <div className="text-lg mb-1">🕓</div>
+                <p className="text-xs text-muted">Henüz kayıtlı işlem yok.</p>
+              </div>
             ) : (
               <div className="space-y-2.5">
                 {recentActivity.map((log) => (
-                  <div key={log.id} className="text-xs">
-                    <div className="font-semibold text-ink">{log.title}</div>
+                  <div key={log.id} className="text-xs min-w-0">
+                    <div className="font-semibold text-ink truncate" title={log.title}>{log.title}</div>
                     <div className="text-muted mt-0.5">{formatDateTime(log.createdAt)}</div>
                   </div>
                 ))}

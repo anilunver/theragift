@@ -163,3 +163,34 @@ satırı ve "Son İşlemler" mini listesi eklendi; ikisi de yeni Reports/Activit
 Log endpoint'lerini yeniden kullanır. Yeni endpointler: `GET /api/reports/financial`,
 `GET /api/reports/appointments`, `GET /api/reports/clients`, `GET /api/activity-logs`
 — hepsi giriş yapan psikoloğun verisiyle sınırlıdır.
+
+## V2.3.1 — Reports Stabilization and Pilot Readiness
+
+Yeni özellik eklenmedi; V2.3'te eklenen Raporlar/CSV export/activity log/
+Dashboard özet alanları pilot öncesi stabilize edildi. Özel tarih aralığında
+başlangıç bitişten sonraysa artık backend'e hiç istek atılmıyor, kullanıcıya
+net bir uyarı gösteriliyor ve tüm rapor sekmeleri aynı anda bu durumu
+yansıtıyor (tek bir ortak tarih state'i kullanıldığı için zaten garanti
+altındaydı). Finans kartı başlıkları netleştirildi (Dönem Cirosu, Tahsil
+Edilen, Tahsil Edilmeyen, Geciken Ödeme, İptal Edilen Seans, Gelmeyen Seans);
+hesaplama mantığı değişmedi. Danışan raporuna, son/sonraki randevu
+tarihlerinin tarih filtresinden bağımsız hesaplandığını belirten bir açıklama
+eklendi. CSV export butonları, dışa aktarılacak veri yoksa devre dışı kalıyor
+ve toast ile bilgilendiriyor; para değerleri artık CSV'de de `₺` formatlı ve
+okunabilir. Dashboard'daki "Son İşlemler" kartında uzun başlıklar artık
+taşmıyor (truncate + tooltip).
+
+## Pilot Test Checklist
+
+Pilot öncesi hızlı manuel doğrulama için önerilen akış:
+
+1. **Login** — demo hesapla giriş yapılabiliyor mu?
+2. **Dashboard** — bugünün özeti, finansal durum, Bu Ayın Özeti ve Son İşlemler kartları hatasız yükleniyor mu?
+3. **Takvim** — haftalık görünüm açılıyor, randevulara tıklanabiliyor mu?
+4. **Yeni randevu** — randevu oluşturma akışı (danışan seçimi, saat, ücret) çalışıyor mu?
+5. **Ödeme güncelleme** — bir randevunun ödeme durumu güncellenebiliyor mu?
+6. **Danışan notu** — bir danışana not eklenebiliyor, not defteri görüntülenebiliyor mu?
+7. **Ayarlar** — kategori bazlı Ayarlar sayfası (Klinik Profili, Çalışma Takvimi, Ücretler, Formlar) açılıyor mu?
+8. **Raporlar** — tarih filtresi, Finans/Randevu/Danışan/İşlem Geçmişi sekmeleri hatasız çalışıyor mu?
+9. **CSV export** — üç rapor türü de indirilebiliyor, Türkçe karakterler Excel'de düzgün görünüyor mu?
+10. **Activity log** — yeni randevu/ödeme/danışan notu/çalışma dışı blok işlemleri "Raporlar → İşlem Geçmişi" ve Dashboard "Son İşlemler" altında görünüyor mu?

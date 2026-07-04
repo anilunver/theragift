@@ -5,6 +5,7 @@ import StatCard from '../components/StatCard.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import ErrorState from '../components/ErrorState.jsx'
 import EmptyState from '../components/EmptyState.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import {
   formatCurrency, formatDate, formatDateTime, toIsoDateString,
   appointmentStatusLabel, sessionTypeLabel,
@@ -52,6 +53,7 @@ function daysAgo(n) {
 }
 
 export default function Reports() {
+  const { showToast } = useToast()
   const [preset, setPreset] = useState('thisMonth')
   const [customStart, setCustomStart] = useState(toIsoDateString(firstDayOfMonth()))
   const [customEnd, setCustomEnd] = useState(toIsoDateString(new Date()))
@@ -69,6 +71,13 @@ export default function Reports() {
   const [clientStatusFilter, setClientStatusFilter] = useState('ALL')
   const [clientDebtOnly, setClientDebtOnly] = useState(false)
 
+  // V2.3.1: Özel tarih aralığında başlangıç bitişten sonraysa, ne backend'e
+  // geçersiz bir istek atılır ne de sayfa çöker — kullanıcıya net bir uyarı
+  // gösterilir ve tüm rapor sekmeleri (Finans/Randevu/Danışan/İşlem Geçmişi)
+  // AYNI ANDA bu uyarıyı görür, çünkü tek bir ortak startDate/endDate state'i
+  // kullanılıyor.
+  const customRangeInvalid = preset === 'custom' && customStart && customEnd && customStart > customEnd
+
   const { startDate, endDate } = useMemo(() => {
     if (preset === 'lastMonth') {
       return { startDate: toIsoDateString(firstDayOfMonth(-1)), endDate: toIsoDateString(lastDayOfMonth(-1)) }
@@ -84,6 +93,17 @@ export default function Reports() {
   }, [preset, customStart, customEnd])
 
   const loadAll = () => {
+    if (customRangeInvalid) {
+      // Geçersiz aralıkta API'ye hiç istek atılmaz — sayfa eski veriyi
+      // göstermeye devam etmez, temizlenir ve uyarı bloğu gösterilir.
+      setLoading(false)
+      setError('')
+      setFinancial(null)
+      setAppointmentsReport(null)
+      setClientsReport([])
+      setActivityLogs([])
+      return
+    }
     setLoading(true)
     setError('')
     const params = { startDate, endDate }
@@ -105,7 +125,7 @@ export default function Reports() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { loadAll() }, [startDate, endDate])
+  useEffect(() => { loadAll() }, [startDate, endDate, customRangeInvalid])
 
   // Finans/Randevu CSV'leri için: seçili tarih aralığındaki randevu satırları.
   // Ayrı bir backend export endpoint'i açmak yerine zaten çekilmiş /appointments
@@ -125,18 +145,31 @@ export default function Reports() {
     })
   }, [clientsReport, clientSearch, clientStatusFilter, clientDebtOnly])
 
+  // V2.3.1: Boş veride CSV indirmek kafa karıştırıcı olabilir (sadece başlık
+  // satırı olan bir dosya). Bu durumda dosya indirilmez, kullanıcıya net bir
+  // toast ile bilgi verilir.
   const handleExportFinancial = () => {
+    if (appointmentsInRange.length === 0) {
+      showToast('Bu tarih aralığında dışa aktarılacak finans verisi yok.', 'warning')
+      return
+    }
     downloadCsv(
       `theragift-finans-raporu-${periodTagFromDate(startDate)}.csv`,
       ['Danışan Adı', 'Tarih', 'Seans Türü', 'Ücret', 'Ödenen', 'Kalan', 'Durum'],
       appointmentsInRange.map((a) => [
         a.clientFullName, formatDate(a.appointmentDate), sessionTypeLabel(a.sessionType),
-        a.sessionFee ?? 0, a.paidAmount ?? 0, a.remainingAmount ?? 0, appointmentStatusLabel(a.status),
+        formatCurrency(a.sessionFee ?? 0), formatCurrency(a.paidAmount ?? 0), formatCurrency(a.remainingAmount ?? 0),
+        appointmentStatusLabel(a.status),
       ])
     )
+    showToast('Finans raporu indirildi.')
   }
 
   const handleExportAppointments = () => {
+    if (appointmentsInRange.length === 0) {
+      showToast('Bu tarih aralığında dışa aktarılacak randevu verisi yok.', 'warning')
+      return
+    }
     downloadCsv(
       `theragift-randevu-raporu-${periodTagFromDate(startDate)}.csv`,
       ['Tarih', 'Danışan Adı', 'Seans Türü', 'Durum'],
@@ -144,20 +177,26 @@ export default function Reports() {
         formatDate(a.appointmentDate), a.clientFullName, sessionTypeLabel(a.sessionType), appointmentStatusLabel(a.status),
       ])
     )
+    showToast('Randevu raporu indirildi.')
   }
 
   const handleExportClients = () => {
+    if (filteredClients.length === 0) {
+      showToast('Dışa aktarılacak danışan kaydı yok.', 'warning')
+      return
+    }
     downloadCsv(
       `theragift-danisan-raporu-${periodTagFromDate(startDate)}.csv`,
       ['Danışan Adı', 'Toplam Seans', 'Tamamlanan', 'İptal', 'Gelmedi', 'Tahsil Edilen', 'Kalan Borç', 'Son Randevu', 'Sonraki Randevu', 'Durum'],
       filteredClients.map((c) => [
         c.clientFullName, c.totalSessions, c.completedCount, c.cancelledCount, c.noShowCount,
-        c.collectedAmount ?? 0, c.remainingAmount ?? 0,
+        formatCurrency(c.collectedAmount ?? 0), formatCurrency(c.remainingAmount ?? 0),
         c.lastAppointmentDate ? formatDate(c.lastAppointmentDate) : '-',
         c.nextAppointmentDate ? formatDate(c.nextAppointmentDate) : '-',
         c.active ? 'Aktif' : 'Pasif',
       ])
     )
+    showToast('Danışan raporu indirildi.')
   }
 
   return (
@@ -182,26 +221,34 @@ export default function Reports() {
             <div>
               <label className="block text-[11px] font-semibold text-muted mb-1">Başlangıç</label>
               <input type="date" value={customStart} onChange={(e) => setCustomStart(e.target.value)}
-                className="border border-border rounded-lg px-2 py-1.5 text-sm" />
+                className={`border rounded-lg px-2 py-1.5 text-sm ${customRangeInvalid ? 'border-red-400 bg-red-50' : 'border-border'}`} />
             </div>
             <div>
               <label className="block text-[11px] font-semibold text-muted mb-1">Bitiş</label>
               <input type="date" value={customEnd} onChange={(e) => setCustomEnd(e.target.value)}
-                className="border border-border rounded-lg px-2 py-1.5 text-sm" />
+                className={`border rounded-lg px-2 py-1.5 text-sm ${customRangeInvalid ? 'border-red-400 bg-red-50' : 'border-border'}`} />
             </div>
           </div>
         )}
-        <p className="text-xs text-muted">{formatDate(startDate)} – {formatDate(endDate)} aralığı gösteriliyor.</p>
+        {customRangeInvalid ? (
+          <p className="text-xs font-semibold text-red-600">
+            ⚠ Başlangıç tarihi bitiş tarihinden sonra olamaz. Lütfen tarihleri kontrol edin.
+          </p>
+        ) : (
+          <p className="text-xs text-muted">{formatDate(startDate)} – {formatDate(endDate)} aralığı gösteriliyor.</p>
+        )}
       </div>
 
-      {loading ? (
+      {customRangeInvalid ? (
+        <ErrorState text="Başlangıç tarihi bitiş tarihinden sonra olamaz. Lütfen geçerli bir tarih aralığı seçin." />
+      ) : loading ? (
         <LoadingState text="Raporlar yükleniyor..." />
       ) : error ? (
         <ErrorState text={error} />
       ) : (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Toplam Ciro" value={formatCurrency(financial.totalRevenue)} tone="positive" />
+            <StatCard label="Dönem Cirosu" value={formatCurrency(financial.totalRevenue)} tone="positive" />
             <StatCard label="Tahsil Edilen" value={formatCurrency(financial.collectedAmount)} tone="positive" />
             <StatCard label="Tahsil Edilmeyen" value={formatCurrency(financial.outstandingAmount)} tone="warning" />
             <StatCard label="Geciken Ödeme" value={formatCurrency(financial.overdueAmount)} tone="danger" />
@@ -220,8 +267,13 @@ export default function Reports() {
             <div className="bg-white border border-border rounded-2xl p-5 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-extrabold text-ink">Finans Özeti</h3>
-                <button type="button" onClick={handleExportFinancial}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors">
+                <button
+                  type="button"
+                  onClick={handleExportFinancial}
+                  disabled={appointmentsInRange.length === 0}
+                  title={appointmentsInRange.length === 0 ? 'Bu tarih aralığında dışa aktarılacak veri yok' : undefined}
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+                >
                   ⬇ Finans raporunu CSV indir
                 </button>
               </div>
@@ -229,12 +281,12 @@ export default function Reports() {
                 <EmptyState text="Bu tarih aralığında raporlanacak veri bulunamadı." icon="📊" />
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <StatCard label="Kısmi Ödenen Toplam" value={formatCurrency(financial.partialPaidAmount)} />
+                  <StatCard label="Kısmi Ödenen Toplam" value={formatCurrency(financial.partialPaidAmount)} hint="Kısmi ödenmiş seansların kalan tutarı" />
                   <StatCard label="Toplam Seans" value={financial.sessionCount} />
-                  <StatCard label="Ücretsiz Seans" value={financial.freeCount} />
-                  <StatCard label="Paketten Düşülen" value={financial.packageCount} />
-                  <StatCard label="İptal Edilen" value={financial.cancelledCount} tone="danger" />
-                  <StatCard label="Gelmeyen" value={financial.noShowCount} tone="danger" />
+                  <StatCard label="Ücretsiz Seans" value={financial.freeCount} hint="Ciro/tahsilata dahil değil" />
+                  <StatCard label="Paketten Düşülen" value={financial.packageCount} hint="Ciro/tahsilata dahil değil" />
+                  <StatCard label="İptal Edilen Seans" value={financial.cancelledCount} tone="danger" hint="Ciro/tahsilata dahil değil" />
+                  <StatCard label="Gelmeyen Seans" value={financial.noShowCount} tone="danger" hint="Ciro/tahsilata dahil değil" />
                 </div>
               )}
             </div>
@@ -244,8 +296,13 @@ export default function Reports() {
             <div className="bg-white border border-border rounded-2xl p-5 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-extrabold text-ink">Randevu Durum Raporu</h3>
-                <button type="button" onClick={handleExportAppointments}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors">
+                <button
+                  type="button"
+                  onClick={handleExportAppointments}
+                  disabled={appointmentsInRange.length === 0}
+                  title={appointmentsInRange.length === 0 ? 'Bu tarih aralığında dışa aktarılacak veri yok' : undefined}
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+                >
                   ⬇ Randevu raporunu CSV indir
                 </button>
               </div>
@@ -272,11 +329,20 @@ export default function Reports() {
             <div className="bg-white border border-border rounded-2xl p-5 shadow-sm space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h3 className="font-extrabold text-ink">Danışan Bazlı Özet</h3>
-                <button type="button" onClick={handleExportClients}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors">
+                <button
+                  type="button"
+                  onClick={handleExportClients}
+                  disabled={filteredClients.length === 0}
+                  title={filteredClients.length === 0 ? 'Dışa aktarılacak danışan kaydı yok' : undefined}
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+                >
                   ⬇ Danışan raporunu CSV indir
                 </button>
               </div>
+
+              <p className="text-xs text-muted -mt-2">
+                Son ve sonraki randevu bilgileri danışanın genel geçmişinden alınır (seçili tarih aralığından bağımsızdır).
+              </p>
 
               <div className="flex flex-wrap items-center gap-2">
                 <input
@@ -297,8 +363,10 @@ export default function Reports() {
                 </label>
               </div>
 
-              {filteredClients.length === 0 ? (
+              {clientsReport.length === 0 ? (
                 <EmptyState text="Bu tarih aralığında raporlanacak veri bulunamadı." icon="👥" />
+              ) : filteredClients.length === 0 ? (
+                <EmptyState text="Filtrelere uyan danışan bulunamadı. Arama veya filtreleri değiştirmeyi deneyin." icon="🔍" />
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
