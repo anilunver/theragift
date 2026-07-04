@@ -150,10 +150,10 @@ export default function Payments() {
         </div>
       )}
 
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-1.5 flex-wrap bg-panel/60 border border-border rounded-2xl p-1.5">
         {TABS.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${tab === t.key ? 'bg-brand text-white' : 'bg-white border border-border text-muted hover:bg-panel'}`}>
+          <button key={t.key} type="button" onClick={() => setTab(t.key)}
+            className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors ${tab === t.key ? 'bg-brand text-white shadow-sm' : 'bg-white text-muted hover:bg-panel border border-transparent'}`}>
             {t.label}
           </button>
         ))}
@@ -173,13 +173,14 @@ export default function Payments() {
             {SORT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
           </select>
           <button
+            type="button"
             onClick={() => setShowFilters(!showFilters)}
             className="text-sm font-semibold px-3 py-2 rounded-xl border border-border hover:bg-panel transition-colors"
           >
             Filtreler {activeFilterCount > 0 ? `(${activeFilterCount})` : ''} {showFilters ? '▲' : '▼'}
           </button>
           {activeFilterCount > 0 && (
-            <button onClick={() => setFilters(EMPTY_FILTERS)} className="text-xs font-semibold text-red-600 hover:underline">
+            <button type="button" onClick={() => setFilters(EMPTY_FILTERS)} className="text-xs font-semibold text-red-600 hover:underline">
               Filtreleri temizle
             </button>
           )}
@@ -240,16 +241,29 @@ export default function Payments() {
       ) : (
         <div className="bg-white border border-border rounded-2xl divide-y divide-border shadow-sm">
           {filteredItems.map((a) => (
-            <div key={a.id} className="flex items-center justify-between px-4 py-3.5 flex-wrap gap-3">
-              <div className="min-w-0">
+            <div key={a.id} className="flex items-center justify-between px-4 py-3.5 flex-wrap gap-4">
+              <div className="min-w-0 flex-1">
                 <div className="text-sm font-semibold text-ink truncate">{toTitleCase(a.clientFullName)}</div>
-                <div className="text-xs text-muted">
-                  {formatDate(a.appointmentDate)} · Ücret: {formatCurrency(a.sessionFee)} · Ödenen: {formatCurrency(a.paidAmount)} · Kalan: {formatCurrency(a.remainingAmount)}
+                <div className="text-xs text-muted mt-0.5">{formatDate(a.appointmentDate)}</div>
+              </div>
+              <div className="flex items-center gap-4 text-xs shrink-0">
+                <div className="text-right">
+                  <div className="text-[10px] text-muted uppercase tracking-wide">Ücret</div>
+                  <div className="font-semibold text-ink">{formatCurrency(a.sessionFee)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-muted uppercase tracking-wide">Ödenen</div>
+                  <div className="font-semibold text-green-700">{formatCurrency(a.paidAmount)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-muted uppercase tracking-wide">Kalan</div>
+                  <div className={`font-semibold ${Number(a.remainingAmount) > 0 ? 'text-red-600' : 'text-ink'}`}>{formatCurrency(a.remainingAmount)}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <PaymentStatusBadge status={a.paymentStatus} />
                 <button
+                  type="button"
                   onClick={() => setSelected(a)}
                   className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors"
                 >

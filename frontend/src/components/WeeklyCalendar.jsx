@@ -82,18 +82,20 @@ export default function WeeklyCalendar({ weekStart, appointments, unavailableBlo
               </button>
             )}
 
-            <div className="space-y-1.5">
+            <div className={`space-y-1.5 ${dayAppointments.length > 4 ? 'max-h-[190px] overflow-y-auto pr-0.5' : ''}`}>
               {dayAppointments.length === 0 && <div className="text-[11px] text-muted">Randevu yok</div>}
               {dayAppointments.map((a) => (
                 <button
                   key={a.id}
+                  type="button"
                   onClick={() => onSelectAppointment(a)}
                   className={`w-full text-left text-[11px] px-2 py-1.5 rounded-lg font-semibold transition-opacity hover:opacity-80 ${STATUS_STYLES[a.status] || 'bg-brand-soft text-brand-dark border border-transparent'}`}
                 >
                   <div className="flex items-center gap-1.5">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${PAYMENT_DOT_STYLES[a.paymentStatus] || 'bg-gray-300'}`} />
-                    <span className="truncate">{formatTime(a.startTime)} - {formatTime(a.endTime)} {a.clientFullName}</span>
+                    <span className="font-bold shrink-0">{formatTime(a.startTime)}–{formatTime(a.endTime)}</span>
                   </div>
+                  <div className="truncate mt-0.5 font-medium">{a.clientFullName}</div>
                   {a.outOfWorkingHours && (
                     <span className="mt-1 inline-block text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">Mesai dışı</span>
                   )}
@@ -105,7 +107,7 @@ export default function WeeklyCalendar({ weekStart, appointments, unavailableBlo
               <button
                 type="button"
                 onClick={() => onQuickClose(dateStr)}
-                className="mt-2 w-full text-[10px] font-semibold text-muted hover:text-ink border border-dashed border-border rounded-lg py-1 transition-colors"
+                className="mt-2 w-full text-[10px] font-medium text-muted/70 hover:text-muted border border-dashed border-border/70 rounded-lg py-1 transition-colors"
               >
                 Bu günü kapat
               </button>

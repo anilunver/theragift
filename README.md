@@ -130,3 +130,11 @@ Bkz. [`docs/ROADMAP_V3.md`](docs/ROADMAP_V3.md).
 
 - Kod tabanı sade tutulmuştur; Türkçe yorumlar iş mantığının anlaşılmasını kolaylaştırmak için eklenmiştir.
 - v2 polish çalışması yalnızca frontend'de yapılmıştır; backend API sözleşmesi, entity yapısı ve seed data korunmuştur.
+
+## V2.2F — Pilot Demo Polish & UX Consistency
+
+Bu sprint yeni bir özellik eklemedi; Dashboard, Takvim, Danışan Detayı, Ödemeler,
+Öneriler ve Ayarlar sayfalarında görsel tutarlılık, okunabilirlik ve demo sunum
+kalitesi iyileştirildi (durum rozetleri, boş/loading/hata durumları, modal
+düzeni, mikro metinler). Sadece frontend değişti; hiçbir endpoint, hesaplama
+mantığı veya veri modeli değişmedi.

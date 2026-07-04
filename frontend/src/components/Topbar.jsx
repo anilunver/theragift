@@ -13,7 +13,7 @@ export default function Topbar({ title, onMenuClick }) {
   return (
     <div className="h-16 bg-white border-b border-border flex items-center justify-between px-4 md:px-6 shadow-sm shrink-0">
       <div className="flex items-center gap-3 min-w-0">
-        <button className="md:hidden text-2xl shrink-0" onClick={onMenuClick} aria-label="Menü">
+        <button type="button" className="md:hidden text-2xl shrink-0" onClick={onMenuClick} aria-label="Menü">
           ☰
         </button>
         <h1 className="text-lg md:text-xl font-extrabold text-ink truncate">{title}</h1>
@@ -24,6 +24,7 @@ export default function Topbar({ title, onMenuClick }) {
           <div className="text-xs text-muted leading-tight">{user?.email}</div>
         </div>
         <button
+          type="button"
           onClick={handleLogout}
           className="text-sm font-semibold px-3 py-2 rounded-lg border border-border hover:bg-panel transition-colors"
         >

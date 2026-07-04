@@ -117,32 +117,38 @@ export default function Settings() {
         description="Klinik, çalışma düzeni, ücretler ve danışan formlarını buradan yönetin."
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <SettingsOverviewCard
-          icon="🗓️"
-          label="Aktif Çalışma Günü"
-          value={activeWorkingDaysCount}
-        />
-        <SettingsOverviewCard
-          icon="🏖️"
-          label="Yaklaşan Çalışma Dışı Blok"
-          value={upcomingBlock ? upcomingBlock.title : 'Yok'}
-          hint={upcomingBlock ? formatDate(upcomingBlock.startDate) : undefined}
-        />
-        <SettingsOverviewCard
-          icon="💳"
-          label="Varsayılan Seans Ücreti"
-          value={profile.defaultSessionFee ? formatCurrency(profile.defaultSessionFee) : 'Tanımlanmadı'}
-        />
-        <SettingsOverviewCard
-          icon="📝"
-          label="Bekleyen Form"
-          value={pendingFormsCount}
-        />
+      <div>
+        <h3 className="text-sm font-bold text-muted mb-3">Özet</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <SettingsOverviewCard
+            icon="🗓️"
+            label="Aktif Çalışma Günü"
+            value={activeWorkingDaysCount}
+          />
+          <SettingsOverviewCard
+            icon="🏖️"
+            label="Yaklaşan Çalışma Dışı Blok"
+            value={upcomingBlock ? upcomingBlock.title : 'Yok'}
+            hint={upcomingBlock ? formatDate(upcomingBlock.startDate) : undefined}
+          />
+          <SettingsOverviewCard
+            icon="💳"
+            label="Varsayılan Seans Ücreti"
+            value={profile.defaultSessionFee ? formatCurrency(profile.defaultSessionFee) : 'Tanımlanmadı'}
+          />
+          <SettingsOverviewCard
+            icon="📝"
+            label="Bekleyen Form"
+            value={pendingFormsCount}
+          />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr_280px] gap-6 items-start">
-        <SettingsCategoryNav categories={CATEGORIES} active={category} onChange={setCategory} />
+      <div className="grid grid-cols-1 lg:grid-cols-[210px_1fr_240px] gap-6 items-start">
+        <div className="lg:sticky lg:top-6">
+          <h3 className="text-[11px] font-bold text-muted uppercase tracking-wide mb-2 hidden lg:block">Kategoriler</h3>
+          <SettingsCategoryNav categories={CATEGORIES} active={category} onChange={setCategory} />
+        </div>
 
         <div className="min-w-0">
           <ErrorBoundary key={category}>
@@ -150,7 +156,7 @@ export default function Settings() {
           </ErrorBoundary>
         </div>
 
-        <div>
+        <div className="lg:sticky lg:top-6">
           <GiftLicenseCard subscription={subscription} />
         </div>
       </div>

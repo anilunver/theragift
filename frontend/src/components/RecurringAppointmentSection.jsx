@@ -292,16 +292,20 @@ export default function RecurringAppointmentSection({ client }) {
             <div key={rule.id} className="border border-border rounded-xl p-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
-                  <div className="text-sm font-bold text-ink">
-                    {dayOfWeekLabel(rule.dayOfWeek)} · {formatTime(rule.startTime)} - {formatTime(rule.endTime)}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-bold text-ink">
+                      {dayOfWeekLabel(rule.dayOfWeek)} · {formatTime(rule.startTime)}–{formatTime(rule.endTime)}
+                    </span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${rule.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}>
+                      {rule.active ? 'Aktif' : 'Pasif'}
+                    </span>
                   </div>
-                  <div className="text-xs text-muted">
+                  <div className="text-xs text-muted mt-0.5">
                     {recurrenceTypeLabel(rule.recurrenceType)} · {formatCurrency(rule.feeAmount)}
-                    {!rule.active && <span className="ml-2 text-red-600 font-semibold">Pasif</span>}
                   </div>
-                  {rule.note && <div className="text-xs text-muted mt-1">{rule.note}</div>}
+                  {rule.note && <div className="text-xs text-muted mt-1">📝 {rule.note}</div>}
                   {!rule.active && (
-                    <div className="text-[11px] text-muted mt-1 italic">
+                    <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-2 py-1 mt-1.5">
                       Pasifleştirmek yalnızca yeni otomatik üretimi durdurur. Önceden oluşturulan randevular takvimde kalır.
                     </div>
                   )}

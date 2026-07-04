@@ -76,12 +76,22 @@ export default function Calendar() {
         }
       />
 
-      <div className="flex items-center gap-2">
-        <button onClick={() => shiftWeek(-7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">← Önceki</button>
-        <button onClick={() => setWeekStart(getMonday(new Date()))} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">
-          Bugün
-        </button>
-        <button onClick={() => shiftWeek(7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">Sonraki →</button>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => shiftWeek(-7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">← Önceki</button>
+          <button type="button" onClick={() => setWeekStart(getMonday(new Date()))} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">
+            Bugün
+          </button>
+          <button type="button" onClick={() => shiftWeek(7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">Sonraki →</button>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap text-[11px] text-muted">
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400" />Planlandı</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-400" />Tamamlandı</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-400" />Gelmedi</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-gray-400" />İptal</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" />Mesai dışı</span>
+        </div>
       </div>
 
       {loading ? (

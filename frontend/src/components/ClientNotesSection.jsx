@@ -83,7 +83,7 @@ export default function ClientNotesSection({ client }) {
   return (
     <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
       <div className="flex items-center justify-between mb-1">
-        <h3 className="font-extrabold text-ink">Danışan Not Defteri</h3>
+        <h3 className="font-extrabold text-ink flex items-center gap-1.5">📓 Danışan Not Defteri</h3>
         <button
           type="button"
           onClick={() => setShowForm((v) => !v)}
@@ -161,17 +161,19 @@ export default function ClientNotesSection({ client }) {
               onClick={() => setDetailNote(n)}
               className="w-full text-left border border-border rounded-xl px-3 py-2.5 hover:bg-panel transition-colors"
             >
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                {n.pinned && <span className="text-[10px]">📌</span>}
-                {n.title && <span className="text-sm font-semibold text-ink truncate">{n.title}</span>}
-                {n.category && (
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${CLIENT_NOTE_CATEGORY_STYLES[n.category] || 'bg-gray-200 text-gray-700'}`}>
-                    {clientNoteCategoryLabel(n.category)}
-                  </span>
-                )}
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+                  {n.pinned && <span className="text-[10px] shrink-0">📌</span>}
+                  {n.title && <span className="text-sm font-semibold text-ink truncate">{n.title}</span>}
+                  {n.category && (
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${CLIENT_NOTE_CATEGORY_STYLES[n.category] || 'bg-gray-200 text-gray-700'}`}>
+                      {clientNoteCategoryLabel(n.category)}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] text-muted shrink-0">{formatDateTime(n.updatedAt || n.createdAt)}</span>
               </div>
               <p className="text-sm text-ink line-clamp-2 break-words">{previewText(n.content)}</p>
-              <p className="text-[11px] text-muted mt-1">{formatDateTime(n.updatedAt || n.createdAt)}</p>
             </button>
           ))}
         </div>

@@ -75,6 +75,7 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           {appointment.clientId && (
             <button
+              type="button"
               onClick={() => navigate(`/clients/${appointment.clientId}`)}
               className="text-xs font-semibold text-brand-light hover:underline"
             >
@@ -82,6 +83,7 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
             </button>
           )}
           <button
+            type="button"
             onClick={() => setShowPaymentUpdate(true)}
             className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors"
           >
@@ -90,31 +92,34 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
         </div>
 
         {status !== 'CANCELLED' && (
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <button disabled={saving} onClick={() => handleStatusChange('COMPLETED', 'Randevu tamamlandı olarak işaretlendi.')}
-              className="text-xs font-bold py-2 rounded-lg bg-green-100 text-green-800 hover:bg-green-200 disabled:opacity-50 transition-colors">
-              ✓ Tamamlandı
-            </button>
-            <button disabled={saving} onClick={() => handleStatusChange('NO_SHOW', 'Randevu gelmedi olarak işaretlendi.')}
-              className="text-xs font-bold py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50 transition-colors">
-              ✕ Gelmedi
-            </button>
+          <div className="mb-4">
+            <h4 className="text-[11px] font-bold text-muted uppercase tracking-wide mb-1.5">Randevu Durumunu Güncelle</h4>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" disabled={saving} onClick={() => handleStatusChange('COMPLETED', 'Randevu tamamlandı olarak işaretlendi.')}
+                className="text-xs font-bold py-2 rounded-lg bg-green-100 text-green-800 hover:bg-green-200 disabled:opacity-50 transition-colors">
+                ✓ Tamamlandı
+              </button>
+              <button type="button" disabled={saving} onClick={() => handleStatusChange('NO_SHOW', 'Randevu gelmedi olarak işaretlendi.')}
+                className="text-xs font-bold py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50 transition-colors">
+                ✕ Gelmedi
+              </button>
+            </div>
           </div>
         )}
 
-        <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel transition-colors">
+        <div className="flex gap-3 pt-3 border-t border-border/70">
+          <button type="button" onClick={onClose} className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel transition-colors">
             Kapat
           </button>
           {status !== 'CANCELLED' && !confirmingCancel && (
-            <button onClick={() => setConfirmingCancel(true)}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl py-2.5 font-bold text-sm transition-colors">
+            <button type="button" onClick={() => setConfirmingCancel(true)}
+              className="flex-1 border border-red-200 text-red-700 hover:bg-red-50 rounded-xl py-2.5 font-bold text-sm transition-colors">
               Randevuyu İptal Et
             </button>
           )}
           {confirmingCancel && (
-            <button disabled={saving} onClick={handleCancel}
-              className="flex-1 bg-red-700 hover:bg-red-800 text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
+            <button type="button" disabled={saving} onClick={handleCancel}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
               {saving ? 'İptal ediliyor...' : 'Emin misiniz? Onayla'}
             </button>
           )}

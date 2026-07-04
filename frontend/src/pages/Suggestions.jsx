@@ -81,7 +81,10 @@ export default function Suggestions() {
       {!loading && error && <ErrorState text={error} />}
 
       {!loading && !error && searched && suggestions.length === 0 && (
-        <EmptyState text="Bu danışan için uygun boş slot bulunamadı." icon="🔍" />
+        <EmptyState
+          text="Bu danışan için uygun boş slot bulunamadı. Çalışma saatleri, tatil blokları veya danışan uygunluk notunu kontrol edin."
+          icon="🔍"
+        />
       )}
 
       {!loading && !error && suggestions.length > 0 && (
