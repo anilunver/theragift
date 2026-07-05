@@ -85,7 +85,10 @@ export default function AppointmentNew() {
     const res = await api.post('/appointments', payload)
 
     if (res.data.requiresConfirmation) {
-      const message = res.data.warnings.join('\n\n') + '\n\nYine de oluşturmak istiyor musunuz?'
+      // Backend uyarı metinleri zaten kendi onay sorusuyla bitiyor
+      // ("...Yine de oluşturmak istiyor musunuz?") — burada tekrar eklenmez,
+      // aksi halde diyalogda soru iki kez görünür.
+      const message = res.data.warnings.join('\n\n')
       if (window.confirm(message)) {
         await submitAppointment(true)
       }

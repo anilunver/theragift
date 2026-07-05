@@ -111,6 +111,27 @@ export default function OnboardingChecklist() {
     setDismissed(true)
   }
 
+  // V2.5: Tüm adımlar tamamlandığında uzun kontrol listesi yerine, Dashboard'ta
+  // az yer kaplayan, profesyonel görünen kompakt bir "hazır" kartı gösterilir.
+  if (allDone) {
+    return (
+      <div className="flex items-center justify-between gap-3 bg-green-50 border border-green-200 rounded-2xl px-4 py-3">
+        <div className="flex items-center gap-2 text-sm font-semibold text-green-800">
+          <span>✅</span>
+          <span>Pilot hazırlık tamamlandı — panel demo için hazır.</span>
+        </div>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          className="text-xs font-semibold text-green-800/70 hover:text-green-900 shrink-0"
+          title="Kartı gizle"
+        >
+          ✕ Gizle
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
       <div className="flex items-start justify-between gap-3 mb-1">

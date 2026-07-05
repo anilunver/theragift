@@ -19,7 +19,7 @@ export default function GiftLicenseCard({ subscription }) {
       <div className="flex items-center justify-between relative flex-wrap gap-1.5">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-mint">Gift License</span>
         <div className="flex items-center gap-1.5">
-          <span className="bg-white/15 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Pilot MVP</span>
+          <span className="bg-white/15 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Pilot Sürüm</span>
           {subscription.giftLicense && (
             <span className="bg-white/20 text-[11px] font-bold px-2 py-1 rounded-full">Aktif</span>
           )}
@@ -59,7 +59,7 @@ export default function GiftLicenseCard({ subscription }) {
 
       <div className="mt-3 relative">
         <div className="flex justify-between text-[11px] mb-1 text-brand-mint/90">
-          <span>AI Kullanım Kotası</span>
+          <span>Kullanım Kotası</span>
           <span>{subscription.aiQuotaUsed} / {subscription.aiQuotaLimit}</span>
         </div>
         <div className="w-full bg-white/20 rounded-full h-2">

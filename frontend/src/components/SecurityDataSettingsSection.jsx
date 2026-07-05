@@ -13,12 +13,12 @@ const PLACEHOLDER_ITEMS = [
   {
     title: 'Veri Dışa Aktarma',
     description: 'Danışan, randevu ve ödeme verilerinizi dışa aktarma (export) özelliği.',
-    badge: 'MVP sonrası',
+    badge: 'Yakında',
   },
   {
     title: 'Hesap Silme Talebi',
     description: 'Hesabınızı ve tüm verilerinizi kalıcı olarak silme talebinde bulunma.',
-    badge: 'MVP sonrası',
+    badge: 'Yakında',
   },
   {
     title: 'Aktivite Kaydı (Audit Log)',
@@ -29,7 +29,6 @@ const PLACEHOLDER_ITEMS = [
 
 const BADGE_STYLES = {
   'Yakında': 'bg-amber-100 text-amber-800',
-  'MVP sonrası': 'bg-gray-200 text-gray-600',
 }
 
 export default function SecurityDataSettingsSection() {
@@ -42,11 +41,11 @@ export default function SecurityDataSettingsSection() {
         </p>
       </div>
 
-      {/* V2.4: MVP/KVKK uyarısı — gerçek bir hukuk metni değildir, sadece
+      {/* V2.5: Pilot/KVKK uyarısı — gerçek bir hukuk metni değildir, sadece
           pilot kullanım öncesi kullanıcıyı bilgilendiren kısa bir not. */}
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 space-y-1.5">
-        <p className="font-bold">⚠ MVP / KVKK Notu</p>
-        <p>Bu MVP klinik karar vermez; terapi, teşhis veya tedavi önerisi üretmez.</p>
+        <p className="font-bold">⚠ Pilot Kullanım ve KVKK Notu</p>
+        <p>TheraGift tanı, tedavi veya terapi hizmeti vermez; yalnızca operasyonel yönetim panelidir.</p>
         <p>Danışan notları hassas veri olabilir. Gerçek kullanım öncesi KVKK ve veri saklama politikası hazırlanmalıdır.</p>
         <p>Pilot testte gerçek danışan verisi yerine anonim/test veri kullanılması önerilir.</p>
       </div>

@@ -15,7 +15,7 @@ export default function Sidebar({ onNavigate }) {
     <div className="bg-brand-dark text-white h-full flex flex-col w-64 shrink-0">
       <div className="px-6 py-7 border-b border-white/10">
         <div className="text-xl font-extrabold tracking-tight">TheraGift</div>
-        <div className="text-xs text-brand-mint/70 mt-1">Psikolog Paneli · Web MVP</div>
+        <div className="text-xs text-brand-mint/70 mt-1">Psikolog Operasyon Paneli</div>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
         {links.map((link) => (
@@ -37,7 +37,7 @@ export default function Sidebar({ onNavigate }) {
         ))}
       </nav>
       <div className="px-6 py-4 text-[11px] text-brand-mint/60 border-t border-white/10">
-        © {new Date().getFullYear()} TheraGift — MVP v1
+        © {new Date().getFullYear()} TheraGift — Pilot Sürüm
       </div>
     </div>
   )

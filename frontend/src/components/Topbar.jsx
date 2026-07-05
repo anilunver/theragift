@@ -22,9 +22,9 @@ export default function Topbar({ title, onMenuClick }) {
             sadece görsel bir açıklık notu. */}
         <span
           className="hidden sm:inline-block text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0"
-          title="TheraGift şu anda pilot/MVP aşamasındadır"
+          title="TheraGift şu anda pilot sürüm aşamasındadır. Tanı, tedavi veya terapi hizmeti vermez; yalnızca operasyonel yönetim panelidir."
         >
-          Pilot MVP
+          Pilot Sürüm
         </span>
       </div>
       <div className="flex items-center gap-3 shrink-0">
