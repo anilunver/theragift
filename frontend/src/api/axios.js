@@ -1,7 +1,14 @@
 import axios from 'axios'
 
+// V2.4.1: API base URL artık Vite ortam değişkeninden okunuyor. Hiçbir
+// VITE_API_BASE_URL verilmezse (local geliştirme varsayılanı) davranış
+// AYNEN korunur — önceki hardcoded değerle birebir aynı fallback kullanılır.
+// Production build'de .env.production veya deploy ortamına
+// VITE_API_BASE_URL=https://... eklenerek backend adresi değiştirilebilir.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: API_BASE_URL,
 })
 
 // Her istekte token'ı otomatik ekle

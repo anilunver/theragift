@@ -80,4 +80,35 @@ export default function Suggestions() {
         <div className="bg-white border border-border rounded-2xl p-4 flex gap-3 items-center shadow-sm">
           <select
             value={clientId}
-            onChange={(e) => fetchSuggesti
+            onChange={(e) => fetchSuggestions(e.target.value)}
+            className="border border-border rounded-xl px-3 py-2.5 text-sm flex-1"
+          >
+            <option value="">Danışan seçiniz</option>
+            {clients.map((c) => (
+              <option key={c.id} value={c.id}>{c.firstName} {c.lastName}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {loading && <LoadingState text="Öneriler hesaplanıyor..." />}
+
+      {!loading && error && <ErrorState text={error} />}
+
+      {!loading && !error && searched && suggestions.length === 0 && (
+        <EmptyState
+          text="Bu danışan için uygun boş slot bulunamadı. Çalışma saatleri, tatil blokları veya danışan uygunluk notunu kontrol edin."
+          icon="🔍"
+        />
+      )}
+
+      {!loading && !error && suggestions.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {suggestions.map((s, idx) => (
+            <SuggestionCard key={idx} suggestion={s} onUse={handleUse} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

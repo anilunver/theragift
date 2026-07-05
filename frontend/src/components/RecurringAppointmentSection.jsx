@@ -270,4 +270,112 @@ export default function RecurringAppointmentSection({ client }) {
           <div>
             <label className="block text-[11px] font-semibold text-muted mb-1">Not</label>
             <input name="note" value={form.note} onChange={handleChange}
-              className="w-
+              className="w-full border border-border rounded-lg px-2 py-1.5 text-sm" />
+          </div>
+
+          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>}
+
+          <button type="submit" disabled={saving}
+            className="w-full bg-brand hover:bg-brand-light text-white rounded-lg py-2 font-bold text-sm disabled:opacity-60 transition-colors">
+            {saving ? 'Kaydediliyor...' : 'Kuralı Kaydet'}
+          </button>
+        </form>
+      )}
+
+      {loading ? (
+        <p className="text-sm text-muted">Yükleniyor...</p>
+      ) : rules.length === 0 ? (
+        <EmptyState text="Bu danışan için sabit randevu tanımlanmamış." icon="🔁" />
+      ) : (
+        <div className="space-y-3">
+          {rules.map((rule) => (
+            <div key={rule.id} className="border border-border rounded-xl p-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-bold text-ink">
+                      {dayOfWeekLabel(rule.dayOfWeek)} · {formatTime(rule.startTime)}–{formatTime(rule.endTime)}
+                    </span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${rule.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}>
+                      {rule.active ? 'Aktif' : 'Pasif'}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted mt-0.5">
+                    {recurrenceTypeLabel(rule.recurrenceType)} · {formatCurrency(rule.feeAmount)}
+                  </div>
+                  {rule.note && <div className="text-xs text-muted mt-1">📝 {rule.note}</div>}
+                  {!rule.active && (
+                    <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-2 py-1 mt-1.5">
+                      Pasifleştirmek yalnızca yeni otomatik üretimi durdurur. Önceden oluşturulan randevular takvimde kalır.
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={(e) => handleGenerate(e, rule)}
+                    disabled={!rule.active || generatingId === rule.id}
+                    className="text-xs font-bold px-3 py-1.5 rounded-lg bg-brand-soft text-brand-dark hover:bg-brand/20 disabled:opacity-50 transition-colors"
+                  >
+                    {generatingId === rule.id ? 'Kontrol ediliyor...' : 'Önümüzdeki 4 hafta'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleActive(e, rule)}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-border hover:bg-panel transition-colors"
+                  >
+                    {rule.active ? 'Pasif yap' : 'Aktif yap'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleDelete(e, rule)}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    Sil
+                  </button>
+                </div>
+              </div>
+
+              {lastResult && lastResult.ruleId === rule.id && (
+                <div className="mt-3 pt-3 border-t border-border/70 text-xs space-y-1.5">
+                  <div className="font-semibold text-green-700">{lastResult.createdCount} randevu oluşturuldu.</div>
+                  {lastResult.blockers.length > 0 && (
+                    <div>
+                      <div className="font-semibold text-red-700">{lastResult.blockers.length} slot çakışma nedeniyle engellendi:</div>
+                      <ul className="list-disc list-inside text-muted">
+                        {lastResult.blockers.map((b, idx) => (
+                          <li key={idx}>{formatDate(b?.date)} {formatTime(b?.startTime)} - {b?.message || 'Çakışma'}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {lastResult.warnings.length > 0 && (
+                    <div>
+                      <div className="font-semibold text-purple-700">Onaylanan uyarılar:</div>
+                      <ul className="list-disc list-inside text-muted">
+                        {lastResult.warnings.map((w, idx) => (
+                          <li key={idx}>{formatDate(w?.date)} {formatTime(w?.startTime)} - {w?.message || 'Uyarı'}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {confirmState?.rule && (
+        <RecurringConfirmModal
+          rule={confirmState.rule}
+          blockers={confirmState.blockers}
+          warnings={confirmState.warnings}
+          saving={generatingId === confirmState.rule.id}
+          onCancel={handleCancelGenerate}
+          onConfirm={handleConfirmGenerate}
+        />
+      )}
+    </div>
+  )
+}

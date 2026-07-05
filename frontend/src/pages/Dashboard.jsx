@@ -108,4 +108,149 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={() => {
-              try { localStorage.setItem(PILOT_BANNER_DISMISSED_KEY, 'true') } 
+              try { localStorage.setItem(PILOT_BANNER_DISMISSED_KEY, 'true') } catch { /* yok say */ }
+              setShowPilotBanner(false)
+            }}
+            className="shrink-0 text-amber-800/70 hover:text-amber-900"
+            aria-label="Bilgilendirmeyi kapat"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      <OnboardingChecklist />
+
+      {todayBlock && (
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm font-semibold text-gray-700">
+          🚫 Bugün {unavailableBlockTypeLabel(todayBlock.type, todayBlock.title)} olarak işaretlendi.
+        </div>
+      )}
+      {!todayBlock && upcomingBlock && (
+        <div className="bg-purple-50 border border-purple-200 rounded-2xl px-4 py-3 text-sm font-semibold text-purple-800">
+          📅 Yaklaşan çalışma dışı dönem: {formatDate(upcomingBlock.startDate)} - {formatDate(upcomingBlock.endDate)}
+          {' '}({unavailableBlockTypeLabel(upcomingBlock.type, upcomingBlock.title)})
+        </div>
+      )}
+
+      <div>
+        <h3 className="text-sm font-bold text-muted mb-3">Bugün ne var?</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard label="Bugünkü Seans" value={summary.todayAppointmentsCount} hint="Planlanan randevu sayısı" />
+          <StatCard label="Boş Slot" value={summary.availableSlotsCount} hint="Bugün için uygun saat" />
+          <StatCard label="Bugünkü Tahsilat" value={formatCurrency(summary.todayRevenue)} tone="positive" hint="Bugün tahsil edilen tutar" />
+          <StatCard label="Bekleyen Form" value={summary.pendingFormsCount} hint="Yanıt bekleyen uygunluk formu" />
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-bold text-muted mb-3">Finansal Durum</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard label="Bekleyen Ödeme" value={formatCurrency(summary.unpaidAmount)} tone="warning" hint="Toplam tahsil edilmemiş tutar" />
+          <StatCard label="Geciken Ödeme" value={summary.overduePaymentsCount} tone="danger" hint="Vadesi geçmiş seans sayısı" />
+          <StatCard label="Aylık Ciro" value={formatCurrency(summary.monthlyRevenue)} tone="positive" hint="Bu ayki toplam ücretlendirme" />
+          <StatCard label="AI Kotası" value={`${summary.aiQuotaUsed} / ${summary.aiQuotaLimit}`} hint="Kullanılan / toplam hak" />
+        </div>
+      </div>
+
+      {monthlyReport && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-muted">Bu Ayın Özeti</h3>
+            <Link to="/reports" className="text-xs font-semibold text-brand-light hover:underline">Raporlara git →</Link>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard label="Tamamlanan Seans" value={monthlyReport.sessionCount} hint="Bu ay tamamlanan/ücretlendirilen seans" />
+            <StatCard label="Tahsil Edilen" value={formatCurrency(monthlyReport.collectedAmount)} tone="positive" hint="Bu ay tahsil edilen tutar" />
+            <StatCard label="Kalan Borç" value={formatCurrency(monthlyReport.outstandingAmount)} tone="warning" hint="Bu ay tahsil edilmeyen tutar" />
+            <StatCard label="İptal / Gelmedi" value={monthlyReport.cancelledCount + monthlyReport.noShowCount} tone="danger" hint="Bu ay iptal edilen + gelinmeyen seans" />
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white border border-border rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-extrabold text-ink">Bu Haftaki Randevular</h3>
+              <p className="text-xs text-muted mt-0.5">Bir satıra tıklayarak randevu detayını açabilirsiniz.</p>
+            </div>
+            <Link to="/calendar" className="text-sm font-semibold text-brand-light hover:underline shrink-0 ml-3">Takvime git →</Link>
+          </div>
+          {weekAppointments.length === 0 ? (
+            <EmptyState
+              text="Bu hafta için planlanmış randevu yok. Yeni bir randevu oluşturarak başlayabilirsiniz."
+              icon="📅"
+              action={
+                <Link
+                  to="/appointments/new"
+                  className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm"
+                >
+                  + Randevu Oluştur
+                </Link>
+              }
+            />
+          ) : (
+            <div className="space-y-2">
+              {weekAppointments.slice(0, 8).map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => setSelected(a)}
+                  className="w-full flex items-center justify-between gap-3 border border-border rounded-xl px-4 py-3 hover:bg-panel hover:border-brand-light/40 transition-colors text-left"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-sm text-ink truncate">{a.clientFullName}</div>
+                    <div className="text-xs text-muted mt-0.5">
+                      {formatDate(a.appointmentDate)} <span className="text-border">·</span> {formatTime(a.startTime)}–{formatTime(a.endTime)}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-xs font-semibold px-2 py-1 rounded-full bg-brand-soft text-brand-dark">
+                      {sessionTypeLabel(a.sessionType)}
+                    </span>
+                    <AppointmentStatusBadge status={a.status} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-6">
+          <GiftLicenseCard subscription={subscription} />
+
+          <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-ink text-sm">Son İşlemler</h3>
+              <Link to="/reports" className="text-xs font-semibold text-brand-light hover:underline">Tümü →</Link>
+            </div>
+            {recentActivity.length === 0 ? (
+              <div className="text-center py-3">
+                <div className="text-lg mb-1">🕓</div>
+                <p className="text-xs text-muted">Henüz kayıtlı işlem yok.</p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {recentActivity.map((log) => (
+                  <div key={log.id} className="text-xs min-w-0">
+                    <div className="font-semibold text-ink truncate" title={log.title}>{log.title}</div>
+                    <div className="text-muted mt-0.5">{formatDateTime(log.createdAt)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {selected && (
+        <AppointmentModal
+          appointment={selected}
+          onClose={() => setSelected(null)}
+          onUpdated={loadAll}
+        />
+      )}
+    </div>
+  )
+}

@@ -42,6 +42,15 @@ export default function SecurityDataSettingsSection() {
         </p>
       </div>
 
+      {/* V2.4: MVP/KVKK uyarısı — gerçek bir hukuk metni değildir, sadece
+          pilot kullanım öncesi kullanıcıyı bilgilendiren kısa bir not. */}
+      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 space-y-1.5">
+        <p className="font-bold">⚠ MVP / KVKK Notu</p>
+        <p>Bu MVP klinik karar vermez; terapi, teşhis veya tedavi önerisi üretmez.</p>
+        <p>Danışan notları hassas veri olabilir. Gerçek kullanım öncesi KVKK ve veri saklama politikası hazırlanmalıdır.</p>
+        <p>Pilot testte gerçek danışan verisi yerine anonim/test veri kullanılması önerilir.</p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {PLACEHOLDER_ITEMS.map((item) => (
           <div key={item.title} className="bg-white border border-border rounded-2xl p-5 shadow-sm opacity-90">

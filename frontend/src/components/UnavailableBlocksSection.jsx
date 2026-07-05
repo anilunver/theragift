@@ -84,4 +84,33 @@ export default function UnavailableBlocksSection() {
                   {b.startDate !== b.endDate ? ` - ${formatDate(b.endDate)}` : ''}
                   {b.fullDay ? ' · Tam gün' : ` · ${formatTime(b.startTime)} - ${formatTime(b.endTime)}`}
                 </div>
-                {b.note && <div className="text-xs te
+                {b.note && <div className="text-xs text-muted mt-0.5">{b.note}</div>}
+              </div>
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => handleDelete(e, b)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleDelete(e, b) }}
+                className="text-xs font-bold px-3 py-1.5 rounded-lg border border-border hover:bg-red-50 hover:text-red-700 hover:border-red-200 shrink-0 ml-3 transition-colors"
+              >
+                Sil
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {showForm && (
+        <UnavailableBlockFormModal onClose={() => setShowForm(false)} onSaved={load} />
+      )}
+
+      {selectedBlock && (
+        <UnavailableBlockDetailModal
+          block={selectedBlock}
+          onClose={() => setSelectedBlock(null)}
+          onDeleted={load}
+        />
+      )}
+    </div>
+  )
+}

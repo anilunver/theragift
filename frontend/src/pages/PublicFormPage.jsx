@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
-
-const api = axios.create({ baseURL: 'http://localhost:8080/api' })
+// V2.4.1: Artık kendi ayrı axios instance'ını oluşturmuyor — tüm uygulamada
+// tek bir yerden (api/axios.js) yönetilen, VITE_API_BASE_URL'i okuyan ortak
+// istemci kullanılıyor. Bu sayede base URL her yerde tutarlı olur ve
+// production'da tek bir env değişkeniyle değiştirilebilir. Ortak istemcinin
+// 401 interceptor'ı zaten "/public" yollarında yönlendirme yapmayacak
+// şekilde tasarlanmıştı, bu yüzden bu public sayfada da güvenle kullanılabilir.
+import api from '../api/axios.js'
 
 export default function PublicFormPage() {
   const { token } = useParams()

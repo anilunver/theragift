@@ -96,4 +96,43 @@ export default function AppointmentModal({ appointment, onClose, onUpdated }) {
             <h4 className="text-[11px] font-bold text-muted uppercase tracking-wide mb-1.5">Randevu Durumunu Güncelle</h4>
             <div className="grid grid-cols-2 gap-2">
               <button type="button" disabled={saving} onClick={() => handleStatusChange('COMPLETED', 'Randevu tamamlandı olarak işaretlendi.')}
-                className="text-xs font-bold py-2 rounded-lg bg-green-100 text-green-800 hover:bg-
+                className="text-xs font-bold py-2 rounded-lg bg-green-100 text-green-800 hover:bg-green-200 disabled:opacity-50 transition-colors">
+                ✓ Tamamlandı
+              </button>
+              <button type="button" disabled={saving} onClick={() => handleStatusChange('NO_SHOW', 'Randevu gelmedi olarak işaretlendi.')}
+                className="text-xs font-bold py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50 transition-colors">
+                ✕ Gelmedi
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-3 pt-3 border-t border-border/70">
+          <button type="button" onClick={onClose} className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel transition-colors">
+            Kapat
+          </button>
+          {status !== 'CANCELLED' && !confirmingCancel && (
+            <button type="button" onClick={() => setConfirmingCancel(true)}
+              className="flex-1 border border-red-200 text-red-700 hover:bg-red-50 rounded-xl py-2.5 font-bold text-sm transition-colors">
+              Randevuyu İptal Et
+            </button>
+          )}
+          {confirmingCancel && (
+            <button type="button" disabled={saving} onClick={handleCancel}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
+              {saving ? 'İptal ediliyor...' : 'Emin misiniz? Onayla'}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {showPaymentUpdate && (
+        <PaymentUpdateModal
+          appointment={appointment}
+          onClose={() => setShowPaymentUpdate(false)}
+          onUpdated={() => { onUpdated(); onClose(); }}
+        />
+      )}
+    </div>
+  )
+}

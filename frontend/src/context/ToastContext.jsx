@@ -31,4 +31,11 @@ export function ToastProvider({ children }) {
             {t.message}
           </div>
         ))}
-      </div
+      </div>
+    </ToastContext.Provider>
+  )
+}
+
+export function useToast() {
+  return useContext(ToastContext)
+}

@@ -184,4 +184,35 @@ export default function Clients() {
                   type="number" placeholder="Varsayılan Ücret (₺)"
                   className="border border-border rounded-xl px-3 py-2.5 text-sm" />
               </div>
-              <select name="defaultPaymentMethod" value={form.defaultPaymentMethod} onChan
+              <select name="defaultPaymentMethod" value={form.defaultPaymentMethod} onChange={handleChange}
+                className="border border-border rounded-xl px-3 py-2.5 text-sm w-full">
+                <option value="CASH">Nakit</option>
+                <option value="BANK_TRANSFER">Havale/EFT</option>
+                <option value="CREDIT_CARD_MANUAL">Manuel Kart</option>
+                <option value="ONLINE_LINK">Online Link</option>
+                <option value="PACKAGE">Paket</option>
+                <option value="OTHER">Diğer</option>
+              </select>
+              <textarea name="availabilityNotes" value={form.availabilityNotes} onChange={handleChange}
+                placeholder="Uygunluk notu (örn: Pazartesi ve Çarşamba öğleden sonra)"
+                className="border border-border rounded-xl px-3 py-2.5 text-sm w-full" rows={2} />
+              <textarea name="notes" value={form.notes} onChange={handleChange} placeholder="Genel notlar"
+                className="border border-border rounded-xl px-3 py-2.5 text-sm w-full" rows={2} />
+
+              {formError && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</div>}
+
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowModal(false)}
+                  className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel">İptal</button>
+                <button type="submit" disabled={saving}
+                  className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60">
+                  {saving ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

@@ -372,4 +372,75 @@ export default function Reports() {
               {clientsReport.length === 0 ? (
                 <EmptyState text="Bu dönem için raporlanacak veri bulunamadı. Randevu ve ödeme kayıtları oluştukça raporlar burada görünecek." icon="👥" />
               ) : filteredClients.length === 0 ? (
-                <EmptyState text="Filtrelere uyan danışan bulunamadı. Arama veya filtreleri değişti
+                <EmptyState text="Filtrelere uyan danışan bulunamadı. Arama veya filtreleri değiştirmeyi deneyin." icon="🔍" />
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-muted border-b border-border bg-panel/60">
+                        <th className="px-3 py-2 font-semibold">Danışan</th>
+                        <th className="px-3 py-2 font-semibold text-center">Toplam</th>
+                        <th className="px-3 py-2 font-semibold text-center">Tamamlanan</th>
+                        <th className="px-3 py-2 font-semibold text-center">İptal</th>
+                        <th className="px-3 py-2 font-semibold text-center">Gelmedi</th>
+                        <th className="px-3 py-2 font-semibold text-right">Tahsil Edilen</th>
+                        <th className="px-3 py-2 font-semibold text-right">Kalan Borç</th>
+                        <th className="px-3 py-2 font-semibold">Son Randevu</th>
+                        <th className="px-3 py-2 font-semibold">Sonraki Randevu</th>
+                        <th className="px-3 py-2 font-semibold">Durum</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredClients.map((c) => (
+                        <tr key={c.clientId} className="border-b border-border last:border-0 hover:bg-panel transition-colors">
+                          <td className="px-3 py-2.5 font-semibold text-ink">{c.clientFullName}</td>
+                          <td className="px-3 py-2.5 text-center">{c.totalSessions}</td>
+                          <td className="px-3 py-2.5 text-center">{c.completedCount}</td>
+                          <td className="px-3 py-2.5 text-center">{c.cancelledCount}</td>
+                          <td className="px-3 py-2.5 text-center">{c.noShowCount}</td>
+                          <td className="px-3 py-2.5 text-right text-green-700 font-semibold">{formatCurrency(c.collectedAmount)}</td>
+                          <td className={`px-3 py-2.5 text-right font-semibold ${Number(c.remainingAmount) > 0 ? 'text-red-600' : 'text-ink'}`}>{formatCurrency(c.remainingAmount)}</td>
+                          <td className="px-3 py-2.5 text-muted">{c.lastAppointmentDate ? formatDate(c.lastAppointmentDate) : '-'}</td>
+                          <td className="px-3 py-2.5 text-muted">{c.nextAppointmentDate ? formatDate(c.nextAppointmentDate) : '-'}</td>
+                          <td className="px-3 py-2.5">
+                            <span className={`text-xs font-semibold px-2 py-1 rounded-full ${c.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}>
+                              {c.active ? 'Aktif' : 'Pasif'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'activity' && (
+            <div className="bg-white border border-border rounded-2xl p-5 shadow-sm space-y-3">
+              <h3 className="font-extrabold text-ink">İşlem Geçmişi</h3>
+              <p className="text-xs text-muted -mt-2">
+                Bu liste operasyonel işlemleri özetler; danışan not içeriği veya klinik detay göstermez.
+              </p>
+              {activityLogs.length === 0 ? (
+                <EmptyState text="Bu tarih aralığında raporlanacak veri bulunamadı." icon="🕓" />
+              ) : (
+                <div className="space-y-2 max-h-[420px] overflow-y-auto">
+                  {activityLogs.map((log) => (
+                    <div key={log.id} className="flex items-start justify-between gap-3 border border-border rounded-xl px-3 py-2.5">
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-ink">{log.title}</div>
+                        {log.description && <div className="text-xs text-muted mt-0.5">{log.description}</div>}
+                      </div>
+                      <div className="text-[11px] text-muted shrink-0">{formatDateTime(log.createdAt)}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}

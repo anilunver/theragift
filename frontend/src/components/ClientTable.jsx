@@ -2,11 +2,25 @@ import { useNavigate } from 'react-router-dom'
 import { fullNameTitleCase, formatCurrency, sessionTypeLabel } from '../utils/format.js'
 import EmptyState from './EmptyState.jsx'
 
-export default function ClientTable({ clients }) {
+export default function ClientTable({ clients, onAddClick }) {
   const navigate = useNavigate()
 
   if (!clients || clients.length === 0) {
-    return <EmptyState text="Danışan yok. Yeni danışan eklemek için sağ üstteki butonu kullanın." icon="👥" />
+    return (
+      <EmptyState
+        text="Henüz danışan eklenmemiş. İlk danışanınızı ekleyerek randevu takibine başlayın."
+        icon="👥"
+        action={onAddClick && (
+          <button
+            type="button"
+            onClick={onAddClick}
+            className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm"
+          >
+            + Danışan Ekle
+          </button>
+        )}
+      />
+    )
   }
 
   return (

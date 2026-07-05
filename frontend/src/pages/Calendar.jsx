@@ -66,4 +66,85 @@ export default function Calendar() {
 
   return (
     <div className="space-y-5">
-      <PageHeade
+      <PageHeader
+        title="Haftalık Takvim"
+        description={`${weekStart.toLocaleDateString('tr-TR')} haftası`}
+        action={
+          <Link to="/appointments/new" className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2.5 rounded-xl text-sm text-center whitespace-nowrap">
+            + Yeni randevu
+          </Link>
+        }
+      />
+
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => shiftWeek(-7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">← Önceki</button>
+          <button type="button" onClick={() => setWeekStart(getMonday(new Date()))} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">
+            Bugün
+          </button>
+          <button type="button" onClick={() => shiftWeek(7)} className="px-3 py-2 border border-border rounded-lg text-sm font-semibold hover:bg-panel transition-colors">Sonraki →</button>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap text-[11px] text-muted">
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400" />Planlandı</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-400" />Tamamlandı</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-400" />Gelmedi</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-gray-400" />İptal</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" />Mesai dışı</span>
+        </div>
+      </div>
+
+      {loading ? (
+        <LoadingState text="Takvim yükleniyor..." />
+      ) : error ? (
+        <ErrorState text={error} />
+      ) : (
+        <>
+          {appointments.length === 0 && (
+            <div className="flex items-center justify-between gap-3 flex-wrap bg-panel/60 border border-border rounded-2xl px-4 py-3">
+              <span className="text-sm font-semibold text-muted">Bu hafta için planlı randevu yok.</span>
+              <Link
+                to="/appointments/new"
+                className="bg-brand hover:bg-brand-light text-white font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap"
+              >
+                + Randevu Oluştur
+              </Link>
+            </div>
+          )}
+          <WeeklyCalendar
+            weekStart={weekStart}
+            appointments={appointments}
+            unavailableBlocks={unavailableBlocks}
+            onSelectAppointment={setSelected}
+            onQuickClose={setQuickCloseDate}
+            onBlockClick={setSelectedBlock}
+          />
+        </>
+      )}
+
+      {selected && (
+        <AppointmentModal
+          appointment={selected}
+          onClose={() => setSelected(null)}
+          onUpdated={loadWeek}
+        />
+      )}
+
+      {quickCloseDate && (
+        <UnavailableBlockFormModal
+          initialDate={quickCloseDate}
+          onClose={() => setQuickCloseDate(null)}
+          onSaved={loadWeek}
+        />
+      )}
+
+      {selectedBlock && (
+        <UnavailableBlockDetailModal
+          block={selectedBlock}
+          onClose={() => setSelectedBlock(null)}
+          onDeleted={loadWeek}
+        />
+      )}
+    </div>
+  )
+}

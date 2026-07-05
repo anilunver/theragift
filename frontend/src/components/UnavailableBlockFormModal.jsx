@@ -151,4 +151,18 @@ export default function UnavailableBlockFormModal({ initialDate, onClose, onSave
               className="w-full border border-border rounded-xl px-3 py-2.5 text-sm" />
           </div>
 
-          {error
+          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>}
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} disabled={saving}
+              className="flex-1 border border-border rounded-xl py-2.5 font-semibold text-sm hover:bg-panel disabled:opacity-60 transition-colors">İptal</button>
+            <button type="submit" disabled={saving}
+              className="flex-1 bg-brand hover:bg-brand-light text-white rounded-xl py-2.5 font-bold text-sm disabled:opacity-60 transition-colors">
+              {saving ? 'Kaydediliyor...' : 'Kaydet'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
